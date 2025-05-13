@@ -1,0 +1,11 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "isCreatingSolution": true,
+    "environment": "onprem",
+    "version": "1.6.0",
+    "libraryName": "zarsim-agent",
+    "libraryId": "c3465a16-a36e-4a59-944c-866ec1659090",
+    "packageManager": "npm",
+    "componentType": "webpart"
+  }
+}

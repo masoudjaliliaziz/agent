@@ -1,0 +1,93 @@
+.Layout {
+  padding: 20px 40px;
+  //   display: flex;
+  //   flex-direction: column;
+  //   justify-content: center;
+  //   align-items: center;
+  //   width: 100vw;
+  //   height: 100vh;
+}
+.Header {
+  background-color: rgb(37, 37, 37);
+  width: 100%;
+  height: 70px;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  color: rgb(243, 243, 243);
+  border-radius: 12px 12px 0 0;
+  text-align: right;
+}
+
+.btnContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.btn {
+  cursor: pointer;
+  transition: all 300ms linear;
+  padding: 8px 12px;
+  border-radius: 8.5px;
+  font-weight: bolder;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  &:hover {
+    scale: 105%;
+    background-color: black;
+    color: white;
+  }
+}
+
+.activeHome {
+  cursor: pointer;
+  transition: all 300ms linear;
+  padding: 8px 12px;
+  border-radius: 8.5px;
+  font-weight: bolder;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  background-color: black;
+  color: white;
+  &:hover {
+    scale: 105%;
+    background-color: black;
+    color: white;
+  }
+}
+
+.activeCart {
+  cursor: pointer;
+  transition: all 300ms linear;
+  padding: 8px 12px;
+  border-radius: 8.5px;
+  font-weight: bolder;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  background-color: black;
+  color: white;
+  &:hover {
+    scale: 105%;
+    background-color: black;
+    color: white;
+  }
+}

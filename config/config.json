@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "entry": "./lib/webparts/agentForm/AgentFormWebPart.js",
+      "manifest": "./src/webparts/agentForm/AgentFormWebPart.manifest.json",
+      "outputPath": "./dist/agent-form-web-part.js"
+    }
+  ],
+  "externals": {},
+  "localizedResources": {
+    "AgentFormWebPartStrings": "webparts/agentForm/loc/{locale}.js"
+  }
+}
