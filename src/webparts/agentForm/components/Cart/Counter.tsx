@@ -1,6 +1,7 @@
 import * as React from "react";
 import { getDigest } from "../Crud/GetDigest";
 import styles from "./Counter.module.scss";
+
 class Counter extends React.Component<any, any> {
   private listName = "shoping";
   private webUrl = "https://crm.zarsim.com";
@@ -31,8 +32,11 @@ class Counter extends React.Component<any, any> {
     )
       .then((res) => res.json())
       .then((data) => {
-        const count = data.d.count;
+        const count = Number(data.d.count) || 0;
         this.setState({ count, displayCount: count, loading: false });
+        if (this.props.onCountChange) {
+          this.props.onCountChange(count);
+        }
       })
       .catch((error) => {
         console.error("Fetch quantity error:", error);
@@ -42,11 +46,10 @@ class Counter extends React.Component<any, any> {
 
   updateQuantity = async (newCount: number) => {
     const digest = await getDigest();
-    const { Id, onDelete } = this.props;
+    const { Id, onDelete, onCountChange } = this.props;
     const url = `${this.webUrl}/_api/web/lists/getbytitle('${this.listName}')/items(${Id})`;
 
     if (newCount === 0) {
-      // حذف آیتم
       fetch(url, {
         method: "POST",
         headers: {
@@ -58,11 +61,10 @@ class Counter extends React.Component<any, any> {
       })
         .then(() => {
           this.setState({ count: 0, displayCount: 0 });
-          if (onDelete) onDelete(Id); // اطلاع به والد برای حذف از DOM
+          if (onDelete) onDelete(Id);
         })
         .catch((error) => console.error("Delete item error:", error));
     } else {
-      // بروزرسانی
       fetch(url, {
         method: "POST",
         headers: {
@@ -79,25 +81,37 @@ class Counter extends React.Component<any, any> {
       })
         .then(() => {
           this.setState({ count: newCount, displayCount: newCount });
+          if (onCountChange) onCountChange(newCount);
         })
         .catch((error) => console.error("Update quantity error:", error));
     }
   };
 
   increment = () => {
-    const newCount = Number(this.state.displayCount) + 1;
+    const newCount = this.state.displayCount + 1;
     this.updateQuantity(newCount);
   };
 
   decrement = () => {
-    const current = Number(this.state.displayCount);
+    const current = this.state.displayCount;
     if (current === 1) {
-      this.setState({ displayCount: 0 }); // اول UI صفر بشه
-      this.updateQuantity(0); // بعد حذف آیتم
+      this.setState({ displayCount: 0 });
+      this.updateQuantity(0);
     } else {
       const newCount = Math.max(0, current - 1);
       this.updateQuantity(newCount);
     }
+  };
+
+  handleInputChange = (e) => {
+    const value = parseInt(e.target.value, 10);
+    const newCount = isNaN(value) || value < 0 ? 0 : value;
+    this.setState({ displayCount: newCount });
+  };
+
+  handleInputBlur = () => {
+    const { displayCount } = this.state;
+    this.updateQuantity(displayCount);
   };
 
   render() {
@@ -107,7 +121,13 @@ class Counter extends React.Component<any, any> {
     return (
       <div className={styles.buttonContainer}>
         <button onClick={this.decrement}>-</button>
-        <span>{displayCount}</span>
+        <input
+          type="text"
+          min={0}
+          value={displayCount}
+          onChange={this.handleInputChange}
+          onBlur={this.handleInputBlur}
+        />
         <button onClick={this.increment}>+</button>
       </div>
     );

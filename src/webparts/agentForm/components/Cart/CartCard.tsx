@@ -9,8 +9,10 @@ export default class CartCard extends React.Component<CrudItemProps, any> {
     super(props);
     this.state = {
       productFromStore: {},
-      formIsOpen: false,
-      priceText: "",
+      count: 1,
+      price: 0,
+      discount: 0,
+      total: 0,
     };
   }
 
@@ -18,12 +20,43 @@ export default class CartCard extends React.Component<CrudItemProps, any> {
     const { product } = this.props;
     const { codegoods } = product;
     const productFromStore = await loadItemByCode(codegoods);
-    this.setState({ productFromStore });
+
+    const initialPrice = productFromStore.Price || 0;
+
+    this.setState(
+      {
+        productFromStore,
+        price: initialPrice,
+      },
+      this.calculateTotal
+    );
   }
+
+  handleCountChange = (newCount: number) => {
+    this.setState({ count: newCount }, this.calculateTotal);
+  };
+
+  handlePriceChange = (e) => {
+    const price = parseFloat(e.target.value) || 0;
+    this.setState({ price }, this.calculateTotal);
+  };
+
+  handleDiscountChange = (e) => {
+    const discount = parseFloat(e.target.value) || 0;
+    this.setState({ discount }, this.calculateTotal);
+  };
+
+  calculateTotal = () => {
+    const { price, count, discount } = this.state;
+    const discountedPrice = price - (price * discount) / 100;
+    const total = discountedPrice * count;
+    this.setState({ total });
+  };
 
   render() {
     const { product, onDelete } = this.props;
-    const { productFromStore } = this.state;
+    const { productFromStore, price, discount, total } = this.state;
+
     return (
       <div className={styles.cardContainer}>
         <div className={styles.cardDescription}>
@@ -36,7 +69,6 @@ export default class CartCard extends React.Component<CrudItemProps, any> {
               {product.Title}
             </p>
           </div>
-
           <div className={styles.actionsContainer}>
             <button
               onClick={() => onDelete(product.Id)}
@@ -46,49 +78,49 @@ export default class CartCard extends React.Component<CrudItemProps, any> {
             </button>
           </div>
         </div>
+
         <div className={styles.cardDescription}>
           <p className={styles.inventoryDescription}>
             <small> موجودی : </small>
             {productFromStore.Inventory}
           </p>
 
-          <Counter Id={product.Id} onDelete={onDelete} />
-          <form className={styles.priceForm}>
+          <Counter
+            Id={product.Id}
+            onDelete={onDelete}
+            onCountChange={this.handleCountChange}
+          />
+
+          <form
+            className={styles.priceForm}
+            onSubmit={(e) => e.preventDefault()}
+          >
             <input
-              defaultValue={
-                productFromStore.Price !== 0 ? productFromStore.Price : null
-              }
-              type="text"
-              onChange={(e) =>
-                this.setState((prevState) => ({
-                  formIsOpen: !prevState.formIsOpen,
-                }))
-              }
+              type="number"
+              value={price}
+              onChange={this.handlePriceChange}
             />
             <button type="submit">ثبت قیمت</button>
           </form>
-          <form className={styles.discountForm}>
+
+          <form
+            className={styles.discountForm}
+            onSubmit={(e) => e.preventDefault()}
+          >
             <input
-              type="text"
-              onChange={(e) =>
-                this.setState((prevState) => ({
-                  formIsOpen: !prevState.formIsOpen,
-                }))
-              }
+              type="number"
+              value={discount}
+              onChange={this.handleDiscountChange}
             />
-            <button type="submit"> ٪ تخفیف </button>
+            <button type="submit">٪ تخفیف</button>
           </form>
-          <form className={styles.fullPrice}>
-            <input
-              disabled
-              type="text"
-              onChange={(e) =>
-                this.setState((prevState) => ({
-                  formIsOpen: !prevState.formIsOpen,
-                }))
-              }
-            />
-            <button type="submit"> جمع </button>
+
+          <form
+            className={styles.fullPrice}
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <input type="number" disabled value={total.toFixed(2)} />
+            <button type="submit">جمع</button>
           </form>
         </div>
       </div>
