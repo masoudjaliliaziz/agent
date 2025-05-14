@@ -15,11 +15,13 @@ export interface Product {
 
 export interface CrudItemProps {
   product: Product;
-  // onEdit: (id: number, title: string) => void;
   onDelete: (id: number) => void;
+  onTotalUpdate: (total: number) => void; // اضافه کردن متد به روز رسانی مجموع
 }
-export interface CrudListProps {
-  products: Product[];
-  // onEdit: (id: number, title: string) => void;
+
+interface CartListProps {
+  products: any[];
   onDelete: (id: number) => void;
+  onTotalUpdate: (total: number) => void;
+  discount: number; // 👈 اضافه شد
 }

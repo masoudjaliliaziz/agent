@@ -1,10 +1,10 @@
 .buttonContainer {
   min-width: 75px;
-  padding: 4px 16px;
+  gap: 2.5px;
   border-radius: 6.5px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
   cursor: pointer;

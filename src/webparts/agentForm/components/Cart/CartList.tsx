@@ -1,16 +1,22 @@
 import * as React from "react";
-import { CrudListProps } from "./CartProps";
+
 import CartCard from "./CartCard";
 import styles from "./Cart.module.scss";
 
-export default class CartList extends React.Component<CrudListProps, any> {
+export default class CartList extends React.Component<any, any> {
   render() {
-    const { products, onDelete } = this.props;
+    const { products, onDelete, onTotalUpdate, discount } = this.props;
 
     return (
-      <div className={styles.productsDiv}>
+      <div>
         {products.map((product) => (
-          <CartCard product={product} key={product.Id} onDelete={onDelete} />
+          <CartCard
+            key={product.Id}
+            product={product}
+            onDelete={onDelete}
+            onTotalUpdate={onTotalUpdate}
+            discount={discount}
+          />
         ))}
       </div>
     );
