@@ -99,3 +99,24 @@ export async function loadImages(): Promise<any[]> {
     url: file.ServerRelativeUrl,
   }));
 }
+
+export async function getItemTypeForList(listName: string) {
+  const webUrl = "https://crm.zarsim.com";
+
+  try {
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/ListItemEntityTypeFullName`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json;odata=verbose",
+        },
+      }
+    );
+
+    const data = await response.json();
+    return data.d.ListItemEntityTypeFullName;
+  } catch (error) {
+    console.error("Error fetching item type:", error);
+  }
+}

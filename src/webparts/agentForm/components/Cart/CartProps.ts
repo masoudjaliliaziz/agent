@@ -1,4 +1,5 @@
 export interface Product {
+  price: number;
   codegoods: string;
   size: string;
   color: string;

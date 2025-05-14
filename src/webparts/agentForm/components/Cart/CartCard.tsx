@@ -2,7 +2,9 @@ import * as React from "react";
 import { CrudItemProps } from "./CartProps";
 import styles from "./Cart.module.scss";
 import Counter from "./Counter";
-import { loadItemByCode } from "../Crud/GetData";
+import { getItemTypeForList, loadItemByCode } from "../Crud/GetData";
+import { handleUpdateCartPrice } from "../Crud/UpdateData";
+import { getDigest } from "../Crud/GetDigest";
 
 export default class CartCard extends React.Component<CrudItemProps, any> {
   constructor(props) {
@@ -20,8 +22,9 @@ export default class CartCard extends React.Component<CrudItemProps, any> {
     const { product } = this.props;
     const { codegoods } = product;
     const productFromStore = await loadItemByCode(codegoods);
+    const initialPrice = productFromStore.Price || product.price || 0;
 
-    const initialPrice = productFromStore.Price || 0;
+    // استفاده از این تابع برای دریافت نوع داده
 
     this.setState(
       {
@@ -39,6 +42,16 @@ export default class CartCard extends React.Component<CrudItemProps, any> {
   handlePriceChange = (e) => {
     const price = parseFloat(e.target.value) || 0;
     this.setState({ price }, this.calculateTotal);
+  };
+
+  handlePriceBlur = async (e) => {
+    const price = e.target.value;
+
+    const { product } = this.props;
+    console.log(price);
+    console.log(product.Id);
+
+    await handleUpdateCartPrice(product.Id, price);
   };
 
   handleDiscountChange = (e) => {
@@ -98,21 +111,10 @@ export default class CartCard extends React.Component<CrudItemProps, any> {
             <input
               type="number"
               value={price}
+              onBlur={this.handlePriceBlur} // وقتی فوکوس از input خارج می‌شود
               onChange={this.handlePriceChange}
             />
-            <button type="submit">ثبت قیمت</button>
-          </form>
-
-          <form
-            className={styles.discountForm}
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <input
-              type="number"
-              value={discount}
-              onChange={this.handleDiscountChange}
-            />
-            <button type="submit">٪ تخفیف</button>
+            {/* نیازی به دکمه ارسال برای ثبت قیمت نیست */}
           </form>
 
           <form
