@@ -11,9 +11,6 @@ export default class AppRouter extends Component<any, any> {
         <Route path="/" component={Layout}>
           <IndexRoute component={AgentForm} />
           <Route path="cart" component={Cart} />
-          {/* <Route path="product-details/:Code" component={ProductPage} />
-          <Route path="order" component={OrderForm} /> */}
-
         </Route>
       </Router>
     );
