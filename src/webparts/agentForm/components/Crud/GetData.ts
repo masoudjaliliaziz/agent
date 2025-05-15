@@ -120,3 +120,25 @@ export async function getItemTypeForList(listName: string) {
     console.error("Error fetching item type:", error);
   }
 }
+
+export async function loadEvent(filterGuidForm: string): Promise<any[]> {
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Events";
+
+  try {
+    // URL با فیلتر کردن بر اساس guid_form
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=Parent_GUID eq '${filterGuidForm}'`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
+
+    const data = await response.json();
+
+    return data.d.results;
+  } catch (err) {
+    console.error("خطا در دریافت آیتم‌ها:", err);
+    return [];
+  }
+}

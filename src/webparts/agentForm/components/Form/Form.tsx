@@ -2,29 +2,37 @@ import * as React from "react";
 import { Component } from "react";
 import styles from "./Form.module.scss";
 import { FormProps, FormState } from "../IAgentFormProps";
-import uuidv4 from "../utils/createGuid";
+import uuidv4 from "../utils/createGuid"; // برای تولید GUID
 import { handleAddEvent } from "../Crud/AddData";
+import { loadEvent } from "../Crud/GetData";
 
 export default class Form extends Component<FormProps, any> {
   constructor(props: FormProps) {
     super(props);
     this.state = {
-      item_GUID: "",
+      item_GUID: "", // GUID که برای هر فرم جدید ایجاد می‌شود
       Event_Type: "", // مقدار پیش‌فرض برای Event_Type
       Order_Status: "",
       Description: "",
+      Events: [],
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    this.generateNewGUID();
+    const EventsData = await loadEvent(this.props.parent_GUID);
+    console.log(EventsData);
+    // تولید GUID جدید هنگام بارگذاری کامپوننت
+  }
+
+  // متد برای تولید GUID جدید
+  generateNewGUID() {
     const item_GUID = uuidv4();
-    this.setState({
-      item_GUID,
-      Event_Type: "chose", // مقدار پیش‌فرض انتخاب برای Event_Type
-    });
+    this.setState({ item_GUID });
   }
 
   onEventAdd() {
+    // ذخیره‌سازی داده‌ها با GUID جدید
     handleAddEvent(
       this.state.item_GUID,
       this.props.parent_GUID,
@@ -32,6 +40,17 @@ export default class Form extends Component<FormProps, any> {
       this.state.Order_Status,
       this.state.Description
     );
+
+    // ریست کردن فرم پس از ذخیره
+    this.setState({
+      item_GUID: "", // پاک کردن GUID قبلی
+      Event_Type: "chose", // بازنشانی Event_Type به مقدار پیش‌فرض
+      Order_Status: "", // بازنشانی Order_Status
+      Description: "", // پاک کردن توضیحات
+    });
+
+    // تولید GUID جدید برای فرم بعدی
+    this.generateNewGUID();
   }
 
   render() {
@@ -64,10 +83,10 @@ export default class Form extends Component<FormProps, any> {
             value={this.state.Order_Status} // مقدار انتخاب‌شده بر اساس state
             onChange={(event) =>
               this.setState({
-                Order_Status: String(event.currentTarget.value), // به‌روزرسانی مقدار Event_Type
+                Order_Status: String(event.currentTarget.value), // به‌روزرسانی مقدار Order_Status
               })
             }
-            name="Event_Type"
+            name="Order_Status"
           >
             <option value="chose" disabled>
               وضعیت سفارش
@@ -80,6 +99,7 @@ export default class Form extends Component<FormProps, any> {
         </div>
         <textarea
           placeholder="توضیحات ..."
+          value={this.state.Description} // مقدار موجود در state
           onChange={(e) =>
             this.setState({ Description: e.currentTarget.value })
           }
