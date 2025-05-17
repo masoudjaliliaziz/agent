@@ -27,7 +27,7 @@ export default class Form extends Component<FormProps, any> {
     const newGUID = uuidv4(); // ساخت GUID جدید
 
     this.setState({
-      Events: EventsData,
+      Events: EventsData.reverse(),
       item_GUID: newGUID,
     });
   }
@@ -50,7 +50,7 @@ export default class Form extends Component<FormProps, any> {
 
     // به‌روزرسانی state
     this.setState({
-      Events: updatedEvents,
+      Events: updatedEvents.reverse(),
       item_GUID: newGUID,
       Event_Type: "chose",
       Order_Status: "chose",

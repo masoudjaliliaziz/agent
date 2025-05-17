@@ -1,10 +1,8 @@
 import * as React from "react";
 import { Component } from "react";
 import styles from "./ShownForm.module.scss";
-import { FormProps, FormState, ShownFormProps } from "../IAgentFormProps";
-import uuidv4 from "../utils/createGuid"; // برای تولید GUID
-import { handleAddEvent } from "../Crud/AddData";
-import { loadEvent } from "../Crud/GetData";
+import { FormProps, ShownFormProps } from "../IAgentFormProps";
+
 import { convertIsoToJalali } from "../utils/convertToJalali";
 
 export default class ShownForm extends Component<ShownFormProps, any> {
