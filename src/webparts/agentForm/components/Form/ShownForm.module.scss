@@ -1,0 +1,159 @@
+.formContainer {
+  width: 80%;
+  padding: 20px 10px;
+  border-radius: 12.5px;
+  background-color: lightgray;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  .selectContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    justify-content: end;
+    padding: 10px 0;
+    gap: 10px;
+    .ColData {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      div {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        gap: 10px;
+        p {
+          background-color: white;
+          outline: none;
+
+          border-radius: 5.5px;
+          font-weight: bolder;
+          padding: 1.5px 3.5px;
+        }
+        small {
+          font-size: smaller;
+          font-weight: bolder;
+          color: black;
+        }
+        .pPhone {
+          background-color: rgb(72, 88, 138);
+          outline: none;
+          color: white;
+          border-radius: 5.5px;
+          font-weight: bolder;
+          padding: 1.5px 3.5px;
+        }
+        .pTelegram {
+          background-color: rgb(63, 139, 161);
+          outline: none;
+          color: white;
+
+          border-radius: 5.5px;
+          font-weight: bolder;
+          padding: 1.5px 3.5px;
+        }
+        .pWhatsApp {
+          background-color: rgb(77, 129, 84);
+          outline: none;
+          color: white;
+          border-radius: 5.5px;
+          font-weight: bolder;
+          padding: 1.5px 3.5px;
+        }
+        .pPeresental {
+          background-color: rgb(128, 102, 68);
+          outline: none;
+          color: white;
+          border-radius: 5.5px;
+          font-weight: bolder;
+          padding: 1.5px 3.5px;
+        }
+        .pEmail {
+          background-color: rgb(94, 63, 109);
+          outline: none;
+          color: white;
+          border-radius: 5.5px;
+          font-weight: bolder;
+          padding: 1.5px 3.5px;
+        }
+      }
+    }
+
+    button.reciveBtn {
+      width: 95px;
+      height: 25px;
+      border-radius: 5.5px;
+      font-weight: bolder;
+      background-color: rgb(38, 104, 228);
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: all 300ms linear;
+      &:hover {
+        background-color: white;
+        border: 2px solid rgb(38, 104, 228);
+        color: rgb(38, 104, 228);
+      }
+    }
+    button.sendBtn {
+      width: 95px;
+      height: 25px;
+      border-radius: 5.5px;
+      font-weight: bolder;
+      background-color: rgb(13, 105, 25);
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: all 300ms linear;
+      &:hover {
+        background-color: white;
+        border: 2px solid rgb(13, 105, 25);
+        color: rgb(13, 105, 25);
+      }
+    }
+  }
+  button {
+    width: 95px;
+    height: 25px;
+    border-radius: 5.5px;
+    font-weight: bolder;
+    background-color: rgb(37, 37, 37);
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: all 300ms linear;
+    &:hover {
+      background-color: white;
+      border: 2px solid rgb(37, 37, 37);
+      color: rgb(37, 37, 37);
+    }
+  }
+
+  .Description {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: center;
+    width: 100%;
+    gap: 10px;
+    div {
+      outline: none;
+      width: 100%;
+      border-radius: 5.5px;
+      font-weight: bolder;
+      background-color: white;
+      direction: rtl;
+      padding: 5px 10px;
+      min-height: 70px;
+    }
+    p {
+      color: black;
+      font-weight: bolder;
+      font-size: smaller;
+    }
+  }
+}

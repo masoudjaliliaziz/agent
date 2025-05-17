@@ -15,3 +15,11 @@ export interface FormState {
   Event_Type: string;
   Order_Status: string;
 }
+
+export interface ShownFormProps {
+  Event_Type: string;
+  Order_Status: string;
+  Description: string;
+  Display_Name: string;
+  Created: string;
+}

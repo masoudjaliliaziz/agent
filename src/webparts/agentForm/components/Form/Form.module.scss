@@ -1,82 +1,91 @@
-.formContainer {
-  width: 80%;
-  padding: 20px 10px;
-  border-radius: 12.5px;
-  background-color: lightgray;
+.Form {
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 10px;
-  .selectContainer {
-    width: 100%;
+  align-items: center;
+  gap: 15px;
+
+  .formContainer {
+    width: 80%;
+    padding: 20px 10px;
+    border-radius: 12.5px;
+    background-color: lightgray;
     display: flex;
-    align-items: center;
-    justify-content: end;
-    padding: 10px 0;
+    flex-direction: column;
+    justify-content: center;
     gap: 10px;
-    select {
+    .selectContainer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: end;
+      padding: 10px 0;
+      gap: 10px;
+      select {
+        outline: none;
+        border: 2px solid black;
+        border-radius: 5.5px;
+        font-weight: bolder;
+        cursor: pointer;
+      }
+      button.reciveBtn {
+        width: 95px;
+        height: 25px;
+        border-radius: 5.5px;
+        font-weight: bolder;
+        background-color: rgb(38, 104, 228);
+        border: none;
+        color: white;
+        cursor: pointer;
+        transition: all 300ms linear;
+        &:hover {
+          background-color: white;
+          border: 2px solid rgb(38, 104, 228);
+          color: rgb(38, 104, 228);
+        }
+      }
+      button.sendBtn {
+        width: 95px;
+        height: 25px;
+        border-radius: 5.5px;
+        font-weight: bolder;
+        background-color: rgb(13, 105, 25);
+        border: none;
+        color: white;
+        cursor: pointer;
+        transition: all 300ms linear;
+        &:hover {
+          background-color: white;
+          border: 2px solid rgb(13, 105, 25);
+          color: rgb(13, 105, 25);
+        }
+      }
+    }
+    button {
+      width: 95px;
+      height: 25px;
+      border-radius: 5.5px;
+      font-weight: bolder;
+      background-color: rgb(37, 37, 37);
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: all 300ms linear;
+      &:hover {
+        background-color: white;
+        border: 2px solid rgb(37, 37, 37);
+        color: rgb(37, 37, 37);
+      }
+    }
+    textarea {
       outline: none;
       border: 2px solid black;
       border-radius: 5.5px;
       font-weight: bolder;
-      cursor: pointer;
-    }
-    button.reciveBtn {
-      width: 95px;
-      height: 25px;
-      border-radius: 5.5px;
-      font-weight: bolder;
-      background-color: rgb(38, 104, 228);
-      border: none;
-      color: white;
-      cursor: pointer;
-      transition: all 300ms linear;
-      &:hover {
-        background-color: white;
-        border: 2px solid rgb(38, 104, 228);
-        color: rgb(38, 104, 228);
-      }
-    }
-    button.sendBtn {
-      width: 95px;
-      height: 25px;
-      border-radius: 5.5px;
-      font-weight: bolder;
-      background-color: rgb(13, 105, 25);
-      border: none;
-      color: white;
-      cursor: pointer;
-      transition: all 300ms linear;
-      &:hover {
-        background-color: white;
-        border: 2px solid rgb(13, 105, 25);
-        color: rgb(13, 105, 25);
-      }
-    }
-  }
-  button {
-    width: 95px;
-    height: 25px;
-    border-radius: 5.5px;
-    font-weight: bolder;
-    background-color: rgb(37, 37, 37);
-    border: none;
-    color: white;
-    cursor: pointer;
-    transition: all 300ms linear;
-    &:hover {
-      background-color: white;
-      border: 2px solid rgb(37, 37, 37);
-      color: rgb(37, 37, 37);
-    }
-  }
-  textarea {
-    outline: none;
-    border: 2px solid black;
-    border-radius: 5.5px;
-    font-weight: bolder;
 
-    direction: rtl;
-    padding: 5px 10px;
+      direction: rtl;
+      padding: 5px 10px;
+    }
   }
 }
