@@ -6,6 +6,7 @@ import uuidv4 from "../utils/createGuid"; // برای تولید GUID
 import { handleAddEvent } from "../Crud/AddData";
 import { loadEvent } from "../Crud/GetData";
 import ShownForm from "./ShownForms";
+import { FileUploader } from "../utils/FileUploader";
 
 export default class Form extends Component<FormProps, any> {
   constructor(props: FormProps) {
@@ -61,10 +62,20 @@ export default class Form extends Component<FormProps, any> {
     return (
       <div className={styles.Form}>
         <div className={styles.formContainer}>
-          <div className={styles.selectContainer}>
-            <button className={styles.reciveBtn}>فایل دریافتی</button>
-            <button className={styles.sendBtn}>فایل ارسالی</button>
+          <div className={styles.upladContainer}>
+            <FileUploader
+              orderNumber={this.props.parent_GUID}
+              subFolder={this.state.item_GUID}
+              title={"فایل دریافتی"}
+            />
+            <FileUploader
+              orderNumber={this.props.parent_GUID}
+              subFolder={this.state.item_GUID}
+              title={"فایل ارسالی"}
+            />
+          </div>
 
+          <div className={styles.selectContainer}>
             <select
               value={this.state.Event_Type}
               onChange={(event) =>
@@ -108,7 +119,12 @@ export default class Form extends Component<FormProps, any> {
             }
           />
 
-          <button onClick={() => this.onEventAdd()}>ذخیره</button>
+          <button
+            className={styles.buttonSave}
+            onClick={() => this.onEventAdd()}
+          >
+            ذخیره
+          </button>
         </div>
 
         {this.state.Events.map((event, i) => (
