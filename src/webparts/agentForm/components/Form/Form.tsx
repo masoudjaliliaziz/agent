@@ -134,6 +134,8 @@ export default class Form extends Component<FormProps, any> {
             Display_Name={event.Display_Name}
             Order_Status={event.Order_Status}
             Created={event.Created}
+            parent_GUID={this.props.parent_GUID}
+            item_GUID={event.Title}
             key={i}
           />
         ))}

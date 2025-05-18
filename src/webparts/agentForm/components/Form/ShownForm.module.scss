@@ -158,3 +158,33 @@
     }
   }
 }
+.colDataLinks {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  .ColDataLinkRecive {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    small {
+      color: rgb(38, 104, 228);
+      font-weight: bolder;
+    }
+    a {
+      text-decoration: none;
+    }
+  }
+  .ColDataLinkSend {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    small {
+      color: rgb(13, 105, 25);
+      font-weight: bolder;
+    }
+    a {
+      text-decoration: none;
+    }
+  }
+}

@@ -142,3 +142,55 @@ export async function loadEvent(filterGuidForm: string): Promise<any[]> {
     return [];
   }
 }
+
+export async function loadFiles(
+  folderPath: string
+): Promise<{ name: string; url: string }[]> {
+  const webUrl = "https://crm.zarsim.com";
+  const serverRelativeUrl = `/Attach1/${folderPath}`;
+
+  try {
+    const response = await fetch(
+      `${webUrl}/_api/web/GetFolderByServerRelativeUrl('${serverRelativeUrl}')/Files?$format=json`,
+      {
+        headers: {
+          Accept: "application/json;odata=verbose",
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    console.log("داده برگشتی از API:", data);
+
+    return data.d.results.map((file) => ({
+      name: file.Name,
+      url: `${webUrl}${file.ServerRelativeUrl}`,
+    }));
+  } catch (err) {
+    console.error("❌ خطا در دریافت فایل‌ها:", err);
+    return [];
+  }
+}
+
+export async function loadEvent2(filterGuidForm: string): Promise<any[]> {
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Events";
+
+  try {
+    // URL با فیلتر کردن بر اساس guid_form
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=Parent_GUID eq '${filterGuidForm}'`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
+
+    const data = await response.json();
+
+    return data.d.results;
+  } catch (err) {
+    console.error("خطا در دریافت آیتم‌ها:", err);
+    return [];
+  }
+}

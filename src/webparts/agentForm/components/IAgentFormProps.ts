@@ -22,4 +22,6 @@ export interface ShownFormProps {
   Description: string;
   Display_Name: string;
   Created: string;
+  item_GUID: string;
+  parent_GUID: string;
 }
