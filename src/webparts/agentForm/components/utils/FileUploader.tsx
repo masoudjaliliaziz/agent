@@ -47,7 +47,6 @@ export class FileUploader extends React.Component<any, any> {
       .then((data) => {
         const digest = data.d.GetContextWebInformation.FormDigestValue;
 
-        // ساخت پوشه‌های لازم (به ترتیب)
         const createFolder = (path) =>
           fetch(`${webUrl}/_api/web/folders/add('${path}')`, {
             method: "POST",
@@ -55,7 +54,7 @@ export class FileUploader extends React.Component<any, any> {
               Accept: "application/json;odata=verbose",
               "X-RequestDigest": digest,
             },
-          }).catch(() => {}); // اگر پوشه وجود داشت، رد بشه
+          }).catch(() => {});
 
         return createFolder(`${libraryName}/${cleanOrderNumber}`)
           .then(() =>
@@ -83,7 +82,7 @@ export class FileUploader extends React.Component<any, any> {
       .then((uploadRes) => {
         if (uploadRes.ok) {
           this.setState({
-            uploadStatus: " فایل با موفقیت آپلود شد",
+            uploadStatus: "فایل با موفقیت آپلود شد",
             uploadProgress: 100,
           });
         } else {
@@ -93,10 +92,20 @@ export class FileUploader extends React.Component<any, any> {
       .catch((error) => {
         console.error("خطا:", error);
         this.setState({
-          uploadStatus: " خطا در آپلود فایل",
+          uploadStatus: "خطا در آپلود فایل",
           uploadProgress: 0,
         });
       });
+  };
+
+  clearSelectedFile = () => {
+    this.setState({
+      selectedFile: null,
+      uploadStatus: "",
+      uploadProgress: 0,
+    });
+    const inputElem = document.getElementById(this.inputId) as HTMLInputElement;
+    if (inputElem) inputElem.value = "";
   };
 
   render() {
@@ -110,6 +119,8 @@ export class FileUploader extends React.Component<any, any> {
           onChange={(e) =>
             this.setState({
               selectedFile: (e.target as HTMLInputElement).files[0],
+              uploadStatus: "",
+              uploadProgress: 0,
             })
           }
         />
@@ -124,9 +135,17 @@ export class FileUploader extends React.Component<any, any> {
           >
             {this.state.uploadStatus}
           </div>
+
           {this.state.selectedFile && (
-            <div className={styles.fileName}>
-              {this.state.selectedFile.name}
+            <div className={styles.fileInfo}>
+              <p className={styles.fileName}>{this.state.selectedFile.name}</p>
+              <button
+                className={styles.removeFileBtn}
+                onClick={this.clearSelectedFile}
+                aria-label="پاک کردن فایل انتخاب شده"
+              >
+                ×
+              </button>
             </div>
           )}
         </div>
