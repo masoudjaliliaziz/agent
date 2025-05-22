@@ -1,11 +1,14 @@
 .formContainer {
-  width: 80%;
+  width: 49%;
+  min-height: 350px;
+  max-height: 450px;
   padding: 20px 10px;
   border-radius: 12.5px;
   background-color: lightgray;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
+  align-items: center;
   gap: 10px;
   .selectContainer {
     width: 100%;

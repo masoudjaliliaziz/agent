@@ -1,13 +1,15 @@
 .Form {
   width: 100%;
   display: flex;
+
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 15px;
 
   .formContainer {
-    width: 80%;
+    width: 100%;
+    background-color: rebeccapurple;
     padding: 20px 10px;
     border-radius: 12.5px;
     background-color: lightgray;
@@ -80,6 +82,16 @@
       direction: rtl;
       padding: 5px 10px;
     }
+  }
+
+  .shownHistory {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 3.5px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
   }
 }
 .buttonSave {

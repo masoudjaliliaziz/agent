@@ -1,9 +1,7 @@
 import * as React from "react";
 import styles from "./AgentForm.module.scss";
-import { IAgentFormProps, IAgentFormState } from "./IAgentFormProps"; // فرض بر این است که این به‌درستی تعریف شده باشد
-import { escape } from "@microsoft/sp-lodash-subset";
+import { IAgentFormProps, IAgentFormState } from "./IAgentFormProps";
 import Form from "./Form/Form";
-import { handleAddEvent } from "./Crud/AddData";
 require("./Styles/font.css");
 
 export default class AgentForm extends React.Component<
@@ -16,10 +14,17 @@ export default class AgentForm extends React.Component<
       parent_GUID: "",
     };
   }
-
   componentDidMount() {
-    const guid = "0f492e61-c4a0-4177-8bd8-2a4bd46e5f9f";
-    this.setState({ parent_GUID: guid });
+    const hash = window.location.hash; // مثلاً "#/?guid=5882d265-23bf-4867-956b-7c22783c59a0"
+
+    if (hash) {
+      const hashParams = new URLSearchParams(hash.replace("#/?", ""));
+      const guid = hashParams.get("guid");
+
+      if (guid) {
+        this.setState({ parent_GUID: guid });
+      }
+    }
   }
 
   public render(): React.ReactElement<IAgentFormProps> {

@@ -151,6 +151,7 @@ export class FileUploader extends React.Component<any, any> {
         </div>
 
         <button
+          type="button"
           className={
             this.props.title === "فایل ارسالی"
               ? styles.sendBtn

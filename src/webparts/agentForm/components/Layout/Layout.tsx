@@ -31,25 +31,12 @@ export class Layout extends React.Component<any, any> {
       pageTitle = "صفحه ناشناخته";
     }
 
-    let StyleBtnHome = "";
-    if (pathname === "/") {
-      StyleBtnHome = "activeHome";
-    } else {
-      StyleBtnHome = "btn";
-    }
-
-    let StyleBtnCart = "";
-    if (pathname === "/cart") {
-      StyleBtnCart = "activeCart";
-    } else {
-      StyleBtnCart = "btn";
-    }
     return (
       <div className={styles.Layout}>
         <header className={styles.Header}>
-          <h1>{pageTitle}</h1>
+          <p className={styles.pageTitle}>{pageTitle}</p>
           <div className={styles.btnContainer}>
-            <button className={styles[StyleBtnCart]} onClick={this.goCart}>
+            <div type="button" className={styles.btn} onClick={this.goCart}>
               <svg
                 width="18"
                 height="18"
@@ -64,9 +51,9 @@ export class Layout extends React.Component<any, any> {
                 <circle cx="20" cy="21" r="1" />
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
               </svg>
-            </button>
+            </div>
 
-            <button className={styles[StyleBtnHome]} onClick={this.goList}>
+            <div type="button" className={styles.btn} onClick={this.goList}>
               <svg
                 width="18"
                 height="18"
@@ -78,7 +65,7 @@ export class Layout extends React.Component<any, any> {
               >
                 <path d="M3 6h18M3 12h18M3 18h18" />
               </svg>
-            </button>
+            </div>
           </div>
         </header>
         <main>{this.props.children}</main>

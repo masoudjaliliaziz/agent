@@ -120,7 +120,9 @@ class Counter extends React.Component<any, any> {
 
     return (
       <div className={styles.buttonContainer}>
-        <button onClick={this.decrement}>-</button>
+        <button type="button" onClick={this.decrement}>
+          -
+        </button>
         <input
           type="text"
           min={0}
@@ -128,7 +130,9 @@ class Counter extends React.Component<any, any> {
           onChange={this.handleInputChange}
           onBlur={this.handleInputBlur}
         />
-        <button onClick={this.increment}>+</button>
+        <button type="button" onClick={this.increment}>
+          +
+        </button>
       </div>
     );
   }

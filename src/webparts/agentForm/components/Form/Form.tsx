@@ -127,18 +127,20 @@ export default class Form extends Component<FormProps, any> {
           </button>
         </div>
 
-        {this.state.Events.map((event, i) => (
-          <ShownForm
-            Description={event.Description}
-            Event_Type={event.Event_Type}
-            Display_Name={event.Display_Name}
-            Order_Status={event.Order_Status}
-            Created={event.Created}
-            parent_GUID={this.props.parent_GUID}
-            item_GUID={event.Title}
-            key={i}
-          />
-        ))}
+        <div className={styles.shownHistory}>
+          {this.state.Events.map((event, i) => (
+            <ShownForm
+              Description={event.Description}
+              Event_Type={event.Event_Type}
+              Display_Name={event.Display_Name}
+              Order_Status={event.Order_Status}
+              Created={event.Created}
+              parent_GUID={this.props.parent_GUID}
+              item_GUID={event.Title}
+              key={i}
+            />
+          ))}
+        </div>
       </div>
     );
   }
