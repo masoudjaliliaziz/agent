@@ -6,7 +6,7 @@ class Counter extends React.Component<any, any> {
   private listName = "shoping";
   private webUrl = "https://crm.zarsim.com";
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.state = {
       count: 0,
@@ -33,7 +33,10 @@ class Counter extends React.Component<any, any> {
       const data = await response.json();
       const count = Number(data.d.count) || 0;
       this.setState({ count, displayCount: count, loading: false });
-      onCountChange?.(count);
+
+      if (onCountChange) {
+        onCountChange(count);
+      }
     } catch (error) {
       console.error("❌ Fetch quantity error:", error);
       this.setState({ loading: false });
@@ -58,7 +61,10 @@ class Counter extends React.Component<any, any> {
           },
         });
         this.setState({ count: 0, displayCount: 0 });
-        onDelete?.(Id);
+
+        if (onDelete) {
+          onDelete(Id);
+        }
       } catch (error) {
         console.error("❌ Delete item error:", error);
       }
@@ -80,7 +86,10 @@ class Counter extends React.Component<any, any> {
           }),
         });
         this.setState({ count: newCount, displayCount: newCount });
-        onCountChange?.(newCount);
+
+        if (onCountChange) {
+          onCountChange(newCount);
+        }
       } catch (error) {
         console.error("❌ Update quantity error:", error);
       }

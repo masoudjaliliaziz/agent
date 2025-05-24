@@ -103,7 +103,10 @@ export default class Cart extends Component<any, any> {
   };
 
   calculateDiscountAmount = () => {
-    return (this.calculateTotal() * this.state.discount) / (100 + this.state.discount); // optional logic tweak
+    return (
+      (this.calculateTotal() * this.state.discount) /
+      (100 + this.state.discount)
+    ); // optional logic tweak
   };
 
   calculateTotalBeforeDiscount = () => {
@@ -152,7 +155,8 @@ export default class Cart extends Component<any, any> {
             <div>
               <small> مقدار تخفیف </small>
               <h3>
-                {this.formatNumberWithComma(discountAmount)} <small>تومان</small>
+                {this.formatNumberWithComma(discountAmount)}{" "}
+                <small>تومان</small>
               </h3>
             </div>
           </div>
@@ -172,13 +176,18 @@ export default class Cart extends Component<any, any> {
             </div>
           </div>
 
-          <button
-            type="button"
-            style={{ padding: "5px", fontSize: "smaller" }}
+          <div
+            style={{
+              padding: "5px",
+              backgroundColor: "black",
+              color: "white",
+              borderRadius: "5.5px",
+              cursor: "pointer",
+            }}
             onClick={this.handleSaveAllDiscounts}
           >
             ثبت
-          </button>
+          </div>
         </div>
       </div>
     );
