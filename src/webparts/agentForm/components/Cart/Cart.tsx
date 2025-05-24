@@ -11,45 +11,63 @@ export default class Cart extends Component<any, any> {
       cartItems: [],
       message: "",
       guid: "",
-      total: 0,
       discount: 0,
       showMessage: false,
     };
   }
 
   componentDidMount() {
-    let guidFromUrl = "";
     const hash = window.location.hash;
-
     if (hash) {
       const hashParams = new URLSearchParams(hash.replace("#/?", ""));
       const guid = hashParams.get("guid");
 
       if (guid) {
-        guidFromUrl = guid;
         localStorage.setItem("agent_guid", guid);
-        this.setState({ parent_GUID: guid, guid }, () => {
-          loadCard(guid).then((cartItems) => this.setState({ cartItems }));
-        });
+        this.setState({ guid }, () => this.loadCartItems(guid));
         return;
       }
     }
 
     const guidFromStorage = localStorage.getItem("agent_guid");
     if (guidFromStorage) {
-      this.setState(
-        { parent_GUID: guidFromStorage, guid: guidFromStorage },
-        () => {
-          loadCard(guidFromStorage).then((cartItems) =>
-            this.setState({ cartItems })
-          );
-        }
+      this.setState({ guid: guidFromStorage }, () =>
+        this.loadCartItems(guidFromStorage)
       );
     }
   }
 
+  loadCartItems = (guid: string) => {
+    loadCard(guid).then((cartItems) => {
+      this.setState({ cartItems });
+    });
+  };
+
+  handleItemUpdate = (updatedItem: any) => {
+    const updatedCartItems = this.state.cartItems.map((item) =>
+      item.Id === updatedItem.Id ? { ...item, ...updatedItem } : item
+    );
+    this.setState({ cartItems: updatedCartItems });
+  };
+
+  calculateTotal = () => {
+    return this.state.cartItems.reduce((sum, item) => {
+      const count = parseFloat(item.count) || 0;
+      const price = parseFloat(item.price) || 0;
+      return sum + count * price;
+    }, 0);
+  };
+
+  calculateDiscountAmount = () => {
+    return (this.calculateTotal() * this.state.discount) / 100;
+  };
+
+  calculateTotalAfterDiscount = () => {
+    return this.calculateTotal() - this.calculateDiscountAmount();
+  };
+
   formatNumberWithComma = (number: number) => {
-    return new Intl.NumberFormat().format(number);
+    return new Intl.NumberFormat().format(Number(number.toFixed(2)));
   };
 
   handleDeleteItem = (id: number) => {
@@ -81,14 +99,10 @@ export default class Cart extends Component<any, any> {
         setTimeout(() => this.setState({ showMessage: false }), 2000);
         return loadCard(this.state.guid);
       })
-      .then((cartItems) => this.setState({ cartItems }))
+      .then((cartItems) => {
+        this.setState({ cartItems });
+      })
       .catch((err) => this.setState({ message: `خطا: ${err.message}` }));
-  };
-
-  handleTotalUpdate = (total: number) => {
-    this.setState((prev) => ({
-      total: prev.total + total,
-    }));
   };
 
   handleDiscountChange = (e) => {
@@ -96,15 +110,8 @@ export default class Cart extends Component<any, any> {
     this.setState({ discount });
   };
 
-  calculateDiscountAmount = () => {
-    return (this.state.total * this.state.discount) / 100;
-  };
-
-  calculateTotalAfterDiscount = () => {
-    return this.state.total - this.calculateDiscountAmount();
-  };
-
   render() {
+    const total = this.calculateTotal();
     const discountAmount = this.calculateDiscountAmount();
     const finalTotal = this.calculateTotalAfterDiscount();
 
@@ -119,13 +126,12 @@ export default class Cart extends Component<any, any> {
         <CartList
           products={this.state.cartItems}
           onDelete={this.handleDeleteItem}
-          onTotalUpdate={this.handleTotalUpdate}
+          onUpdate={this.handleItemUpdate}
           discount={this.state.discount}
         />
 
         <div className={styles.totalContainer}>
           <div className={styles.row}>
-            {" "}
             <div>
               <label> (%) تخفیف</label>
               <input
@@ -135,33 +141,24 @@ export default class Cart extends Component<any, any> {
               />
             </div>
             <div>
-              {" "}
               <small> مقدار تخفیف </small>
               <h3>
-                {" "}
-                {this.formatNumberWithComma(Number(discountAmount.toFixed(2)))}
-                <small> تومان</small>
+                {this.formatNumberWithComma(discountAmount)} <small>تومان</small>
               </h3>
             </div>
           </div>
+
           <div className={styles.row}>
-            {" "}
             <div>
-              {" "}
               <small> جمع کل بدون تخفیف </small>
               <h3>
-                {" "}
-                {this.formatNumberWithComma(this.state.total.toFixed(2))}
-                <small> تومان</small>
+                {this.formatNumberWithComma(total)} <small>تومان</small>
               </h3>
             </div>
             <div>
-              {" "}
               <small> مبلغ نهایی</small>
               <h2>
-                {" "}
-                {this.formatNumberWithComma(Number(finalTotal.toFixed(2)))}
-                <small> تومان</small>
+                {this.formatNumberWithComma(finalTotal)} <small>تومان</small>
               </h2>
             </div>
           </div>

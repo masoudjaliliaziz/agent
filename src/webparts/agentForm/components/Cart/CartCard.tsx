@@ -9,25 +9,16 @@ export default class CartCard extends React.Component<any, any> {
     super(props);
     this.state = {
       productFromStore: {},
-      count: 1,
-      price: 0,
+      count: parseFloat(props.product.count) || 1,
+      price: parseFloat(props.product.price) || 0,
       total: 0,
     };
   }
 
   async componentDidMount() {
-    const { product } = this.props;
-    const { codegoods } = product;
+    const { codegoods } = this.props.product;
     const productFromStore = await loadItemByCode(codegoods);
-    const initialPrice = productFromStore.Price || product.price || 0;
-
-    this.setState(
-      {
-        productFromStore,
-        price: initialPrice,
-      },
-      this.calculateTotal
-    );
+    this.setState({ productFromStore }, this.calculateTotal);
   }
 
   componentDidUpdate(prevProps) {
@@ -47,23 +38,26 @@ export default class CartCard extends React.Component<any, any> {
 
   handlePriceBlur = async (e) => {
     const price = e.target.value;
-    const { product } = this.props;
-    await handleUpdateCartPrice(product.Id, price);
+    await handleUpdateCartPrice(this.props.product.Id, price);
   };
 
   calculateTotal = () => {
     const { price, count } = this.state;
-    const { discount } = this.props;
+    const { discount, product, onUpdate } = this.props;
     const discountedPrice = price - (price * discount) / 100;
     const total = discountedPrice * count;
     this.setState({ total });
 
-    this.props.onTotalUpdate(total);
+    onUpdate({
+      Id: product.Id,
+      price,
+      count,
+    });
   };
 
   render() {
     const { product, onDelete, discount } = this.props;
-    const { productFromStore, price, total } = this.state;
+    const { productFromStore, price, total, count } = this.state;
 
     const discountAmount = (price * discount) / 100;
     const finalPricePerItem = price - discountAmount;
@@ -78,7 +72,7 @@ export default class CartCard extends React.Component<any, any> {
             <p className={styles.titleDescription}>{product.Title}</p>
           </div>
           <button
-          type="button"
+            type="button"
             onClick={() => onDelete(product.Id)}
             className={styles.deleteBtn}
           >
@@ -106,21 +100,22 @@ export default class CartCard extends React.Component<any, any> {
             onCountChange={this.handleCountChange}
           />
         </div>
+
         <div className={styles.cardDescription}>
           <div className={styles.discountDiv}>
             <p>
-              <small>تخفیف ({discount}٪):</small>{" "}
-              {discountAmount.toFixed(2).toLocaleString()} تومان
+              <small>تخفیف ({discount}٪):</small> {discountAmount.toFixed(2)}{" "}
+              تومان
             </p>
             <p style={{ color: "green" }}>
               <small>قیمت بعد تخفیف (هر عدد):</small>{" "}
-              {finalPricePerItem.toFixed(2).toLocaleString()} تومان
+              {finalPricePerItem.toFixed(2)} تومان
             </p>
           </div>
 
           <div className={styles.priceForm}>
             <input type="number" disabled value={total.toFixed(2)} />
-            <div type="submit">جمع</div>
+            <div>جمع</div>
           </div>
         </div>
       </div>
