@@ -21,7 +21,6 @@ export default class Cart extends Component<any, any> {
     if (hash) {
       const hashParams = new URLSearchParams(hash.replace("#/?", ""));
       const guid = hashParams.get("guid");
-
       if (guid) {
         localStorage.setItem("agent_guid", guid);
         this.setState({ guid }, () => this.loadCartItems(guid));
@@ -41,33 +40,6 @@ export default class Cart extends Component<any, any> {
     loadCard(guid).then((cartItems) => {
       this.setState({ cartItems });
     });
-  };
-
-  handleItemUpdate = (updatedItem: any) => {
-    const updatedCartItems = this.state.cartItems.map((item) =>
-      item.Id === updatedItem.Id ? { ...item, ...updatedItem } : item
-    );
-    this.setState({ cartItems: updatedCartItems });
-  };
-
-  calculateTotal = () => {
-    return this.state.cartItems.reduce((sum, item) => {
-      const count = parseFloat(item.count) || 0;
-      const price = parseFloat(item.price) || 0;
-      return sum + count * price;
-    }, 0);
-  };
-
-  calculateDiscountAmount = () => {
-    return (this.calculateTotal() * this.state.discount) / 100;
-  };
-
-  calculateTotalAfterDiscount = () => {
-    return this.calculateTotal() - this.calculateDiscountAmount();
-  };
-
-  formatNumberWithComma = (number: number) => {
-    return new Intl.NumberFormat().format(Number(number.toFixed(2)));
   };
 
   handleDeleteItem = (id: number) => {
@@ -101,13 +73,36 @@ export default class Cart extends Component<any, any> {
       })
       .then((cartItems) => {
         this.setState({ cartItems });
-      })
-      .catch((err) => this.setState({ message: `خطا: ${err.message}` }));
+      });
   };
 
   handleDiscountChange = (e) => {
     const discount = parseFloat(e.target.value) || 0;
     this.setState({ discount });
+  };
+
+  handleSaveAllDiscounts = () => {
+    this.setState({ saveSignal: Date.now() }); // تغییر ساده برای تریگر
+  };
+
+  calculateTotal = () => {
+    return this.state.cartItems.reduce((sum, item) => {
+      const count = parseFloat(item.count) || 0;
+      const price = parseFloat(item.price) || 0;
+      return sum + count * price;
+    }, 0);
+  };
+
+  calculateDiscountAmount = () => {
+    return (this.calculateTotal() * this.state.discount) / 100;
+  };
+
+  calculateTotalAfterDiscount = () => {
+    return this.calculateTotal() - this.calculateDiscountAmount();
+  };
+
+  formatNumberWithComma = (number: number) => {
+    return new Intl.NumberFormat().format(Number(number.toFixed(2)));
   };
 
   render() {
@@ -126,8 +121,8 @@ export default class Cart extends Component<any, any> {
         <CartList
           products={this.state.cartItems}
           onDelete={this.handleDeleteItem}
-          onUpdate={this.handleItemUpdate}
           discount={this.state.discount}
+          saveSignal={this.state.saveSignal}
         />
 
         <div className={styles.totalContainer}>
@@ -162,6 +157,8 @@ export default class Cart extends Component<any, any> {
               </h2>
             </div>
           </div>
+
+          <button onClick={this.handleSaveAllDiscounts}>ثبت تخفیف‌ها</button>
         </div>
       </div>
     );

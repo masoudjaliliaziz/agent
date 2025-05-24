@@ -44,54 +44,65 @@ export async function handleUpdateItem() {
     .catch((err) => this.setState({ message: `خطا: ${err.message}` }));
 }
 
-export async function handleUpdateCartPrice(
-  Id: number,
-  price: number | string
-) {
+export async function handleUpdateCartPrice(id: number, data: any) {
   const listName = "shoping";
-  const itemType = `SP.Data.ShopingListItem`; // نوع داده صحیح
-  const webUrl = "https://crm.zarsim.com"; // آدرس سایت SharePoint شما
+  const webUrl = "https://crm.zarsim.com";
 
   try {
-    // گرفتن Digest برای ارسال درخواست
-    const digest = await getDigest();
-    if (!digest) {
-      console.error("Digest not received");
-      return;
-    }
+    // دریافت Digest برای احراز هویت
+    const digestResponse = await fetch(`${webUrl}/_api/contextinfo`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json;odata=verbose",
+      },
+    });
 
-    // بررسی صحت ورودی‌ها
-    if (!Id || isNaN(Number(price))) {
-      console.error("Invalid Id or price");
-      return;
-    }
+    const digestData = await digestResponse.json();
+    const digestValue = digestData.d.GetContextWebInformation.FormDigestValue;
 
-    // ارسال درخواست PATCH برای آپدیت قیمت
-    const response = await fetch(
-      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${Id})`,
+    // دریافت ListItemEntityTypeFullName
+    const entityTypeResponse = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')?$select=ListItemEntityTypeFullName`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json;odata=verbose",
+        },
+      }
+    );
+
+    const entityTypeData = await entityTypeResponse.json();
+    const listItemEntityType = entityTypeData.d.ListItemEntityTypeFullName;
+
+    // ارسال MERGE با __metadata
+    const updateResponse = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${id})`,
       {
         method: "POST",
         headers: {
           Accept: "application/json;odata=verbose",
           "Content-Type": "application/json;odata=verbose",
-          "X-RequestDigest": digest,
-          "IF-MATCH": "*", // می‌تواند * باشد برای تمامی آیتم‌ها
-          "X-HTTP-Method": "MERGE", // استفاده از متد MERGE برای آپدیت
+          "X-RequestDigest": digestValue,
+          "IF-MATCH": "*",
+          "X-HTTP-Method": "MERGE",
         },
         body: JSON.stringify({
-          __metadata: { type: itemType }, // نوع داده لیست شما
-          price: Number(price), // بروزرسانی قیمت
+          __metadata: { type: listItemEntityType },
+          price: data.price,
+          discountPersenTage: data.discountPersenTage,
+          discountAmount: data.discountAmount,
+          priceAfterDiscount: data.priceAfterDiscount,
         }),
       }
     );
 
-    // بررسی پاسخ از سرور
-    if (response.ok) {
-      console.log("Price updated successfully!");
-    } else {
-      console.error(`Error: ${response.statusText}`);
+    if (!updateResponse.ok) {
+      const errorText = await updateResponse.text();
+      throw new Error("Update failed: " + errorText);
     }
-  } catch (err) {
-    console.error("Error during update:", err.message);
+
+    console.log("✅ Updated item successfully");
+  } catch (error) {
+    console.error("❌ Error updating item:", error);
   }
 }

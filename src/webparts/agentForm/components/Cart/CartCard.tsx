@@ -9,21 +9,34 @@ export default class CartCard extends React.Component<any, any> {
     super(props);
     this.state = {
       productFromStore: {},
-      count: parseFloat(props.product.count) || 1,
-      price: parseFloat(props.product.price) || 0,
+      count: 1,
+      price: 0,
       total: 0,
+      lastSaveSignal: null,
     };
   }
 
   async componentDidMount() {
-    const { codegoods } = this.props.product;
+    const { product } = this.props;
+    const { codegoods, count } = product;
+
     const productFromStore = await loadItemByCode(codegoods);
-    this.setState({ productFromStore }, this.calculateTotal);
+    const initialPrice =
+      productFromStore.Price || parseFloat(product.price) || 0;
+
+    this.setState({
+      productFromStore,
+      price: initialPrice,
+      count: parseFloat(count) || 1,
+    }, this.calculateTotal);
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.discount !== this.props.discount) {
-      this.calculateTotal();
+    if (
+      this.props.saveSignal &&
+      this.props.saveSignal !== prevProps.saveSignal
+    ) {
+      this.handleSaveDiscountExternally();
     }
   }
 
@@ -36,28 +49,42 @@ export default class CartCard extends React.Component<any, any> {
     this.setState({ price }, this.calculateTotal);
   };
 
-  handlePriceBlur = async (e) => {
-    const price = e.target.value;
-    await handleUpdateCartPrice(this.props.product.Id, price);
+  handlePriceBlur = () => {
+    this.handleSaveDiscountExternally();
+  };
+
+  handleSaveDiscountExternally = async () => {
+    const { discount, product } = this.props;
+    const { price } = this.state;
+
+    const discountAmount = ((price * discount) / 100).toFixed(2);
+    const priceAfterDiscount = (price - parseFloat(discountAmount)).toFixed(2);
+
+    const data = {
+      price: price.toFixed(2),
+      discountPersenTage: discount.toString(),
+      discountAmount,
+      priceAfterDiscount,
+    };
+
+    try {
+      await handleUpdateCartPrice(product.Id, data);
+    } catch (err) {
+      console.error("❌ Error saving discount:", err);
+    }
   };
 
   calculateTotal = () => {
     const { price, count } = this.state;
-    const { discount, product, onUpdate } = this.props;
+    const { discount } = this.props;
     const discountedPrice = price - (price * discount) / 100;
     const total = discountedPrice * count;
     this.setState({ total });
-
-    onUpdate({
-      Id: product.Id,
-      price,
-      count,
-    });
   };
 
   render() {
     const { product, onDelete, discount } = this.props;
-    const { productFromStore, price, total, count } = this.state;
+    const { productFromStore, price, total } = this.state;
 
     const discountAmount = (price * discount) / 100;
     const finalPricePerItem = price - discountAmount;
@@ -104,18 +131,18 @@ export default class CartCard extends React.Component<any, any> {
         <div className={styles.cardDescription}>
           <div className={styles.discountDiv}>
             <p>
-              <small>تخفیف ({discount}٪):</small> {discountAmount.toFixed(2)}{" "}
-              تومان
+              <small>تخفیف ({discount}٪):</small>{" "}
+              {discountAmount.toFixed(2).toLocaleString()} تومان
             </p>
             <p style={{ color: "green" }}>
               <small>قیمت بعد تخفیف (هر عدد):</small>{" "}
-              {finalPricePerItem.toFixed(2)} تومان
+              {finalPricePerItem.toFixed(2).toLocaleString()} تومان
             </p>
           </div>
 
           <div className={styles.priceForm}>
             <input type="number" disabled value={total.toFixed(2)} />
-            <div>جمع</div>
+            <div type="submit">جمع</div>
           </div>
         </div>
       </div>
