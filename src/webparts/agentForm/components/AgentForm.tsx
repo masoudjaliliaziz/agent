@@ -8,22 +8,36 @@ export default class AgentForm extends React.Component<
   IAgentFormProps,
   IAgentFormState
 > {
+
+
+
+
   constructor(props: IAgentFormProps) {
     super(props);
     this.state = {
       parent_GUID: "",
     };
   }
+
   componentDidMount() {
-    const hash = window.location.hash; // مثلاً "#/?guid=5882d265-23bf-4867-956b-7c22783c59a0"
+    let guidFromUrl = "";
+    const hash = window.location.hash;
 
     if (hash) {
       const hashParams = new URLSearchParams(hash.replace("#/?", ""));
       const guid = hashParams.get("guid");
 
       if (guid) {
+        guidFromUrl = guid;
+        localStorage.setItem("agent_guid", guid);
         this.setState({ parent_GUID: guid });
+        return;
       }
+    }
+
+    const guidFromStorage = localStorage.getItem("agent_guid");
+    if (guidFromStorage) {
+      this.setState({ parent_GUID: guidFromStorage });
     }
   }
 
@@ -36,4 +50,7 @@ export default class AgentForm extends React.Component<
       </div>
     );
   }
+
+
+
 }

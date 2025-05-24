@@ -17,13 +17,34 @@ export default class Cart extends Component<any, any> {
     };
   }
 
-  async componentDidMount() {
-    const guid = "0f492e61-c4a0-4177-8bd8-2a4bd46e5f9f";
-    if (guid) {
-      const cartItems = await loadCard(guid);
-      this.setState({ cartItems, guid });
-    } else {
-      this.setState({ message: "مقدار GUID پیدا نشد." });
+  componentDidMount() {
+    let guidFromUrl = "";
+    const hash = window.location.hash;
+
+    if (hash) {
+      const hashParams = new URLSearchParams(hash.replace("#/?", ""));
+      const guid = hashParams.get("guid");
+
+      if (guid) {
+        guidFromUrl = guid;
+        localStorage.setItem("agent_guid", guid);
+        this.setState({ parent_GUID: guid, guid }, () => {
+          loadCard(guid).then((cartItems) => this.setState({ cartItems }));
+        });
+        return;
+      }
+    }
+
+    const guidFromStorage = localStorage.getItem("agent_guid");
+    if (guidFromStorage) {
+      this.setState(
+        { parent_GUID: guidFromStorage, guid: guidFromStorage },
+        () => {
+          loadCard(guidFromStorage).then((cartItems) =>
+            this.setState({ cartItems })
+          );
+        }
+      );
     }
   }
 
