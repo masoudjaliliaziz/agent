@@ -3,7 +3,7 @@ import CartCard from "./CartCard";
 
 export default class CartList extends React.Component<any, any> {
   render() {
-    const { products, onDelete, discount, saveSignal } = this.props;
+    const { products, onDelete, discount, saveSignal, onItemUpdate } = this.props;
 
     return (
       <div>
@@ -14,6 +14,7 @@ export default class CartList extends React.Component<any, any> {
             onDelete={onDelete}
             discount={discount}
             saveSignal={saveSignal}
+            onItemUpdate={onItemUpdate}
           />
         ))}
       </div>

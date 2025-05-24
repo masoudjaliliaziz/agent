@@ -12,7 +12,6 @@ export default class CartCard extends React.Component<any, any> {
       count: 1,
       price: 0,
       total: 0,
-      lastSaveSignal: null,
     };
   }
 
@@ -24,11 +23,14 @@ export default class CartCard extends React.Component<any, any> {
     const initialPrice =
       productFromStore.Price || parseFloat(product.price) || 0;
 
-    this.setState({
-      productFromStore,
-      price: initialPrice,
-      count: parseFloat(count) || 1,
-    }, this.calculateTotal);
+    this.setState(
+      {
+        productFromStore,
+        price: initialPrice,
+        count: parseFloat(count) || 1,
+      },
+      this.calculateTotal
+    );
   }
 
   componentDidUpdate(prevProps) {
@@ -41,12 +43,22 @@ export default class CartCard extends React.Component<any, any> {
   }
 
   handleCountChange = (newCount: number) => {
-    this.setState({ count: newCount }, this.calculateTotal);
+    this.setState({ count: newCount }, () => {
+      this.calculateTotal();
+      this.props.onItemUpdate(this.props.product.Id, {
+        count: newCount,
+      });
+    });
   };
 
   handlePriceChange = (e) => {
     const price = parseFloat(e.target.value) || 0;
-    this.setState({ price }, this.calculateTotal);
+    this.setState({ price }, () => {
+      this.calculateTotal();
+      this.props.onItemUpdate(this.props.product.Id, {
+        price,
+      });
+    });
   };
 
   handlePriceBlur = () => {
@@ -142,7 +154,7 @@ export default class CartCard extends React.Component<any, any> {
 
           <div className={styles.priceForm}>
             <input type="number" disabled value={total.toFixed(2)} />
-            <div type="submit">جمع</div>
+            <div>جمع</div>
           </div>
         </div>
       </div>

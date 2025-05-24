@@ -6,7 +6,7 @@ class Counter extends React.Component<any, any> {
   private listName = "shoping";
   private webUrl = "https://crm.zarsim.com";
 
-  constructor(props: any) {
+  constructor(props) {
     super(props);
     this.state = {
       count: 0,
@@ -16,74 +16,74 @@ class Counter extends React.Component<any, any> {
   }
 
   async componentDidMount() {
-    this.fetchQuantity();
+    await this.fetchQuantity();
   }
 
-  fetchQuantity = () => {
-    const { Id } = this.props;
-
-    fetch(
-      `${this.webUrl}/_api/web/lists/getbytitle('${this.listName}')/items(${Id})`,
-      {
-        headers: {
-          Accept: "application/json;odata=verbose",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        const count = Number(data.d.count) || 0;
-        this.setState({ count, displayCount: count, loading: false });
-        if (this.props.onCountChange) {
-          this.props.onCountChange(count);
+  fetchQuantity = async () => {
+    const { Id, onCountChange } = this.props;
+    try {
+      const response = await fetch(
+        `${this.webUrl}/_api/web/lists/getbytitle('${this.listName}')/items(${Id})`,
+        {
+          headers: {
+            Accept: "application/json;odata=verbose",
+          },
         }
-      })
-      .catch((error) => {
-        console.error("Fetch quantity error:", error);
-        this.setState({ loading: false });
-      });
+      );
+      const data = await response.json();
+      const count = Number(data.d.count) || 0;
+      this.setState({ count, displayCount: count, loading: false });
+      onCountChange?.(count);
+    } catch (error) {
+      console.error("❌ Fetch quantity error:", error);
+      this.setState({ loading: false });
+    }
   };
 
   updateQuantity = async (newCount: number) => {
-    const digest = await getDigest();
     const { Id, onDelete, onCountChange } = this.props;
     const url = `${this.webUrl}/_api/web/lists/getbytitle('${this.listName}')/items(${Id})`;
+    const digest = await getDigest();
 
     if (newCount === 0) {
-      fetch(url, {
-        method: "POST",
-        headers: {
-          Accept: "application/json;odata=verbose",
-          "X-RequestDigest": digest,
-          "IF-MATCH": "*",
-          "X-HTTP-Method": "DELETE",
-        },
-      })
-        .then(() => {
-          this.setState({ count: 0, displayCount: 0 });
-          if (onDelete) onDelete(Id);
-        })
-        .catch((error) => console.error("Delete item error:", error));
+      // حذف آیتم
+      try {
+        await fetch(url, {
+          method: "POST",
+          headers: {
+            Accept: "application/json;odata=verbose",
+            "X-RequestDigest": digest,
+            "IF-MATCH": "*",
+            "X-HTTP-Method": "DELETE",
+          },
+        });
+        this.setState({ count: 0, displayCount: 0 });
+        onDelete?.(Id);
+      } catch (error) {
+        console.error("❌ Delete item error:", error);
+      }
     } else {
-      fetch(url, {
-        method: "POST",
-        headers: {
-          Accept: "application/json;odata=verbose",
-          "Content-Type": "application/json;odata=verbose",
-          "X-RequestDigest": digest,
-          "IF-MATCH": "*",
-          "X-HTTP-Method": "MERGE",
-        },
-        body: JSON.stringify({
-          __metadata: { type: "SP.Data.ShopingListItem" },
-          count: String(newCount),
-        }),
-      })
-        .then(() => {
-          this.setState({ count: newCount, displayCount: newCount });
-          if (onCountChange) onCountChange(newCount);
-        })
-        .catch((error) => console.error("Update quantity error:", error));
+      // به‌روزرسانی مقدار
+      try {
+        await fetch(url, {
+          method: "POST",
+          headers: {
+            Accept: "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose",
+            "X-RequestDigest": digest,
+            "IF-MATCH": "*",
+            "X-HTTP-Method": "MERGE",
+          },
+          body: JSON.stringify({
+            __metadata: { type: "SP.Data.ShopingListItem" },
+            count: String(newCount),
+          }),
+        });
+        this.setState({ count: newCount, displayCount: newCount });
+        onCountChange?.(newCount);
+      } catch (error) {
+        console.error("❌ Update quantity error:", error);
+      }
     }
   };
 
@@ -94,13 +94,9 @@ class Counter extends React.Component<any, any> {
 
   decrement = () => {
     const current = this.state.displayCount;
-    if (current === 1) {
-      this.setState({ displayCount: 0 });
-      this.updateQuantity(0);
-    } else {
-      const newCount = Math.max(0, current - 1);
-      this.updateQuantity(newCount);
-    }
+    const newCount = Math.max(0, current - 1);
+    this.setState({ displayCount: newCount });
+    this.updateQuantity(newCount);
   };
 
   handleInputChange = (e) => {
@@ -116,7 +112,8 @@ class Counter extends React.Component<any, any> {
 
   render() {
     const { displayCount, loading } = this.state;
-    if (loading) return <div>Loading...</div>;
+
+    if (loading) return <div>در حال بارگذاری...</div>;
 
     return (
       <div className={styles.buttonContainer}>
