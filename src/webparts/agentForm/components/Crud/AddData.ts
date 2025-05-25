@@ -101,3 +101,101 @@ export async function handleAddEvent(
     console.error(err.message);
   }
 }
+
+export async function addDiscountToTheOrderForm(guid_form: any, Data: any) {
+  const digest = await getDigest();
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Orders";
+  const itemType = "SP.Data.OrdersListItem";
+
+  if (!guid_form) {
+    console.log("شناسه کاربری پیدا نشد");
+    return;
+  }
+
+  fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')/items`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose",
+      "X-RequestDigest": digest,
+    },
+    body: JSON.stringify({
+      __metadata: { type: itemType },
+
+      ...Data,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.d) {
+        console.log("تخفیف با موفقیت ثبت شد.");
+      } else {
+        console.log("خطا در ثبت سفارش");
+      }
+    });
+}
+
+
+
+
+
+export async function updateOrderFormByGuid(guid_form: string, Data: any) {
+  if (!guid_form) {
+    console.log("شناسه کاربری پیدا نشد");
+    return;
+  }
+
+  const digest = await getDigest();
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Orders";
+  const itemType = "SP.Data.OrdersListItem";
+
+  // مرحله 1: پیدا کردن آیتم با guid_form برابر ورودی
+  const filter = `guid_form eq '${guid_form}'`;
+  const queryUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=${filter}`;
+
+  const getResponse = await fetch(queryUrl, {
+    method: "GET",
+    headers: {
+      Accept: "application/json;odata=verbose",
+    },
+  });
+
+  const getData = await getResponse.json();
+
+  if (!getData.d.results.length) {
+    console.log("آیتمی با این شناسه پیدا نشد.");
+    return;
+  }
+
+  // فرض می‌گیریم فقط یک آیتم داریم با این guid_form
+  const item = getData.d.results[0];
+  const itemId = item.Id;
+
+  // مرحله 2: آپدیت آیتم با استفاده از ID
+  const updateUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${itemId})`;
+
+  const updateResponse = await fetch(updateUrl, {
+    method: "POST", // برای آپدیت در SP REST API از POST + X-HTTP-Method: MERGE استفاده می‌کنیم
+    headers: {
+      Accept: "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose",
+      "X-RequestDigest": digest,
+      "X-HTTP-Method": "MERGE",
+      "If-Match": item.__metadata.etag, // برای جلوگیری از override ناخواسته
+    },
+    body: JSON.stringify({
+      __metadata: { type: itemType },
+      ...Data,
+    }),
+  });
+
+  if (updateResponse.ok) {
+    console.log("آیتم با موفقیت آپدیت شد.");
+  } else {
+    const err = await updateResponse.text();
+    console.log("خطا در آپدیت آیتم:", err);
+  }
+}
+

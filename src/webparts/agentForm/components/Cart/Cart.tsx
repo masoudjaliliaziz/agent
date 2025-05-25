@@ -3,6 +3,7 @@ import { Component } from "react";
 import { loadCard } from "../Crud/GetData";
 import styles from "./Cart.module.scss";
 import CartList from "./CartList";
+import { updateOrderFormByGuid } from "../Crud/AddData";
 
 export default class Cart extends Component<any, any> {
   constructor(props) {
@@ -82,8 +83,19 @@ export default class Cart extends Component<any, any> {
     this.setState({ discount });
   };
 
-  handleSaveAllDiscounts = () => {
+  handleSaveAllDiscounts = async (
+    finalTotal,
+    totalBefore,
+    discountAmount,
+    discountPersenTage
+  ) => {
     this.setState({ saveSignal: Date.now() });
+    await updateOrderFormByGuid(localStorage.getItem("agent_guid"), {
+      toatalPriceAfterDiscount: String(finalTotal),
+      toatalPriceBeforeDiscount: String(totalBefore),
+      discountAmount: String(discountAmount),
+      discountPercenTage: String(discountPersenTage),
+    });
   };
 
   handleItemUpdate = (id: number, updatedFields: any) => {
@@ -188,7 +200,14 @@ export default class Cart extends Component<any, any> {
           <div
             className={styles.submit}
             style={{}}
-            onClick={this.handleSaveAllDiscounts}
+            onClick={() =>
+              this.handleSaveAllDiscounts(
+                finalTotal,
+                totalBefore,
+                discountAmount,
+                this.state.discount
+              )
+            }
           >
             ثبت
           </div>
