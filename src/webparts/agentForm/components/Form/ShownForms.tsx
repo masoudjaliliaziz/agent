@@ -30,8 +30,6 @@ export default class ShownForm extends Component<ShownFormProps, any> {
     return (
       <div className={styles.formContainer}>
         <div className={styles.selectContainer}>
-          {/* <button className={styles.reciveBtn}>فایل دریافتی</button>
-          <button className={styles.sendBtn}>فایل ارسالی</button> */}
           <div className={styles.ColData}>
             <div>
               <small>نوع رویداد</small>

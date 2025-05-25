@@ -16,12 +16,12 @@ export interface Product {
 export interface CrudItemProps {
   product: Product;
   onDelete: (id: number) => void;
-  onTotalUpdate: (total: number) => void; // اضافه کردن متد به روز رسانی مجموع
+  onTotalUpdate: (total: number) => void;
 }
 
 interface CartListProps {
   products: any[];
   onDelete: (id: number) => void;
   onTotalUpdate: (total: number) => void;
-  discount: number; // 👈 اضافه شد
+  discount: number;
 }

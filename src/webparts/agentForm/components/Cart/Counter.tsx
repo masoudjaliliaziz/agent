@@ -49,7 +49,6 @@ class Counter extends React.Component<any, any> {
     const digest = await getDigest();
 
     if (newCount === 0) {
-      // حذف آیتم
       try {
         await fetch(url, {
           method: "POST",
@@ -69,7 +68,6 @@ class Counter extends React.Component<any, any> {
         console.error("❌ Delete item error:", error);
       }
     } else {
-      // به‌روزرسانی مقدار
       try {
         await fetch(url, {
           method: "POST",
@@ -126,17 +124,26 @@ class Counter extends React.Component<any, any> {
 
     return (
       <div className={styles.buttonContainer}>
-        <button type="button" onClick={this.decrement}>
+        <button
+          type="button"
+          onClick={this.decrement}
+          className={styles.counterBtn}
+        >
           -
         </button>
         <input
+          className={styles.counterInput}
           type="text"
           min={0}
           value={displayCount}
           onChange={this.handleInputChange}
           onBlur={this.handleInputBlur}
         />
-        <button type="button" onClick={this.increment}>
+        <button
+          type="button"
+          onClick={this.increment}
+          className={styles.counterBtn}
+        >
           +
         </button>
       </div>

@@ -24,7 +24,7 @@ export default class Form extends Component<FormProps, any> {
     const parentGuid = await this.props.parent_GUID;
     console.log(parentGuid);
     const EventsData = await loadEvent(this.props.parent_GUID);
-    const newGUID = uuidv4(); // ساخت GUID جدید
+    const newGUID = uuidv4();
 
     this.setState({
       Events: EventsData.reverse(),
@@ -35,7 +35,6 @@ export default class Form extends Component<FormProps, any> {
   async onEventAdd() {
     const { item_GUID, Event_Type, Order_Status, Description } = this.state;
 
-    // ذخیره فرم
     await handleAddEvent(
       item_GUID,
       this.props.parent_GUID,
@@ -44,11 +43,9 @@ export default class Form extends Component<FormProps, any> {
       Description
     );
 
-    // دریافت مجدد لیست و ساخت GUID جدید
     const updatedEvents = await loadEvent(this.props.parent_GUID);
     const newGUID = uuidv4();
 
-    // به‌روزرسانی state
     this.setState({
       Events: updatedEvents.reverse(),
       item_GUID: newGUID,

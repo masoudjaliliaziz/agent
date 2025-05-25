@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Component } from "react";
-import styles from "./Cart.module.scss";
 import { loadCard } from "../Crud/GetData";
+import styles from "./Cart.module.scss";
 import CartList from "./CartList";
 
 export default class Cart extends Component<any, any> {
@@ -106,7 +106,7 @@ export default class Cart extends Component<any, any> {
     return (
       (this.calculateTotal() * this.state.discount) /
       (100 + this.state.discount)
-    ); // optional logic tweak
+    );
   };
 
   calculateTotalBeforeDiscount = () => {
@@ -144,46 +144,50 @@ export default class Cart extends Component<any, any> {
 
         <div className={styles.totalContainer}>
           <div className={styles.row}>
-            <div>
+            <div className={styles.totalContainerDiv}>
               <label> (%) تخفیف</label>
               <input
+                className={styles.totalContainerInput}
                 type="number"
                 value={this.state.discount}
                 onChange={this.handleDiscountChange}
               />
             </div>
             <div>
-              <small> مقدار تخفیف </small>
-              <h3>
-                {this.formatNumberWithComma(discountAmount)}{" "}
-                <small>تومان</small>
+              <small className={styles.totalContainerSmall}>
+                {" "}
+                مقدار تخفیف{" "}
+              </small>
+              <h3 className={styles.totalContainerH3}>
+                {this.formatNumberWithComma(discountAmount)}
+                <small className={styles.totalContainerH3Small}>تومان</small>
               </h3>
             </div>
           </div>
 
           <div className={styles.row}>
             <div>
-              <small> جمع کل بدون تخفیف </small>
-              <h3>
-                {this.formatNumberWithComma(totalBefore)} <small>تومان</small>
+              <small className={styles.totalContainerSmall}>
+                {" "}
+                جمع کل بدون تخفیف{" "}
+              </small>
+              <h3 className={styles.totalContainerH3}>
+                {this.formatNumberWithComma(totalBefore)}{" "}
+                <small className={styles.totalContainerH3Small}>تومان</small>
               </h3>
             </div>
             <div>
-              <small> مبلغ نهایی</small>
-              <h2>
-                {this.formatNumberWithComma(finalTotal)} <small>تومان</small>
+              <small className={styles.totalContainerSmall}> مبلغ نهایی</small>
+              <h2 className={styles.totalContainerH2}>
+                {this.formatNumberWithComma(finalTotal)}{" "}
+                <small className={styles.totalContainerH2Small}>تومان</small>
               </h2>
             </div>
           </div>
 
           <div
-            style={{
-              padding: "5px",
-              backgroundColor: "black",
-              color: "white",
-              borderRadius: "5.5px",
-              cursor: "pointer",
-            }}
+            className={styles.submit}
+            style={{}}
             onClick={this.handleSaveAllDiscounts}
           >
             ثبت

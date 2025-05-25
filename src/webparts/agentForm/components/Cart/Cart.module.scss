@@ -133,33 +133,6 @@
   }
 }
 
-.form {
-  @include ms-Grid-row;
-  @include ms-fontColor-white;
-  background-color: lightgray;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-
-  .title {
-    color: gray;
-    font-weight: bold;
-  }
-  input {
-    width: 60%;
-    padding: 7.5px;
-    border-radius: 5px;
-    border: none;
-  }
-
-  .alert {
-    color: green;
-  }
-}
-
 .column {
   @include ms-Grid-col;
   @include ms-lg10;
@@ -206,6 +179,7 @@
   transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
   cursor: pointer;
 }
+
 .actionsContainer {
   display: flex;
   gap: 15px;
@@ -366,6 +340,7 @@
     }
   }
 }
+
 .fullPrice {
   background-color: lightgray;
   padding: 5px 7.5px;
@@ -397,6 +372,7 @@
     box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
   }
 }
+
 .xs {
   display: flex;
   flex-direction: row-reverse;
@@ -414,42 +390,46 @@
 .totalContainer {
   padding: 10px 20px;
   width: 100%;
-
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
   justify-content: center;
-  div {
+
+  .totalContainerDiv {
     display: flex;
     flex-direction: row-reverse;
     justify-content: center;
     align-items: center;
     gap: 5.5px;
     font-weight: bolder;
-    h3 {
+
+    .totalContainerH3 {
       font-size: 18px;
       direction: rtl;
-      small {
-        color: #005a9e;
-        font-size: 12px;
-      }
-    }
-    h2 {
-      color: #276749;
 
-      direction: rtl;
-      small {
+      .totalContainerH3Small {
         color: #005a9e;
         font-size: 12px;
       }
     }
-    small {
+
+    .totalContainerH2 {
+      color: #276749;
+      direction: rtl;
+
+      .totalContainerH2Small {
+        color: #005a9e;
+        font-size: 12px;
+      }
+    }
+
+    .totalContainerSmall {
       color: #555;
     }
   }
 
-  input {
+  .totalContainerInput {
     width: 45px;
     padding: 0 4px;
     border-radius: 11.5px;
@@ -465,24 +445,39 @@
 }
 
 .priceInput {
-  width: 120px; /* اندازه کوچک فیلد ورودی */
-  height: 25px; /* ارتفاع فیلد ورودی */
+  width: 120px;
+  height: 25px;
 
-  font-size: 16px; /* اندازه فونت برای خوانایی */
+  font-size: 16px;
   font-weight: bolder;
   border: none;
   outline: none;
   border-radius: 7.5px;
-  padding: 0 5px; /* فضای داخلی فیلد ورودی */
+  padding: 0 5px;
   transition: all 0.3s ease-in-out;
   background-color: white;
   outline: none;
-  /* متن را در وسط فیلد قرار می‌دهد */
   &:focus {
-    border-color: #0077cc; /* تغییر رنگ حاشیه هنگام فوکوس */
+    border-color: #0077cc;
   }
 }
 
 .discountDiv {
   font-weight: bolder;
+}
+
+.submit {
+  min-width: 40px;
+  padding: 8px 16px;
+  background-color: black;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 300ms linear;
+
+  &:hover {
+    background-color: #dadada;
+    color: #000000;
+    scale: scale(1.05);
+  }
 }
