@@ -9,6 +9,9 @@ import ShownForm from "./ShownForms";
 import { FileUploader } from "../utils/FileUploader";
 
 export default class Form extends Component<FormProps, any> {
+  private sendRef: FileUploader | null = null;
+  private reciveRef: FileUploader | null = null;
+
   constructor(props: FormProps) {
     super(props);
     this.state = {
@@ -18,6 +21,8 @@ export default class Form extends Component<FormProps, any> {
       Description: "",
       Events: [],
     };
+
+    this.onEventAdd = this.onEventAdd.bind(this);
   }
 
   async componentDidMount() {
@@ -33,26 +38,44 @@ export default class Form extends Component<FormProps, any> {
   }
 
   async onEventAdd() {
-    const { item_GUID, Event_Type, Order_Status, Description } = this.state;
+    try {
+      // ابتدا آپلود فایل‌ها (اگر انتخاب شده باشند)
+      if (this.reciveRef) {
+        await this.reciveRef.uploadFile();
+      }
+      if (this.sendRef) {
+        await this.sendRef.uploadFile();
+      }
 
-    await handleAddEvent(
-      item_GUID,
-      this.props.parent_GUID,
-      Event_Type,
-      Order_Status,
-      Description
-    );
+      // سپس ذخیره داده‌های فرم
+      const { item_GUID, Event_Type, Order_Status, Description } = this.state;
 
-    const updatedEvents = await loadEvent(this.props.parent_GUID);
-    const newGUID = uuidv4();
+      await handleAddEvent(
+        item_GUID,
+        this.props.parent_GUID,
+        Event_Type,
+        Order_Status,
+        Description
+      );
 
-    this.setState({
-      Events: updatedEvents.reverse(),
-      item_GUID: newGUID,
-      Event_Type: "chose",
-      Order_Status: "chose",
-      Description: "",
-    });
+      const updatedEvents = await loadEvent(this.props.parent_GUID);
+      const newGUID = uuidv4();
+
+      this.setState({
+        Events: updatedEvents.reverse(),
+        item_GUID: newGUID,
+        Event_Type: "chose",
+        Order_Status: "chose",
+        Description: "",
+      });
+
+      // پاک کردن فایل‌های انتخاب‌شده بعد از ذخیره
+      if (this.reciveRef) this.reciveRef.clearFile();
+      if (this.sendRef) this.sendRef.clearFile();
+    } catch (error) {
+      console.error("خطا در ذخیره رویداد یا آپلود فایل:", error);
+      // اینجا می‌تونی نمایش پیام خطا رو اضافه کنی
+    }
   }
 
   render() {
@@ -61,11 +84,13 @@ export default class Form extends Component<FormProps, any> {
         <div className={styles.formContainer}>
           <div className={styles.upladContainer}>
             <FileUploader
+              ref={(el) => (this.reciveRef = el)}
               orderNumber={this.props.parent_GUID}
               subFolder={this.state.item_GUID}
               title={"فایل دریافتی"}
             />
             <FileUploader
+              ref={(el) => (this.sendRef = el)}
               orderNumber={this.props.parent_GUID}
               subFolder={this.state.item_GUID}
               title={"فایل ارسالی"}
@@ -116,17 +141,15 @@ export default class Form extends Component<FormProps, any> {
             }
           />
 
-          <button
-            className={styles.buttonSave}
-            onClick={() => this.onEventAdd()}
-          >
+          <div className={styles.buttonSave} onClick={this.onEventAdd}>
             ذخیره
-          </button>
+          </div>
         </div>
 
         <div className={styles.shownHistory}>
           {this.state.Events.map((event, i) => (
             <ShownForm
+              key={i}
               Description={event.Description}
               Event_Type={event.Event_Type}
               Display_Name={event.Display_Name}
@@ -134,7 +157,6 @@ export default class Form extends Component<FormProps, any> {
               Created={event.Created}
               parent_GUID={this.props.parent_GUID}
               item_GUID={event.Title}
-              key={i}
             />
           ))}
         </div>

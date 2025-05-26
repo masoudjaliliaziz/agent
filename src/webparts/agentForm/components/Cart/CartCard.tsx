@@ -110,13 +110,12 @@ export default class CartCard extends React.Component<any, any> {
             </p>
             <p className={styles.titleDescription}>{product.Title}</p>
           </div>
-          <button
-            type="button"
+          <div
             onClick={() => onDelete(product.Id)}
             className={styles.deleteBtn}
           >
             حذف
-          </button>
+          </div>
         </div>
 
         <div className={styles.cardDescription}>
