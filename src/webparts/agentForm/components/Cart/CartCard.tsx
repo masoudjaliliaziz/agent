@@ -108,6 +108,9 @@ export default class CartCard extends React.Component<any, any> {
     this.setState({ total });
   };
 
+  formatNumberWithComma = (number: number) => {
+    return new Intl.NumberFormat().format(Number(number.toFixed(2)));
+  };
   render() {
     const { product, onDelete, discount } = this.props;
     const { productFromStore, price, total } = this.state;
@@ -170,16 +173,18 @@ export default class CartCard extends React.Component<any, any> {
           <div className={styles.discountDiv}>
             <p>
               <small>تخفیف ({discount}٪):</small>{" "}
-              {discountAmount.toFixed(2).toLocaleString()} تومان
+              {this.formatNumberWithComma(discountAmount).toLocaleString()}{" "}
+              تومان
             </p>
             <p style={{ color: "green" }}>
               <small>قیمت بعد تخفیف (هر عدد):</small>{" "}
-              {finalPricePerItem.toFixed(2).toLocaleString()} تومان
+              {this.formatNumberWithComma(finalPricePerItem).toLocaleString()}{" "}
+              تومان
             </p>
           </div>
 
           <div className={styles.priceForm}>
-            <input type="number" disabled value={total.toFixed(2)} />
+            <input type="number" disabled value={total} />
             <div>جمع</div>
           </div>
         </div>
