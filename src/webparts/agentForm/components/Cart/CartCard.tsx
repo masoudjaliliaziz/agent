@@ -3,6 +3,7 @@ import styles from "./Cart.module.scss";
 import Counter from "./Counter";
 import { loadItemByCode } from "../Crud/GetData";
 import { handleUpdateCartPrice } from "../Crud/UpdateData";
+import { addItemToVirtualInventory } from "../Crud/AddData";
 
 export default class CartCard extends React.Component<any, any> {
   constructor(props) {
@@ -17,7 +18,7 @@ export default class CartCard extends React.Component<any, any> {
 
   async componentDidMount() {
     const { product } = this.props;
-    const { codegoods, count } = product;
+    const { codegoods, count, guid_form } = product;
 
     const productFromStore = await loadItemByCode(codegoods);
     const initialPrice =
@@ -41,6 +42,19 @@ export default class CartCard extends React.Component<any, any> {
       this.handleSaveDiscountExternally();
     }
   }
+
+  handleUpdateInventory = async () => {
+    const { product } = this.props;
+    const { codegoods, guid_form, Title } = product;
+    const { count } = this.state;
+    await addItemToVirtualInventory({
+      guid_form,
+      Title,
+      ProductCode: String(codegoods),
+      status: 0,
+      reserveInventory: String(count),
+    });
+  };
 
   handleCountChange = (newCount: number) => {
     this.setState({ count: newCount }, () => {
@@ -110,18 +124,23 @@ export default class CartCard extends React.Component<any, any> {
             </p>
             <p className={styles.titleDescription}>{product.Title}</p>
           </div>
-          <div
-            onClick={() => onDelete(product.Id)}
-            className={styles.deleteBtn}
-          >
-            حذف
+          <div className={styles.actionContainer}>
+            <div
+              onClick={() => onDelete(product.Id)}
+              className={styles.deleteBtn}
+            >
+              حذف
+            </div>
+            <div
+              onClick={() => onDelete(product.Id)}
+              className={styles.reserve}
+            >
+              نمایش موجودی
+            </div>
           </div>
         </div>
 
         <div className={styles.cardDescription}>
-          <p className={styles.inventoryDescription}>
-            <small>موجودی:</small> {productFromStore.Inventory}
-          </p>
           <div className={styles.priceForm}>
             <input
               className={styles.priceInput}
@@ -132,11 +151,19 @@ export default class CartCard extends React.Component<any, any> {
             />
             <div>قیمت</div>
           </div>
-          <Counter
-            Id={product.Id}
-            onDelete={onDelete}
-            onCountChange={this.handleCountChange}
-          />
+          <div className={styles.actionContainer}>
+            <Counter
+              Id={product.Id}
+              onDelete={onDelete}
+              onCountChange={this.handleCountChange}
+            />
+            <div
+              onClick={() => this.handleUpdateInventory()}
+              className={styles.reserveBtn}
+            >
+              رزرو
+            </div>
+          </div>
         </div>
 
         <div className={styles.cardDescription}>

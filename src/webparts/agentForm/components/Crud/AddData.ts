@@ -136,10 +136,6 @@ export async function addDiscountToTheOrderForm(guid_form: any, Data: any) {
     });
 }
 
-
-
-
-
 export async function updateOrderFormByGuid(guid_form: string, Data: any) {
   if (!guid_form) {
     console.log("شناسه کاربری پیدا نشد");
@@ -199,3 +195,36 @@ export async function updateOrderFormByGuid(guid_form: string, Data: any) {
   }
 }
 
+export async function addItemToVirtualInventory(data) {
+  const listName = "virtualInventory";
+  const itemType = `SP.Data.VirtualInventoryListItem`;
+  const webUrl = "https://crm.zarsim.com";
+
+  try {
+    const digest = await getDigest();
+    console.log("Digest:", digest);
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json;odata=verbose",
+          "Content-Type": "application/json;odata=verbose",
+          "X-RequestDigest": digest,
+        },
+        body: JSON.stringify({
+          __metadata: { type: itemType },
+          ...data,
+        }),
+      }
+    );
+    const result = await response.json();
+    console.log("Add item result:", result);
+
+    if (!response.ok) {
+      throw new Error(`Server responded with status ${response.status}`);
+    }
+  } catch (err) {
+    console.error("❌ Error adding item to inventory:", err);
+  }
+}
