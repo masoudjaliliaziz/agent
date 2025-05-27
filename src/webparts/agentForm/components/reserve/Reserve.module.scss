@@ -1,0 +1,29 @@
+.container {
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 15px;
+  padding: 10px 15px;
+  width: 100%;
+}
+
+.reserveItemContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 5px;
+  border-radius: 12.5px;
+  background-color: lightgray;
+  font-weight: bolder;
+}
+
+.reserveItemRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex-direction: row-reverse;
+}

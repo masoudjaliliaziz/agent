@@ -1,9 +1,10 @@
 import * as React from "react";
 import styles from "./Cart.module.scss";
 import Counter from "./Counter";
-import { loadItemByCode } from "../Crud/GetData";
+import { loadItemByCode, loadReservedInventoryByCode } from "../Crud/GetData";
 import { handleUpdateCartPrice } from "../Crud/UpdateData";
 import { addItemToVirtualInventory } from "../Crud/AddData";
+import ReserveHistory from "../reserve/ReserveHistory";
 
 export default class CartCard extends React.Component<any, any> {
   constructor(props) {
@@ -13,12 +14,16 @@ export default class CartCard extends React.Component<any, any> {
       count: 1,
       price: 0,
       total: 0,
+      reserveInventory: "0",
+      showSuccessPopup: false,
+      reservedTotal: 0,
+      errorMsg: "",
     };
   }
 
   async componentDidMount() {
     const { product } = this.props;
-    const { codegoods, count, guid_form } = product;
+    const { codegoods, count } = product;
 
     const productFromStore = await loadItemByCode(codegoods);
     const initialPrice =
@@ -30,11 +35,39 @@ export default class CartCard extends React.Component<any, any> {
         price: initialPrice,
         count: parseFloat(count) || 1,
       },
-      this.calculateTotal
+      async () => {
+        this.calculateTotal();
+        await this.fetchReservedTotal(productFromStore.Code);
+      }
     );
   }
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.props.product.Id !== prevProps.product.Id) {
+      // وقتی محصول تغییر کرد، دوباره اطلاعات لود کن
+      const productFromStore = await loadItemByCode(
+        this.props.product.codegoods
+      );
+      const initialPrice =
+        productFromStore.Price || parseFloat(this.props.product.price) || 0;
 
-  componentDidUpdate(prevProps) {
+      this.setState(
+        {
+          productFromStore,
+          price: initialPrice,
+          count: parseFloat(this.props.product.count) || 1,
+        },
+        async () => {
+          this.calculateTotal();
+          await this.fetchReservedTotal(productFromStore.Code);
+        }
+      );
+    }
+
+    if (this.state.count !== prevState.count) {
+      // وقتی تعداد تغییر کرد، دوباره موجودی رزرو شده آپدیت شود
+      await this.fetchReservedTotal(this.state.productFromStore.Code);
+    }
+
     if (
       this.props.saveSignal &&
       this.props.saveSignal !== prevProps.saveSignal
@@ -42,18 +75,52 @@ export default class CartCard extends React.Component<any, any> {
       this.handleSaveDiscountExternally();
     }
   }
+  fetchReservedTotal = async (productCode) => {
+    if (!productCode) return;
+
+    try {
+      // از توابع موجودت استفاده کن
+      const reserveInventories = await loadReservedInventoryByCode(productCode);
+
+      const totalReserved = reserveInventories.reduce((acc, item) => {
+        const resInv = parseInt(item.reserveInventory) || 0;
+        return acc + resInv;
+      }, 0);
+
+      this.setState({ reservedTotal: totalReserved });
+    } catch (err) {
+      console.error("Error fetching reserved total:", err);
+    }
+  };
 
   handleUpdateInventory = async () => {
     const { product } = this.props;
     const { codegoods, guid_form, Title } = product;
-    const { count } = this.state;
-    await addItemToVirtualInventory({
+    const { count, reservedTotal, productFromStore } = this.state;
+
+    const inventory = parseInt(productFromStore.Inventory || "0");
+    const inventoryAvailable = inventory - reservedTotal;
+
+    if (count > inventoryAvailable) {
+      this.setState({
+        errorMsg: `موجودی کافی نیست! فقط ${inventoryAvailable} عدد می‌توانید رزرو کنید.`,
+      });
+      return;
+    }
+
+    this.setState({ errorMsg: "" });
+
+    const reserveInventory = await addItemToVirtualInventory({
       guid_form,
       Title,
       ProductCode: String(codegoods),
       status: 0,
       reserveInventory: String(count),
     });
+    this.setState({ reserveInventory });
+
+    // بعد از رزرو موفق، موجودی رزرو شده رو دوباره آپدیت کن
+    await this.fetchReservedTotal(productFromStore.Code);
   };
 
   handleCountChange = (newCount: number) => {
@@ -62,6 +129,8 @@ export default class CartCard extends React.Component<any, any> {
       this.props.onItemUpdate(this.props.product.Id, {
         count: newCount,
       });
+      // این خط حذف شد چون fetchReservedTotal در componentDidUpdate انجام میشه
+      // this.fetchReservedTotal(this.state.productFromStore.Code);
     });
   };
 
@@ -111,9 +180,26 @@ export default class CartCard extends React.Component<any, any> {
   formatNumberWithComma = (number: number) => {
     return new Intl.NumberFormat().format(Number(number.toFixed(2)));
   };
+
+  // دریافت مجموع رزرو شده از ReserveHistory
+  handleReservedTotalChange = (reservedTotal: number) => {
+    this.setState({ reservedTotal });
+  };
+
   render() {
     const { product, onDelete, discount } = this.props;
-    const { productFromStore, price, total } = this.state;
+    const {
+      productFromStore,
+      price,
+      total,
+      showSuccessPopup,
+      reserveInventory,
+      errorMsg,
+      reservedTotal,
+    } = this.state;
+
+    const inventory = parseInt(productFromStore.Inventory || "0");
+    const inventoryAvailable = inventory - reservedTotal;
 
     const discountAmount = (price * discount) / 100;
     const finalPricePerItem = price - discountAmount;
@@ -133,12 +219,6 @@ export default class CartCard extends React.Component<any, any> {
               className={styles.deleteBtn}
             >
               حذف
-            </div>
-            <div
-              onClick={() => onDelete(product.Id)}
-              className={styles.reserve}
-            >
-              نمایش موجودی
             </div>
           </div>
         </div>
@@ -171,6 +251,30 @@ export default class CartCard extends React.Component<any, any> {
 
         <div className={styles.cardDescription}>
           <div className={styles.discountDiv}>
+            <p
+              className={styles.inventoryDescription}
+              style={{ color: "green" }}
+            >
+              موجودی قابل رزرو : {inventoryAvailable}
+            </p>
+            <p className={styles.inventoryReserve}>
+              مجموع رزرو شده : {reservedTotal}
+            </p>
+
+            {errorMsg && (
+              <p style={{ color: "red", fontWeight: "bold" }}>{errorMsg}</p>
+            )}
+            <div className={styles.actionContainer}>
+              <div
+                onClick={() => this.setState({ showSuccessPopup: true })}
+                className={styles.reserve}
+              >
+                نمایش موجودی رزرو{" "}
+              </div>
+              <p className={styles.inventoryDescription}>
+                موجودی رزرو : {reserveInventory}
+              </p>
+            </div>
             <p>
               <small>تخفیف ({discount}٪):</small>{" "}
               {this.formatNumberWithComma(discountAmount).toLocaleString()}{" "}
@@ -188,6 +292,24 @@ export default class CartCard extends React.Component<any, any> {
             <div>جمع</div>
           </div>
         </div>
+        {showSuccessPopup && (
+          <div className={styles.popupOverlay}>
+            <div className={styles.popupBox}>
+              <ReserveHistory
+                productCode={productFromStore.Code}
+                onReservedTotalChange={this.handleReservedTotalChange}
+              />
+              <button
+                className={styles.closePopupBtn}
+                onClick={() => {
+                  this.setState({ showSuccessPopup: false });
+                }}
+              >
+                بستن
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

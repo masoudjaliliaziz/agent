@@ -219,12 +219,81 @@ export async function addItemToVirtualInventory(data) {
       }
     );
     const result = await response.json();
-    console.log("Add item result:", result);
+    const reserveInventory = await result.d.reserveInventory;
+    return reserveInventory;
 
-    if (!response.ok) {
-      throw new Error(`Server responded with status ${response.status}`);
-    }
+    // if (!response.ok) {
+    //   throw new Error(`Server responded with status ${response.status}`);
+    // }
   } catch (err) {
     console.error("❌ Error adding item to inventory:", err);
+  }
+}
+
+export async function addOrUpdateItemInVirtualInventory(data) {
+  const listName = "virtualInventory";
+  const itemType = `SP.Data.VirtualInventoryListItem`;
+  const webUrl = "https://crm.zarsim.com";
+
+  try {
+    const digest = await getDigest();
+
+    const guidForm = data.guid_form;
+
+    // جستجو
+    const filterUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${guidForm}'`;
+    const searchResponse = await fetch(filterUrl, {
+      headers: { Accept: "application/json;odata=verbose" },
+    });
+    const searchResult = await searchResponse.json();
+
+    let itemId;
+
+    if (searchResult.d.results.length > 0) {
+      // اگر آیتم موجود است، فقط آی‌دی را بگیر و کاری انجام نده
+      itemId = searchResult.d.results[0].Id;
+    } else {
+      // ایجاد آیتم جدید
+      const createResponse = await fetch(
+        `${webUrl}/_api/web/lists/getbytitle('${listName}')/items`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose",
+            "X-RequestDigest": digest,
+          },
+          body: JSON.stringify({
+            __metadata: { type: itemType },
+            ...data,
+          }),
+        }
+      );
+
+      if (!createResponse.ok) {
+        throw new Error(`Create failed: ${createResponse.statusText}`);
+      }
+
+      const createResult = await createResponse.json();
+      itemId = createResult.d.Id;
+    }
+
+    // حالا با itemId یک درخواست GET می‌زنیم تا مقدار reserveInventory را بگیریم
+    const getResponse = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${itemId})?$select=reserveInventory`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
+
+    if (!getResponse.ok) {
+      throw new Error(`Failed to get item: ${getResponse.statusText}`);
+    }
+
+    const getResult = await getResponse.json();
+    return getResult.d.reserveInventory;
+  } catch (err) {
+    console.error("❌ Error in addOrUpdateItemInVirtualInventory:", err);
+    throw err;
   }
 }
