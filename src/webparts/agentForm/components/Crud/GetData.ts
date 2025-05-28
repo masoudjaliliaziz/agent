@@ -197,7 +197,6 @@ export async function loadCustomerNumberFromOrder(guidForm: string) {
   const listName = "Orders";
 
   try {
-    // URL با فیلتر کردن بر اساس guid_form
     const response = await fetch(
       `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${guidForm}'`,
       {

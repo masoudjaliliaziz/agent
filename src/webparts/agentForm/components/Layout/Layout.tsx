@@ -3,6 +3,7 @@ import styles from "./Layout.module.scss";
 import { hashHistory } from "react-router";
 import { loadCustomerNumberFromOrder } from "../Crud/GetData";
 import CartHistory from "../history/CartHistory";
+
 export class Layout extends React.Component<any, any> {
   constructor(props) {
     super(props);
@@ -14,6 +15,7 @@ export class Layout extends React.Component<any, any> {
       showSuccessPopup: false,
     };
   }
+  
   async componentDidMount() {
     const guid_form = localStorage.getItem("agent_guid");
     const userPhoneNumber = await loadCustomerNumberFromOrder(guid_form);
@@ -90,7 +92,9 @@ export class Layout extends React.Component<any, any> {
             </div>
           </div>
         </header>
+
         <main>{this.props.children}</main>
+
         {this.state.showSuccessPopup && (
           <div className={styles.popupOverlay}>
             <div className={styles.popupBox}>

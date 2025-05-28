@@ -1,7 +1,6 @@
 import * as React from "react";
 import styles from "./History.module.scss";
 import { loadHistoryShopping } from "../Crud/GetData";
-import ReserveItem from "./CartHistoryItem";
 import CartHistoryItem from "./CartHistoryItem";
 
 export default class CartHistory extends React.Component<any, any> {
@@ -18,7 +17,6 @@ export default class CartHistory extends React.Component<any, any> {
 
     const cartHistoryData = await loadHistoryShopping(guid_form);
 
-    // مرتب‌سازی بر اساس فیلد تاریخ (فرضاً Created)
     const sortedData = cartHistoryData.sort((a, b) => {
       return new Date(b.Created).getTime() - new Date(a.Created).getTime();
     });
