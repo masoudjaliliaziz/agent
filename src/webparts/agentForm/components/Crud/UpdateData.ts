@@ -49,7 +49,6 @@ export async function handleUpdateCartPrice(id: number, data: any) {
   const webUrl = "https://crm.zarsim.com";
 
   try {
-    // دریافت Digest برای احراز هویت
     const digestResponse = await fetch(`${webUrl}/_api/contextinfo`, {
       method: "POST",
       headers: {
@@ -60,7 +59,6 @@ export async function handleUpdateCartPrice(id: number, data: any) {
     const digestData = await digestResponse.json();
     const digestValue = digestData.d.GetContextWebInformation.FormDigestValue;
 
-    // دریافت ListItemEntityTypeFullName
     const entityTypeResponse = await fetch(
       `${webUrl}/_api/web/lists/getbytitle('${listName}')?$select=ListItemEntityTypeFullName`,
       {
@@ -74,7 +72,6 @@ export async function handleUpdateCartPrice(id: number, data: any) {
     const entityTypeData = await entityTypeResponse.json();
     const listItemEntityType = entityTypeData.d.ListItemEntityTypeFullName;
 
-    // ارسال MERGE با __metadata
     const updateResponse = await fetch(
       `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${id})`,
       {

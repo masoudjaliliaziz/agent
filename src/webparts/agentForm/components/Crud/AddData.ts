@@ -230,7 +230,13 @@ export async function addItemToVirtualInventory(data) {
   }
 }
 
-export async function addOrUpdateItemInVirtualInventory(data) {
+export async function addOrUpdateItemInVirtualInventory(data: {
+  guid_form: string;
+  Title?: string;
+  ProductCode?: string;
+  status?: number;
+  reserveInventory?: string;
+}) {
   const listName = "virtualInventory";
   const itemType = `SP.Data.VirtualInventoryListItem`;
   const webUrl = "https://crm.zarsim.com";
@@ -239,21 +245,68 @@ export async function addOrUpdateItemInVirtualInventory(data) {
     const digest = await getDigest();
 
     const guidForm = data.guid_form;
+    const productCode = data.ProductCode;
 
-    // جستجو
-    const filterUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${guidForm}'`;
+    if (!guidForm) {
+      throw new Error("guid_form is required");
+    }
+
+    let filterQuery = `guid_form eq '${guidForm}'`;
+
+    if (
+      productCode !== undefined &&
+      productCode !== null &&
+      productCode !== ""
+    ) {
+      filterQuery += ` and ProductCode eq '${productCode}'`;
+    } else {
+      console.warn(
+        "Warning: ProductCode is undefined or empty, filtering only by guid_form"
+      );
+    }
+
+    // جستجو در لیست با فیلتر
+    const filterUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=${filterQuery}`;
     const searchResponse = await fetch(filterUrl, {
       headers: { Accept: "application/json;odata=verbose" },
     });
+
+    if (!searchResponse.ok) {
+      throw new Error(`Search failed: ${searchResponse.statusText}`);
+    }
+
     const searchResult = await searchResponse.json();
 
     let itemId;
 
     if (searchResult.d.results.length > 0) {
-      // اگر آیتم موجود است، فقط آی‌دی را بگیر و کاری انجام نده
       itemId = searchResult.d.results[0].Id;
+
+      const updateData = { ...data };
+      delete updateData.guid_form;
+
+      const updateResponse = await fetch(
+        `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${itemId})`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose",
+            "X-RequestDigest": digest,
+            "IF-MATCH": "*",
+            "X-HTTP-Method": "MERGE",
+          },
+          body: JSON.stringify({
+            __metadata: { type: itemType },
+            ...updateData,
+          }),
+        }
+      );
+
+      if (!updateResponse.ok) {
+        throw new Error(`Update failed: ${updateResponse.statusText}`);
+      }
     } else {
-      // ایجاد آیتم جدید
       const createResponse = await fetch(
         `${webUrl}/_api/web/lists/getbytitle('${listName}')/items`,
         {
@@ -278,7 +331,6 @@ export async function addOrUpdateItemInVirtualInventory(data) {
       itemId = createResult.d.Id;
     }
 
-    // حالا با itemId یک درخواست GET می‌زنیم تا مقدار reserveInventory را بگیریم
     const getResponse = await fetch(
       `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${itemId})?$select=reserveInventory`,
       {
@@ -291,6 +343,7 @@ export async function addOrUpdateItemInVirtualInventory(data) {
     }
 
     const getResult = await getResponse.json();
+
     return getResult.d.reserveInventory;
   } catch (err) {
     console.error("❌ Error in addOrUpdateItemInVirtualInventory:", err);

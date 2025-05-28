@@ -19,7 +19,7 @@ export interface CrudItemProps {
   onTotalUpdate: (total: number) => void;
 }
 
-interface CartListProps {
+export interface CartListProps {
   products: any[];
   onDelete: (id: number) => void;
   onTotalUpdate: (total: number) => void;

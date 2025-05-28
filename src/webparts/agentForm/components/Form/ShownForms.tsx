@@ -14,6 +14,7 @@ export default class ShownForm extends Component<ShownFormProps, any> {
       EventSend: [],
     };
   }
+
   async componentDidMount() {
     const { parent_GUID, item_GUID } = this.props;
     if (parent_GUID && item_GUID) {

@@ -12,9 +12,11 @@ export class Layout extends React.Component<any, any> {
   goCart() {
     hashHistory.push("/cart");
   }
+  
   goList() {
     hashHistory.push("/");
   }
+
   public render() {
     const pathname = this.props.location.pathname;
 

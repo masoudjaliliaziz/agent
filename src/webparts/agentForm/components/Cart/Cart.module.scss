@@ -579,3 +579,12 @@
   font-weight: bolder;
   color: #ac590b;
 }
+
+.actionssContainer{
+  padding-top: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  gap: 15px;
+}

@@ -19,27 +19,29 @@ export default class AgentForm extends React.Component<
     };
   }
 
-  componentDidMount() {
-    let guidFromUrl = "";
-    const hash = window.location.hash;
+componentDidMount() {
+  let guidFromUrl = "";
+  const hash = window.location.hash;
 
-    if (hash) {
-      const hashParams = new URLSearchParams(hash.replace("#/?", ""));
-      const guid = hashParams.get("guid");
+  if (hash) {
+    const hashParams = new URLSearchParams(hash.replace("#/?", ""));
+    const guid = hashParams.get("guid");
 
-      if (guid) {
-        guidFromUrl = guid;
-        localStorage.setItem("agent_guid", guid);
-        this.setState({ parent_GUID: guid });
-        return;
-      }
-    }
-
-    const guidFromStorage = localStorage.getItem("agent_guid");
-    if (guidFromStorage) {
-      this.setState({ parent_GUID: guidFromStorage });
+    if (guid) {
+      guidFromUrl = guid;
+      sessionStorage.setItem("agent_guid", guid); // فقط برای این تب ذخیره می‌شه
+      this.setState({ parent_GUID: guid });
+      return;
     }
   }
+
+  const guidFromStorage = sessionStorage.getItem("agent_guid"); // از sessionStorage می‌خونه
+  if (guidFromStorage) {
+    this.setState({ parent_GUID: guidFromStorage });
+  }
+}
+
+
 
   public render(): React.ReactElement<IAgentFormProps> {
     return (

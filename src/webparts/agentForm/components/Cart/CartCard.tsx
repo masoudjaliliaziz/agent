@@ -3,7 +3,7 @@ import styles from "./Cart.module.scss";
 import Counter from "./Counter";
 import { loadItemByCode, loadReservedInventoryByCode } from "../Crud/GetData";
 import { handleUpdateCartPrice } from "../Crud/UpdateData";
-import { addItemToVirtualInventory } from "../Crud/AddData";
+import { addOrUpdateItemInVirtualInventory } from "../Crud/AddData";
 import ReserveHistory from "../reserve/ReserveHistory";
 
 export default class CartCard extends React.Component<any, any> {
@@ -110,7 +110,7 @@ export default class CartCard extends React.Component<any, any> {
 
     this.setState({ errorMsg: "" });
 
-    const reserveInventory = await addItemToVirtualInventory({
+    const reserveInventory = await addOrUpdateItemInVirtualInventory({
       guid_form,
       Title,
       ProductCode: String(codegoods),
@@ -234,7 +234,7 @@ export default class CartCard extends React.Component<any, any> {
             />
             <div>قیمت</div>
           </div>
-          <div className={styles.actionContainer}>
+          <div className={styles.actionssContainer}>
             <Counter
               Id={product.Id}
               onDelete={onDelete}
