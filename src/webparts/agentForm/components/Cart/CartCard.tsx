@@ -225,8 +225,9 @@ export default class CartCard extends React.Component<any, any> {
               onBlur={this.handlePriceBlur}
               onChange={this.handlePriceChange}
             />
-            <div>قیمت</div>
+            <div className={styles.priceFormDiv}>قیمت</div>
           </div>
+
           <div className={styles.actionssContainer}>
             <Counter
               Id={product.Id}
@@ -257,6 +258,7 @@ export default class CartCard extends React.Component<any, any> {
             {errorMsg && (
               <p style={{ color: "red", fontWeight: "bold" }}>{errorMsg}</p>
             )}
+
             <div className={styles.actionContainer}>
               <div
                 onClick={() => this.setState({ showSuccessPopup: true })}
@@ -264,15 +266,18 @@ export default class CartCard extends React.Component<any, any> {
               >
                 نمایش موجودی رزرو{" "}
               </div>
+
               <p className={styles.inventoryDescription}>
                 موجودی رزرو : {reserveInventory}
               </p>
             </div>
+
             <p>
               <small>تخفیف ({discount}٪):</small>{" "}
               {this.formatNumberWithComma(discountAmount).toLocaleString()}{" "}
               تومان
             </p>
+
             <p style={{ color: "green" }}>
               <small>قیمت بعد تخفیف (هر عدد):</small>{" "}
               {this.formatNumberWithComma(finalPricePerItem).toLocaleString()}{" "}
@@ -285,6 +290,7 @@ export default class CartCard extends React.Component<any, any> {
             <div>جمع</div>
           </div>
         </div>
+
         {showSuccessPopup && (
           <div className={styles.popupOverlay}>
             <div className={styles.popupBox}>

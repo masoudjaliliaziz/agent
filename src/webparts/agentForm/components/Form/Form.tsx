@@ -95,6 +95,7 @@ export default class Form extends Component<FormProps, any> {
               subFolder={this.state.item_GUID}
               title={"فایل دریافتی"}
             />
+
             <FileUploader
               ref={(el) => (this.sendRef = el)}
               orderNumber={this.props.parent_GUID}
@@ -105,6 +106,7 @@ export default class Form extends Component<FormProps, any> {
 
           <div className={styles.selectContainer}>
             <select
+              className={styles.formSelect}
               value={this.state.Event_Type}
               onChange={(event) =>
                 this.setState({ Event_Type: String(event.currentTarget.value) })
@@ -122,6 +124,7 @@ export default class Form extends Component<FormProps, any> {
             </select>
 
             <select
+              className={styles.formSelect}
               value={this.state.Order_Status}
               onChange={(event) =>
                 this.setState({
@@ -140,13 +143,13 @@ export default class Form extends Component<FormProps, any> {
           </div>
 
           <textarea
+            className={styles.formTextArea}
             placeholder="توضیحات ..."
             value={this.state.Description}
             onChange={(e) =>
               this.setState({ Description: e.currentTarget.value })
             }
           />
-
 
           <div className={styles.buttonSave} onClick={this.onEventAdd}>
             ذخیره
@@ -171,4 +174,3 @@ export default class Form extends Component<FormProps, any> {
     );
   }
 }
-

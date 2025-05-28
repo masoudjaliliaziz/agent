@@ -195,7 +195,7 @@
   justify-content: space-between;
   align-items: center;
   text-align: right;
-
+  
   gap: 15px;
 
   .codeDescription {
@@ -204,6 +204,7 @@
     color: #555;
     line-height: 1.6;
   }
+  
   .titleDescription {
     direction: rtl;
     font-weight: bolder;
@@ -281,7 +282,8 @@
   justify-content: center;
   align-items: center;
   border-radius: 6px;
-  input {
+
+  .priceFormInput {
     font-weight: bolder;
     padding: 0 15px;
     height: 25px;
@@ -291,7 +293,8 @@
     outline: none;
     border-radius: 6px;
   }
-  div {
+
+  .priceFormDiv {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -313,16 +316,8 @@
   justify-content: center;
   align-items: center;
   border-radius: 6px;
-  input {
-    padding: 0 5px;
-    height: 25px;
-    width: 60px;
-    background-color: white;
-    border: none;
-    outline: none;
-    border-radius: 6px;
-  }
-  button {
+
+  .discountFormBtn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -336,42 +331,11 @@
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
     cursor: pointer;
+    
     &:hover {
       background-color: #193b2b;
       transform: scale(1.05);
     }
-  }
-}
-
-.fullPrice {
-  background-color: lightgray;
-  padding: 5px 7.5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 6px;
-  input {
-    padding: 0 5px;
-    height: 25px;
-    width: 60px;
-    background-color: white;
-    border: none;
-    outline: none;
-    border-radius: 6px;
-  }
-  button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    outline: none;
-    background-color: gray;
-    color: white;
-    font-weight: bold;
-    padding: 5px;
-    height: 25px;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
   }
 }
 

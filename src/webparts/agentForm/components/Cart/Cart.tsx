@@ -173,6 +173,7 @@ export default class Cart extends Component<any, any> {
                 onChange={this.handleDiscountChange}
               />
             </div>
+            
             <div>
               <small className={styles.totalContainerSmall}>
                 {" "}
