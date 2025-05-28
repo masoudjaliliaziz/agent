@@ -159,8 +159,6 @@ export async function loadFiles(
 
     const data = await response.json();
 
-    console.log("داده برگشتی از API:", data);
-
     return data.d.results.map((file) => ({
       name: file.Name,
       url: `${webUrl}${file.ServerRelativeUrl}`,
@@ -228,8 +226,8 @@ export async function loadOrdersByPhoneNumber(
     );
 
     const data = await response.json();
-
     console.log(data.d.results);
+    return data.d.results;
   } catch (err) {
     console.error("خطا در دریافت آیتم‌ها:", err);
     return [];
