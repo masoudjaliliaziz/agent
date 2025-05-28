@@ -1,12 +1,23 @@
 import * as React from "react";
 import styles from "./Layout.module.scss";
 import { hashHistory } from "react-router";
+import { loadCustomerNumberFromOrder } from "../Crud/GetData";
+import CartHistory from "../history/CartHistory";
 export class Layout extends React.Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {};
     this.goCart = this.goCart.bind(this);
     this.goList = this.goList.bind(this);
+    this.state = {
+      userPhoneNumber: "",
+      showSuccessPopup: false,
+    };
+  }
+  async componentDidMount() {
+    const guid_form = localStorage.getItem("agent_guid");
+    const userPhoneNumber = await loadCustomerNumberFromOrder(guid_form);
+    this.setState({ userPhoneNumber });
   }
 
   goCart() {
@@ -66,9 +77,33 @@ export class Layout extends React.Component<any, any> {
                 <path d="M3 6h18M3 12h18M3 18h18" />
               </svg>
             </div>
+
+            <div
+              className={styles.history}
+              onClick={() => {
+                this.setState({ showSuccessPopup: true });
+              }}
+            >
+              {this.state.userPhoneNumber}
+            </div>
           </div>
         </header>
         <main>{this.props.children}</main>
+        {this.state.showSuccessPopup && (
+          <div className={styles.popupOverlay}>
+            <div className={styles.popupBox}>
+              <CartHistory  />
+              <button
+                className={styles.closePopupBtn}
+                onClick={() => {
+                  this.setState({ showSuccessPopup: false });
+                }}
+              >
+                بستن
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

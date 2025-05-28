@@ -194,3 +194,53 @@ export async function loadReservedInventoryByCode(productsCode: string) {
     return [];
   }
 }
+
+export async function loadCustomerNumberFromOrder(guidForm: string) {
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Orders";
+
+  try {
+    // URL با فیلتر کردن بر اساس guid_form
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${guidForm}'`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
+
+    const data = await response.json();
+
+    return data.d.results.at(0).phoneNumber;
+  } catch (err) {
+    console.error("خطا در دریافت آیتم‌ها:", err);
+    return [];
+  }
+}
+
+export async function loadHistoryShopping(filterGuidForm: string): Promise<any[]> {
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "shoping";
+
+  try {
+    const url = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${filterGuidForm}'`;
+    console.log("Fetch URL:", url);
+
+    const response = await fetch(url, {
+      headers: { Accept: "application/json;odata=verbose" },
+    });
+
+    if (!response.ok) {
+      console.error("Fetch error status:", response.status, response.statusText);
+      return [];
+    }
+
+    const data = await response.json();
+    console.log("API response data:", data);
+
+    return data.d.results;
+  } catch (err) {
+    console.error("خطا در دریافت آیتم‌ها:", err);
+    return [];
+  }
+}
+

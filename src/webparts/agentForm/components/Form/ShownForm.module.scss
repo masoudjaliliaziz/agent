@@ -143,17 +143,7 @@
     justify-content: center;
     width: 100%;
     gap: 10px;
-    div {
-      outline: none;
-      width: 100%;
-      border-radius: 5.5px;
-      font-size: smaller;
-      font-weight: bolder;
-      background-color: white;
-      direction: rtl;
-      padding: 5px 10px;
-      min-height: 70px;
-    }
+
     p {
       color: black;
       font-weight: bolder;
@@ -190,4 +180,15 @@
       text-decoration: none;
     }
   }
+}
+
+.descriptionfied {
+  outline: none;
+  width: 100%;
+  border-radius: 5.5px;
+  font-size: smaller;
+  font-weight: bolder;
+  background-color: white;
+  padding: 5px 10px;
+  min-height: 70px;
 }
