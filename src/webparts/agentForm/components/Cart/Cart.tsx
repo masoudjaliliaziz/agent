@@ -158,6 +158,10 @@ export default class Cart extends Component<any, any> {
           onItemUpdate={this.handleItemUpdate}
         />
 
+        <div className={styles.addProductDiv}>
+          <button className={styles.addProductDiv}>افزودن محصول+</button>
+        </div>
+
         <div className={styles.totalContainer}>
           <div className={styles.row}>
             <div className={styles.totalContainerDiv}>
@@ -170,7 +174,10 @@ export default class Cart extends Component<any, any> {
               />
             </div>
             <div>
-              <small className={styles.totalContainerSmall}> مقدار تخفیف </small>
+              <small className={styles.totalContainerSmall}>
+                {" "}
+                مقدار تخفیف{" "}
+              </small>
               <h3 className={styles.totalContainerH3}>
                 {this.formatNumberWithComma(discountAmount)}
                 <small className={styles.totalContainerH3Small}>تومان</small>

@@ -1,38 +1,3 @@
-button.reciveBtn {
-  width: 95px;
-  height: 25px;
-  border-radius: 5.5px;
-  font-weight: bolder;
-  background-color: rgb(38, 104, 228);
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: all 300ms linear;
-
-  &:hover {
-    background-color: white;
-    color: rgb(38, 104, 228);
-  }
-}
-
-button.sendBtn {
-  width: 95px;
-  height: 25px;
-  border-radius: 5.5px;
-  font-weight: bolder;
-  background-color: rgb(13, 105, 25);
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: all 300ms linear;
-
-  &:hover {
-    background-color: white;
-
-    color: rgb(13, 105, 25);
-  }
-}
-
 .uploaderDiv {
   display: flex;
   justify-content: space-between;
@@ -57,11 +22,11 @@ button.sendBtn {
     }
   }
 
-  input {
+  .uploaderInput {
     display: none;
   }
 
-  label {
+  .uploaderLabel {
     width: 95px;
     height: 25px;
     border-radius: 5.5px;

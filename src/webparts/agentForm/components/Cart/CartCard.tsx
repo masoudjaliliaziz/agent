@@ -43,7 +43,6 @@ export default class CartCard extends React.Component<any, any> {
   }
   async componentDidUpdate(prevProps, prevState) {
     if (this.props.product.Id !== prevProps.product.Id) {
-      // وقتی محصول تغییر کرد، دوباره اطلاعات لود کن
       const productFromStore = await loadItemByCode(
         this.props.product.codegoods
       );
@@ -64,7 +63,6 @@ export default class CartCard extends React.Component<any, any> {
     }
 
     if (this.state.count !== prevState.count) {
-      // وقتی تعداد تغییر کرد، دوباره موجودی رزرو شده آپدیت شود
       await this.fetchReservedTotal(this.state.productFromStore.Code);
     }
 
@@ -79,7 +77,6 @@ export default class CartCard extends React.Component<any, any> {
     if (!productCode) return;
 
     try {
-      // از توابع موجودت استفاده کن
       const reserveInventories = await loadReservedInventoryByCode(productCode);
 
       const totalReserved = reserveInventories.reduce((acc, item) => {
@@ -119,7 +116,6 @@ export default class CartCard extends React.Component<any, any> {
     });
     this.setState({ reserveInventory });
 
-    // بعد از رزرو موفق، موجودی رزرو شده رو دوباره آپدیت کن
     await this.fetchReservedTotal(productFromStore.Code);
   };
 
@@ -129,8 +125,6 @@ export default class CartCard extends React.Component<any, any> {
       this.props.onItemUpdate(this.props.product.Id, {
         count: newCount,
       });
-      // این خط حذف شد چون fetchReservedTotal در componentDidUpdate انجام میشه
-      // this.fetchReservedTotal(this.state.productFromStore.Code);
     });
   };
 
@@ -181,7 +175,6 @@ export default class CartCard extends React.Component<any, any> {
     return new Intl.NumberFormat().format(Number(number.toFixed(2)));
   };
 
-  // دریافت مجموع رزرو شده از ReserveHistory
   handleReservedTotalChange = (reservedTotal: number) => {
     this.setState({ reservedTotal });
   };
