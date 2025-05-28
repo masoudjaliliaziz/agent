@@ -40,7 +40,12 @@ export default class ReserveHistory extends React.Component<any, any> {
           <p>هیچ موجودی رزروی وجود ندارد</p>
         ) : (
           reserveInventories.map((data, index) => (
-            <ReserveItem key={index} reserveData={data} />
+            <ReserveItem
+              key={index}
+              reserveData={data}
+              onReservedTotalChange={this.props.onReservedTotalChange}
+              onDeleted={() => this.componentDidMount()} // بارگذاری مجدد پس از حذف
+            />
           ))
         )}
       </div>

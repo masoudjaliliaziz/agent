@@ -5,6 +5,7 @@ import { FormProps, ShownFormProps } from "../IAgentFormProps";
 
 import { convertIsoToJalali } from "../utils/convertToJalali";
 import { loadFiles } from "../Crud/GetData";
+import { convertToJalaliDateTime } from "../utils/geoToJalali";
 
 export default class ShownForm extends Component<ShownFormProps, any> {
   constructor(props: FormProps) {
@@ -71,7 +72,7 @@ export default class ShownForm extends Component<ShownFormProps, any> {
             </div>
             <div>
               <small> تاریخ ایجاد </small>
-              <p>{convertIsoToJalali(this.props.Created)}</p>
+              <p>{convertToJalaliDateTime(this.props.Created)}</p>
             </div>
           </div>
         </div>
