@@ -100,7 +100,11 @@ export default class ReserveItem extends React.Component<any, any> {
           <p> {userLoading ? "در حال بارگذاری..." : userName} </p>
         </div>
 
-        {canDelete && <button onClick={this.handleDelete} className={styles.deleteReserve}>حذف رزرو من</button>}
+        {canDelete && (
+          <div onClick={this.handleDelete} className={styles.deleteReserve}>
+            حذف رزرو من
+          </div>
+        )}
       </div>
     );
   }

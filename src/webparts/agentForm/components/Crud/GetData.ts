@@ -191,3 +191,47 @@ export async function loadReservedInventoryByCode(productsCode: string) {
     return [];
   }
 }
+
+export async function loadOrders(filterGuidForm: string) {
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Orders";
+
+  try {
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${filterGuidForm}'`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
+
+    const data = await response.json();
+
+    return data.d.results.at(0).phoneNumber;
+  } catch (err) {
+    console.error("خطا در دریافت آیتم‌ها:", err);
+    return [];
+  }
+}
+
+export async function loadOrdersByPhoneNumber(
+  phoneNumber: string
+): Promise<any[]> {
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Orders";
+
+  try {
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=phoneNumber eq '${phoneNumber}'`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
+
+    const data = await response.json();
+
+    console.log(data.d.results);
+  } catch (err) {
+    console.error("خطا در دریافت آیتم‌ها:", err);
+    return [];
+  }
+}

@@ -27,13 +27,13 @@
       justify-content: space-between;
       align-items: center;
 
-      div {
+      .ColDataDiv {
         display: flex;
         flex-direction: row-reverse;
         align-items: center;
         gap: 10px;
 
-        p {
+        .ColDataP {
           background-color: white;
           outline: none;
 
@@ -42,7 +42,7 @@
           padding: 1.5px 3.5px;
         }
 
-        small {
+        .ColDataSmall {
           font-size: smaller;
           font-weight: bolder;
           color: black;
@@ -154,24 +154,25 @@
   .Description {
     display: flex;
     flex-direction: column;
-    align-items: end;
-    justify-content: center;
+    align-items: start;
     width: 100%;
     gap: 10px;
 
-    div {
+    .descriptionDiv {
       outline: none;
       width: 100%;
       border-radius: 5.5px;
       font-size: smaller;
       font-weight: bolder;
       background-color: white;
-      direction: rtl;
+      display: flex;
+      justify-content: end;
+      align-items: start;
       padding: 5px 10px;
       min-height: 70px;
     }
 
-    p {
+    .descriptionP {
       color: black;
       font-weight: bolder;
       font-size: smaller;
