@@ -48,7 +48,6 @@ export async function loadCard(filterGuidForm: string): Promise<any[]> {
   const listName = "shoping";
 
   try {
-    // URL با فیلتر کردن بر اساس guid_form
     const response = await fetch(
       `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${filterGuidForm}'`,
       {
@@ -126,7 +125,6 @@ export async function loadEvent(filterGuidForm: string): Promise<any[]> {
   const listName = "Events";
 
   try {
-    // URL با فیلتر کردن بر اساس guid_form
     const response = await fetch(
       `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=Parent_GUID eq '${filterGuidForm}'`,
       {
@@ -178,7 +176,6 @@ export async function loadReservedInventoryByCode(productsCode: string) {
   const listName = "virtualInventory";
 
   try {
-    // URL با فیلتر کردن بر اساس guid_form
     const response = await fetch(
       `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=ProductCode eq '${productsCode}'&expand=Author`,
       {

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Component } from "react";
 import styles from "./Form.module.scss";
 import { FormProps } from "../IAgentFormProps";
-import uuidv4 from "../utils/createGuid"; // برای تولید GUID
+import uuidv4 from "../utils/createGuid";
 import { handleAddEvent } from "../Crud/AddData";
 import { loadEvent } from "../Crud/GetData";
 import ShownForm from "./ShownForms";
@@ -23,14 +23,27 @@ export default class Form extends Component<FormProps, any> {
     };
 
     this.onEventAdd = this.onEventAdd.bind(this);
+    this.loadData = this.loadData.bind(this);
   }
 
   async componentDidMount() {
-    const parentGuid = await this.props.parent_GUID;
-    console.log(parentGuid);
-    const EventsData = await loadEvent(this.props.parent_GUID);
-    const newGUID = uuidv4();
+    if (this.props.parent_GUID) {
+      this.loadData(this.props.parent_GUID);
+    }
+  }
 
+  async componentDidUpdate(prevProps: FormProps) {
+    if (
+      prevProps.parent_GUID !== this.props.parent_GUID &&
+      this.props.parent_GUID
+    ) {
+      this.loadData(this.props.parent_GUID);
+    }
+  }
+
+  async loadData(guid: string) {
+    const EventsData = await loadEvent(guid);
+    const newGUID = uuidv4();
     this.setState({
       Events: EventsData.reverse(),
       item_GUID: newGUID,
@@ -39,7 +52,6 @@ export default class Form extends Component<FormProps, any> {
 
   async onEventAdd() {
     try {
-      // ابتدا آپلود فایل‌ها (اگر انتخاب شده باشند)
       if (this.reciveRef) {
         await this.reciveRef.uploadFile();
       }
@@ -47,7 +59,6 @@ export default class Form extends Component<FormProps, any> {
         await this.sendRef.uploadFile();
       }
 
-      // سپس ذخیره داده‌های فرم
       const { item_GUID, Event_Type, Order_Status, Description } = this.state;
 
       await handleAddEvent(
@@ -58,23 +69,18 @@ export default class Form extends Component<FormProps, any> {
         Description
       );
 
-      const updatedEvents = await loadEvent(this.props.parent_GUID);
-      const newGUID = uuidv4();
+      await this.loadData(this.props.parent_GUID);
 
       this.setState({
-        Events: updatedEvents.reverse(),
-        item_GUID: newGUID,
         Event_Type: "chose",
         Order_Status: "chose",
         Description: "",
       });
 
-      // پاک کردن فایل‌های انتخاب‌شده بعد از ذخیره
       if (this.reciveRef) this.reciveRef.clearFile();
       if (this.sendRef) this.sendRef.clearFile();
     } catch (error) {
       console.error("خطا در ذخیره رویداد یا آپلود فایل:", error);
-      // اینجا می‌تونی نمایش پیام خطا رو اضافه کنی
     }
   }
 
@@ -165,3 +171,4 @@ export default class Form extends Component<FormProps, any> {
     );
   }
 }
+

@@ -1,61 +1,32 @@
-button.reciveBtn {
-  width: 95px;
-  height: 25px;
-  border-radius: 5.5px;
-  font-weight: bolder;
-  background-color: rgb(38, 104, 228);
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: all 300ms linear;
-  &:hover {
-    background-color: white;
-
-    color: rgb(38, 104, 228);
-  }
-}
-button.sendBtn {
-  width: 95px;
-  height: 25px;
-  border-radius: 5.5px;
-  font-weight: bolder;
-  background-color: rgb(13, 105, 25);
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: all 300ms linear;
-  &:hover {
-    background-color: white;
-
-    color: rgb(13, 105, 25);
-  }
-}
-
 .uploaderDiv {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   height: 50px;
+
   .alertContainer {
     display: flex;
     flex-direction: column;
-
     align-items: center;
     gap: 5px;
+
     .alertStatusSuccess {
       font-weight: bolder;
       color: rgb(13, 105, 25);
     }
+
     .alertStatusFailed {
       font-weight: bolder;
       color: rgb(151, 14, 9);
     }
   }
-  input {
+
+  .uploaderInput {
     display: none;
   }
-  label {
+
+  .uploaderLabel {
     width: 95px;
     height: 25px;
     border-radius: 5.5px;
@@ -68,6 +39,7 @@ button.sendBtn {
     display: flex;
     justify-content: center;
     align-items: center;
+
     &:hover {
       background-color: white;
 
@@ -75,22 +47,23 @@ button.sendBtn {
     }
   }
 }
+
 .fileInfo {
   display: flex;
   align-items: center;
   justify-content: center;
-
-
 }
-  .fileName {
-    font-size: 13px;
-    color: #333;
 
-    font-weight: bolder;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+.fileName {
+  font-size: 13px;
+  color: #333;
+
+  font-weight: bolder;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .removeFileBtn {
   display: flex;
   justify-content: center;
@@ -103,6 +76,7 @@ button.sendBtn {
   margin-left: 8px;
   font-weight: bolder;
   transition: all 300ms linear;
+
   &:hover {
     color: lightcoral;
   }

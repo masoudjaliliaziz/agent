@@ -19,24 +19,28 @@ export default class Cart extends Component<any, any> {
   }
 
   componentDidMount() {
+    this.setGuidFromUrlOrSession();
+  }
+
+  setGuidFromUrlOrSession = () => {
     const hash = window.location.hash;
     if (hash) {
       const hashParams = new URLSearchParams(hash.replace("#/?", ""));
       const guid = hashParams.get("guid");
       if (guid) {
-        localStorage.setItem("agent_guid", guid);
+        sessionStorage.setItem("agent_guid", guid);
         this.setState({ guid }, () => this.loadCartItems(guid));
         return;
       }
     }
 
-    const guidFromStorage = localStorage.getItem("agent_guid");
-    if (guidFromStorage) {
-      this.setState({ guid: guidFromStorage }, () =>
-        this.loadCartItems(guidFromStorage)
+    const guidFromSession = sessionStorage.getItem("agent_guid");
+    if (guidFromSession) {
+      this.setState({ guid: guidFromSession }, () =>
+        this.loadCartItems(guidFromSession)
       );
     }
-  }
+  };
 
   loadCartItems = (guid: string) => {
     loadCard(guid).then((cartItems) => {
@@ -90,7 +94,7 @@ export default class Cart extends Component<any, any> {
     discountPersenTage
   ) => {
     this.setState({ saveSignal: Date.now() });
-    await updateOrderFormByGuid(localStorage.getItem("agent_guid"), {
+    await updateOrderFormByGuid(sessionStorage.getItem("agent_guid"), {
       toatalPriceAfterDiscount: String(finalTotal),
       toatalPriceBeforeDiscount: String(totalBefore),
       discountAmount: String(discountAmount),
@@ -154,6 +158,10 @@ export default class Cart extends Component<any, any> {
           onItemUpdate={this.handleItemUpdate}
         />
 
+        <div className={styles.addProductDiv}>
+          <button className={styles.addProductDiv}>افزودن محصول+</button>
+        </div>
+
         <div className={styles.totalContainer}>
           <div className={styles.row}>
             <div className={styles.totalContainerDiv}>
@@ -180,8 +188,7 @@ export default class Cart extends Component<any, any> {
           <div className={styles.row}>
             <div>
               <small className={styles.totalContainerSmall}>
-                {" "}
-                جمع کل بدون تخفیف{" "}
+                جمع کل بدون تخفیف
               </small>
               <h3 className={styles.totalContainerH3}>
                 {this.formatNumberWithComma(totalBefore)}{" "}
@@ -199,7 +206,6 @@ export default class Cart extends Component<any, any> {
 
           <div
             className={styles.submit}
-            style={{}}
             onClick={() =>
               this.handleSaveAllDiscounts(
                 finalTotal,

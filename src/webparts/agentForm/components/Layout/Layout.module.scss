@@ -1,13 +1,8 @@
 .Layout {
   padding: 20px 40px;
   width: 100%;
-  //   display: flex;
-  //   flex-direction: column;
-  //   justify-content: center;
-  //   align-items: center;
-  //   width: 100vw;
-  //   height: 100vh;
 }
+
 .Header {
   background-color: rgb(37, 37, 37);
   width: 100%;
@@ -32,6 +27,7 @@
   font-weight: bolder;
   font-size: x-large;
 }
+
 .btn {
   width: 40px;
   height: 40px;
@@ -45,6 +41,9 @@
   justify-content: center;
   align-items: center;
   gap: 5px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+
   background-color: white;
   color: rgb(45, 45, 45);
   &:hover {

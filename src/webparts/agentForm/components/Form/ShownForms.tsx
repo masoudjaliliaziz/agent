@@ -15,6 +15,7 @@ export default class ShownForm extends Component<ShownFormProps, any> {
       EventSend: [],
     };
   }
+
   async componentDidMount() {
     const { parent_GUID, item_GUID } = this.props;
     if (parent_GUID && item_GUID) {
@@ -32,8 +33,8 @@ export default class ShownForm extends Component<ShownFormProps, any> {
       <div className={styles.formContainer}>
         <div className={styles.selectContainer}>
           <div className={styles.ColData}>
-            <div>
-              <small>نوع رویداد</small>
+            <div className={styles.ColDataDiv}>
+              <small className={styles.ColDataSmall}>نوع رویداد</small>
               <p
                 className={
                   this.props.Event_Type === "phoneNumber"
@@ -64,38 +65,45 @@ export default class ShownForm extends Component<ShownFormProps, any> {
               <p>{this.props.Order_Status}</p>
             </div>
           </div>
+
           <div className={styles.ColData}>
             <div>
               <small>ایجاد شده توسط </small>
               <p>{this.props.Display_Name}</p>
             </div>
+
             <div>
               <small> تاریخ ایجاد </small>
               <p>{convertToJalaliDateTime(this.props.Created)}</p>
             </div>
           </div>
         </div>
+
         <div className={styles.Description}>
-          <p>توضیحات</p>
-          <div className={styles.descriptionfied}>{this.props.Description}</div>
+          <p className={styles.descriptionParaph}>توضیحات</p>
+          <div className={styles.descriptionDiv}>{this.props.Description}</div>
         </div>
+
         <div className={styles.colDataLinks}>
+
           {this.state.EventRecive.map((e, i) => (
             <div className={styles.ColDataLinkRecive}>
-              <a href={e.url} key={i} download>
+              <a className={styles.ColDataLinkReciveAlink} href={e.url} key={i} download>
                 {e.name}
               </a>
-              <small>فایل دریافتی</small>
+              <small className={styles.ColDataLinkReciveSmall}>فایل دریافتی</small>
             </div>
           ))}
+
           {this.state.EventSend.map((e, i) => (
             <div className={styles.ColDataLinkSend}>
-              <a href={e.url} key={i} download>
+              <a href={e.url} key={i} download className={styles.ColDataLinkSendAlink}>
                 {e.name}
               </a>
-              <small>فایل ارسالی</small>
+              <small className={styles.ColDataLinkSendSmall}>فایل ارسالی</small>
             </div>
           ))}
+
         </div>
       </div>
     );
