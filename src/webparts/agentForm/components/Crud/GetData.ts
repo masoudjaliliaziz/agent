@@ -159,8 +159,6 @@ export async function loadFiles(
 
     const data = await response.json();
 
-    console.log("داده برگشتی از API:", data);
-
     return data.d.results.map((file) => ({
       name: file.Name,
       url: `${webUrl}${file.ServerRelativeUrl}`,
@@ -192,13 +190,13 @@ export async function loadReservedInventoryByCode(productsCode: string) {
   }
 }
 
-export async function loadCustomerNumberFromOrder(guidForm: string) {
+export async function loadOrders(filterGuidForm: string) {
   const webUrl = "https://crm.zarsim.com";
   const listName = "Orders";
-
+  console.log(filterGuidForm);
   try {
     const response = await fetch(
-      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${guidForm}'`,
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${filterGuidForm}'`,
       {
         headers: { Accept: "application/json;odata=verbose" },
       }
@@ -212,31 +210,48 @@ export async function loadCustomerNumberFromOrder(guidForm: string) {
     return [];
   }
 }
-
-export async function loadHistoryShopping(filterGuidForm: string): Promise<any[]> {
+export async function loadAllOrders(filterGuidForm: string) {
   const webUrl = "https://crm.zarsim.com";
-  const listName = "shoping";
-
+  const listName = "Orders";
+  console.log(filterGuidForm);
   try {
-    const url = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${filterGuidForm}'`;
-    console.log("Fetch URL:", url);
-
-    const response = await fetch(url, {
-      headers: { Accept: "application/json;odata=verbose" },
-    });
-
-    if (!response.ok) {
-      console.error("Fetch error status:", response.status, response.statusText);
-      return [];
-    }
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${filterGuidForm}'`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
 
     const data = await response.json();
-    console.log("API response data:", data);
 
+    // برگرداندن کل شیء اولین آیتم
+    return data.d.results[0] || null;
+  } catch (err) {
+    console.error("خطا در دریافت آیتم‌ها:", err);
+    return null;
+  }
+}
+
+
+export async function loadOrdersByPhoneNumber(
+  phoneNumber: string
+): Promise<any[]> {
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Orders";
+
+  try {
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=phoneNumber eq '${phoneNumber}'`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
+
+    const data = await response.json();
+    console.log(data.d.results);
     return data.d.results;
   } catch (err) {
     console.error("خطا در دریافت آیتم‌ها:", err);
     return [];
   }
 }
-

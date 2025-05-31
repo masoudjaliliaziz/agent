@@ -351,7 +351,6 @@ export async function addOrUpdateItemInVirtualInventory(data: {
     throw err;
   }
 }
-
 export async function addToCart(product: Product): Promise<void> {
   const agentGuid = sessionStorage.getItem("agent_guid");
   if (!agentGuid) {
@@ -389,7 +388,6 @@ export async function addToCart(product: Product): Promise<void> {
     if (!response.ok) {
       throw new Error("خطا در افزودن به سبد خرید");
     }
-    
   } catch (error) {
     console.error("❌ خطا:", error);
     alert("افزودن به سبد خرید با خطا مواجه شد.");

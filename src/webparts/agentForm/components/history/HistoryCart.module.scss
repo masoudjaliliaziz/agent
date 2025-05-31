@@ -493,6 +493,9 @@
   color: white;
   font-weight: bold;
   font-size: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   &:hover {
     background-color: #043d3f;
@@ -587,82 +590,4 @@
   justify-content: center;
   align-items: start;
   gap: 15px;
-}
-
-.addProductDiv {
-  padding-block: 8px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.addProductBtn {
-  padding: 8px 16px;
-  width: 200px;
-  background-color: #000;
-  color: #ffffff;
-  border-radius: 8px;
-  transition: all 300ms linear;
-  font-size: 18px;
-  font-weight: 400;
-  direction: rtl;
-  border: none;
-
-  &:hover {
-    background-color: #e4e4e4;
-    scale: 1.05;
-    color: rgb(0, 0, 0);
-  }
-}
-.shopPopupBackdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
-
-.shopPopupContainor {
-  position: fixed;
-  direction: rtl;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px 20px 60px 20px;
-  z-index: 1001;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  width: 1200px;
-  height: 900px;
-}
-
-.closeShopPopupBtn {
-  width: 60%;
-  max-width: 250px;
-  border: none;
-  outline: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  width: 100%;
-  padding: 8px 12px;
-  font-size: 18px;
-  font-weight: 400;
-  border-radius: 6px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 300ms linear;
-  background-color: rgb(41, 41, 41);
-  margin: 10px auto;
-
-  &:hover {
-    background-color: #979797;
-    scale: 105%;
-    color: white;
-  }
 }

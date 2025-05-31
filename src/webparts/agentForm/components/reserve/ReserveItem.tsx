@@ -1,6 +1,7 @@
 import * as React from "react";
 import styles from "./Reserve.module.scss";
 import { convertToJalaliDateTime } from "../utils/geoToJalali";
+import { deleteVirtualInventoryItemById } from "../Crud/DeleteData";
 
 export default class ReserveItem extends React.Component<any, any> {
   constructor(props) {
@@ -9,14 +10,29 @@ export default class ReserveItem extends React.Component<any, any> {
       userName: null,
       userLoading: true,
       userError: null,
+      currentUserId: null,
     };
   }
 
   async componentDidMount() {
     const userId = this.props.reserveData.AuthorId;
 
+    // دریافت اطلاعات کاربر لاگین‌شده
+    try {
+      const res = await fetch(`https://crm.zarsim.com/_api/web/currentuser`, {
+        headers: {
+          Accept: "application/json;odata=verbose",
+        },
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      this.setState({ currentUserId: data.d.Id });
+    } catch (err) {
+      console.error("Error fetching current user ID", err);
+    }
+
     if (!userId) {
-      console.warn("AuthorId is missing, skipping user fetch");
       this.setState({ userLoading: false, userName: "نامشخص" });
       return;
     }
@@ -32,16 +48,11 @@ export default class ReserveItem extends React.Component<any, any> {
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const data = await response.json();
       const userName = data.d.Title || "نامشخص";
 
       this.setState({ userName, userLoading: false });
     } catch (error) {
-      console.error("Error fetching user data:", error);
       this.setState({
         userError: error.message,
         userLoading: false,
@@ -50,9 +61,29 @@ export default class ReserveItem extends React.Component<any, any> {
     }
   }
 
+  handleDelete = async () => {
+    const confirmDelete = window.confirm("آیا از حذف این رزرو مطمئن هستید؟");
+
+    if (!confirmDelete) return;
+
+    try {
+      await deleteVirtualInventoryItemById(this.props.reserveData.Id);
+      alert("رزرو حذف شد");
+
+      // رفرش داده‌ها پس از حذف
+      if (this.props.onDeleted) {
+        this.props.onDeleted();
+      }
+    } catch (error) {
+      console.error("❌ Error deleting reservation:", error);
+    }
+  };
+
   render() {
-    const { reserveInventory, Created } = this.props.reserveData;
-    const { userName, userLoading } = this.state;
+    const { reserveInventory, Created, Id, AuthorId } = this.props.reserveData;
+    const { userName, userLoading, currentUserId } = this.state;
+
+    const canDelete = currentUserId === AuthorId;
 
     return (
       <div className={styles.reserveItemContainer}>
@@ -68,6 +99,12 @@ export default class ReserveItem extends React.Component<any, any> {
           <span>کارشناس </span>
           <p> {userLoading ? "در حال بارگذاری..." : userName} </p>
         </div>
+
+        {canDelete && (
+          <div onClick={this.handleDelete} className={styles.deleteReserve}>
+            حذف رزرو من
+          </div>
+        )}
       </div>
     );
   }

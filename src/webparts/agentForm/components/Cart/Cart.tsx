@@ -17,13 +17,15 @@ export default class Cart extends Component<any, any> {
       showMessage: false,
       saveSignal: null,
       shopPopup: false,
+      products: [], // محصولات بارگذاری شده برای popup
     };
   }
 
   componentDidMount() {
     this.setGuidFromUrlOrSession();
 
-    loadItems().then((products) => this.setState({ products: products }));
+    // بارگذاری محصولات برای پنجره افزودن محصول
+    loadItems().then((products) => this.setState({ products }));
   }
 
   setGuidFromUrlOrSession = () => {

@@ -32,6 +32,7 @@ export class FileUploader extends React.Component<any, any> {
       uploadProgress: 0,
     });
 
+    // پاک کردن مقدار input برای اطمینان از اجرای onChange در انتخاب مجدد
     if (this.fileInputRef) {
       this.fileInputRef.value = "";
     }
@@ -57,6 +58,7 @@ export class FileUploader extends React.Component<any, any> {
     const fullFolderPath = `${libraryName}/${orderNumber}/${subFolder}/${subTypeFolder}`;
 
     try {
+      // گرفتن Digest برای آپلود در SharePoint
       const contextInfo = await fetch(`${webUrl}/_api/contextinfo`, {
         method: "POST",
         headers: { Accept: "application/json;odata=verbose" },
@@ -64,6 +66,7 @@ export class FileUploader extends React.Component<any, any> {
       const data = await contextInfo.json();
       const digest = data.d.GetContextWebInformation.FormDigestValue;
 
+      // ایجاد فولدرها به ترتیب
       const createFolder = (path: string) =>
         fetch(`${webUrl}/_api/web/folders/add('${path}')`, {
           method: "POST",
@@ -71,15 +74,17 @@ export class FileUploader extends React.Component<any, any> {
             Accept: "application/json;odata=verbose",
             "X-RequestDigest": digest,
           },
-        }).catch(() => {});
+        }).catch(() => {}); // خطا در ایجاد فولدرها نادیده گرفته می‌شود
 
       await createFolder(`${libraryName}/${orderNumber}`);
       await createFolder(`${libraryName}/${orderNumber}/${subFolder}`);
       await createFolder(fullFolderPath);
 
+      // آماده‌سازی نام فایل بدون کاراکترهای مشکل‌ساز
       const cleanFileName = file.name.replace(/[#%*<>?\/\\|]/g, "_");
       const arrayBuffer = await file.arrayBuffer();
 
+      // آپلود فایل
       const uploadRes = await fetch(
         `${webUrl}/_api/web/GetFolderByServerRelativeUrl('${fullFolderPath}')/Files/add(overwrite=true, url='${cleanFileName}')`,
         {
@@ -112,12 +117,8 @@ export class FileUploader extends React.Component<any, any> {
   render() {
     return (
       <div className={styles.uploaderDiv}>
-        <label className={styles.uploaderInput} htmlFor={this.inputId}>
-          {this.props.title}
-        </label>
-        
+        <label htmlFor={this.inputId}>{this.props.title}</label>
         <input
-          className={styles.uploaderInput}
           id={this.inputId}
           type="file"
           ref={(ref) => (this.fileInputRef = ref)}
@@ -133,20 +134,22 @@ export class FileUploader extends React.Component<any, any> {
           }}
         />
 
-        {this.state.selectedFile ? (
-          <div className={styles.fileInfo}>
-            <p className={styles.fileName}>{this.state.selectedFile.name}</p>
-            <div
-              className={styles.removeFileBtn}
-              onClick={this.clearFile}
-              aria-label="پاک کردن فایل"
-            >
-              ×
+     
+          {this.state.selectedFile ? (
+            <div className={styles.fileInfo}>
+              <p className={styles.fileName}>{this.state.selectedFile.name}</p>
+              <div
+                className={styles.removeFileBtn}
+                onClick={this.clearFile}
+                aria-label="پاک کردن فایل"
+              >
+                ×
+              </div>
             </div>
-          </div>
-        ) : (
-          <p className={styles.fileName}>هنوز فایلی انتخاب نشده</p>
-        )}
+          ) : (
+            <p className={styles.fileName}>هنوز فایلی انتخاب نشده</p>
+          )}
+       
 
         {this.state.uploadStatus && (
           <div
