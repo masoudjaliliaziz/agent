@@ -25,3 +25,33 @@ export interface ShownFormProps {
   item_GUID: string;
   parent_GUID: string;
 }
+
+export interface SearchBarProps {
+  value: string;
+  onChange: (e: any) => void;
+}
+
+export interface ShopPopUpProps {
+  products: Product[];
+  onItemAdded?: () => void;
+}
+
+export interface ShopPopUpState {
+  searchQuery: string;
+  showMessage: boolean; 
+}
+
+export interface Product {
+  codegoods: string;
+  size: string;
+  color: string;
+  productgroup: string;
+  IdCode: string;
+  image: string;
+  Id: number;
+  Title: string;
+  Code: string;
+  djne: string;
+  cart: (id: number, title: string) => void;
+  updateCartCount?: () => void;
+}

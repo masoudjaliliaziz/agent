@@ -1,9 +1,10 @@
 import * as React from "react";
 import { Component } from "react";
-import { loadCard } from "../Crud/GetData";
+import { loadCard, loadItems } from "../Crud/GetData";
 import styles from "./Cart.module.scss";
 import CartList from "./CartList";
 import { updateOrderFormByGuid } from "../Crud/AddData";
+import ShopPopUp from "../Shop/Shop";
 
 export default class Cart extends Component<any, any> {
   constructor(props) {
@@ -15,11 +16,14 @@ export default class Cart extends Component<any, any> {
       discount: 0,
       showMessage: false,
       saveSignal: null,
+      shopPopup: false,
     };
   }
 
   componentDidMount() {
     this.setGuidFromUrlOrSession();
+
+    loadItems().then((products) => this.setState({ products: products }));
   }
 
   setGuidFromUrlOrSession = () => {
@@ -159,7 +163,15 @@ export default class Cart extends Component<any, any> {
         />
 
         <div className={styles.addProductDiv}>
-          <button className={styles.addProductDiv}>افزودن محصول+</button>
+          <button
+            className={styles.addProductBtn}
+            type="button"
+            onClick={() => {
+              this.setState({ shopPopup: true });
+            }}
+          >
+            افزودن محصول
+          </button>
         </div>
 
         <div className={styles.totalContainer}>
@@ -173,7 +185,7 @@ export default class Cart extends Component<any, any> {
                 onChange={this.handleDiscountChange}
               />
             </div>
-            
+
             <div>
               <small className={styles.totalContainerSmall}>
                 {" "}
@@ -219,6 +231,32 @@ export default class Cart extends Component<any, any> {
             ثبت
           </div>
         </div>
+
+        {this.state.shopPopup && (
+          <div>
+            <div
+              className={styles.shopPopupBackdrop}
+              onClick={() => this.setState({ shopPopup: false })}
+            />
+            <div className={styles.shopPopupContainor}>
+              <ShopPopUp
+                products={this.state.products}
+                onItemAdded={() => {
+                  this.loadCartItems(this.state.guid);
+                }}
+              />
+
+              <button
+                className={styles.closeShopPopupBtn}
+                onClick={() => {
+                  this.setState({ shopPopup: false });
+                }}
+              >
+                بستن
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
