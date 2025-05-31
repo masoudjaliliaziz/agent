@@ -33,6 +33,15 @@
         align-items: center;
         gap: 10px;
 
+        .ColDataP {
+          background-color: white;
+          outline: none;
+
+          border-radius: 5.5px;
+          font-weight: bolder;
+          padding: 1.5px 3.5px;
+        }
+
         .ColDataSmall {
           font-size: smaller;
           font-weight: bolder;
@@ -90,8 +99,7 @@
   .Description {
     display: flex;
     flex-direction: column;
-    align-items: end;
-    justify-content: center;
+    align-items: start;
     width: 100%;
     gap: 10px;
 
@@ -102,12 +110,14 @@
       font-size: smaller;
       font-weight: bolder;
       background-color: white;
-      direction: rtl;
+      display: flex;
+      justify-content: end;
+      align-items: start;
       padding: 5px 10px;
       min-height: 70px;
     }
 
-    .descriptionParaph {
+    .descriptionP {
       color: black;
       font-weight: bolder;
       font-size: smaller;

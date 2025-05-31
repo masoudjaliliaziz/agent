@@ -41,11 +41,9 @@
   justify-content: center;
   align-items: center;
   gap: 5px;
-  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
-    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  background-color: whitesmoke;
+  color: black;
 
-  background-color: white;
-  color: rgb(45, 45, 45);
   &:hover {
     scale: 105%;
     background-color: black;
@@ -54,16 +52,20 @@
 }
 
 .history {
-  background-color: white;
+  height: 40px;
+  cursor: pointer;
+  transition: all 300ms linear;
   padding: 8px 12px;
   border-radius: 8.5px;
+  font-weight: bolder;
+  border: none;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 5px;
+  background-color: whitesmoke;
   color: black;
-  font-weight: bolder;
-  cursor: pointer;
-  
+
   &:hover {
     scale: 105%;
     background-color: black;
@@ -82,19 +84,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-top: 20px;
 }
 
 .popupBox {
+  overflow-y: scroll;
   background-color: #fff;
   padding: 2rem;
   border-radius: 10px;
-
+  height: 500px;
   width: 90%;
   text-align: center;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .closePopupBtn {
+  position: sticky;
+  margin: 10px auto;
+  bottom: 0;
+  left: 0;
   width: 60%;
   max-width: 250px;
   border: none;
@@ -119,4 +131,9 @@
     scale: 105%;
     color: white;
   }
+}
+
+.inventoryReserve {
+  font-weight: bolder;
+  color: #ac590b;
 }

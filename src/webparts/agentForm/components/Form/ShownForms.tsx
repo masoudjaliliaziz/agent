@@ -60,27 +60,28 @@ export default class ShownForm extends Component<ShownFormProps, any> {
               </p>
             </div>
 
-            <div>
-              <small>وضعیت سفارش</small>
-              <p>{this.props.Order_Status}</p>
+            <div className={styles.ColDataDiv}>
+              <small className={styles.ColDataSmall}>وضعیت سفارش</small>
+              <p className={styles.ColDataP}>{this.props.Order_Status}</p>
             </div>
           </div>
 
           <div className={styles.ColData}>
-            <div>
-              <small>ایجاد شده توسط </small>
-              <p>{this.props.Display_Name}</p>
+            <div className={styles.ColDataDiv}>
+              <small className={styles.ColDataSmall}>ایجاد شده توسط </small>
+              <p className={styles.ColDataP}>{this.props.Display_Name}</p>
             </div>
-
-            <div>
-              <small> تاریخ ایجاد </small>
-              <p>{convertToJalaliDateTime(this.props.Created)}</p>
+            <div className={styles.ColDataDiv}>
+              <small className={styles.ColDataSmall}> تاریخ ایجاد </small>
+              <p className={styles.ColDataP}>
+                {convertToJalaliDateTime(this.props.Created)}
+              </p>
             </div>
           </div>
         </div>
 
         <div className={styles.Description}>
-          <p className={styles.descriptionParaph}>توضیحات</p>
+          <p className={styles.descriptionP}>توضیحات</p>
           <div className={styles.descriptionDiv}>{this.props.Description}</div>
         </div>
 

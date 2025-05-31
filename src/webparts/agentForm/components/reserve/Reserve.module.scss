@@ -27,3 +27,20 @@
   gap: 15px;
   flex-direction: row-reverse;
 }
+
+.deleteReserve {
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  padding: 2px 12px;
+  border-radius: 7.5px;
+  border: none;
+  background-color: #740909;
+  color: white;
+  font-weight: bold;
+  font-size: 11px;
+
+  &:hover {
+    background-color: #420707;
+    transform: scale(1.05);
+  }
+}
