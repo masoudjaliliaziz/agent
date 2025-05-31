@@ -193,7 +193,7 @@ export async function loadReservedInventoryByCode(productsCode: string) {
 export async function loadOrders(filterGuidForm: string) {
   const webUrl = "https://crm.zarsim.com";
   const listName = "Orders";
-
+  console.log(filterGuidForm);
   try {
     const response = await fetch(
       `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${filterGuidForm}'`,
@@ -210,6 +210,28 @@ export async function loadOrders(filterGuidForm: string) {
     return [];
   }
 }
+export async function loadAllOrders(filterGuidForm: string) {
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Orders";
+  console.log(filterGuidForm);
+  try {
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${filterGuidForm}'`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
+
+    const data = await response.json();
+
+    // برگرداندن کل شیء اولین آیتم
+    return data.d.results[0] || null;
+  } catch (err) {
+    console.error("خطا در دریافت آیتم‌ها:", err);
+    return null;
+  }
+}
+
 
 export async function loadOrdersByPhoneNumber(
   phoneNumber: string
