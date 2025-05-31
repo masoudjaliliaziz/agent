@@ -33,10 +33,12 @@ export interface SearchBarProps {
 
 export interface ShopPopUpProps {
   products: Product[];
+  onItemAdded?: () => void;
 }
 
 export interface ShopPopUpState {
   searchQuery: string;
+  showMessage: boolean; 
 }
 
 export interface Product {

@@ -360,6 +360,9 @@ export async function addToCart(product: Product): Promise<void> {
   }
 
   const postData = {
+    __metadata: {
+      type: "SP.Data.ShopingListItem",
+    },
     Title: product.Title,
     codegoods: product.Code,
     guid_form: agentGuid,
@@ -381,13 +384,14 @@ export async function addToCart(product: Product): Promise<void> {
       }
     );
 
+    const resultText = await response.text();
+
     if (!response.ok) {
       throw new Error("خطا در افزودن به سبد خرید");
     }
-
-    alert("محصول با موفقیت افزوده شد!");
+    
   } catch (error) {
-    console.error(error);
+    console.error("❌ خطا:", error);
     alert("افزودن به سبد خرید با خطا مواجه شد.");
   }
 }

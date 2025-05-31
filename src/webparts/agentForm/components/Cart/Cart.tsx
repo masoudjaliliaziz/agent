@@ -145,7 +145,7 @@ export default class Cart extends Component<any, any> {
     const totalBefore = this.calculateTotalBeforeDiscount();
     const discountAmount = totalBefore - this.calculateTotal();
     const finalTotal = this.calculateTotal();
-    console.log(this.state.products);
+
     return (
       <div className={styles.formContainer}>
         {this.state.showMessage && (
@@ -239,7 +239,13 @@ export default class Cart extends Component<any, any> {
               onClick={() => this.setState({ shopPopup: false })}
             />
             <div className={styles.shopPopupContainor}>
-              <ShopPopUp products={this.state.products} />
+              <ShopPopUp
+                products={this.state.products}
+                onItemAdded={() => {
+                  this.loadCartItems(this.state.guid);
+                }}
+              />
+
               <button
                 className={styles.closeShopPopupBtn}
                 onClick={() => {
