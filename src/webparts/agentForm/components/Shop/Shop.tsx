@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Product, ShopPopUpProps, ShopPopUpState } from "../IAgentFormProps";
+import { Product, ShopPopUpProps } from "../IAgentFormProps";
 import styles from "./Shop.module.scss";
 import SearchBar from "../Search/SearchBar";
 import { addToCart } from "../Crud/AddData";
