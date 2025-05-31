@@ -48,13 +48,32 @@
   cursor: pointer;
   transition: all 250ms linear;
   padding: 8px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   &:hover {
-    background-color: rgb(163, 163, 163);
+    background-color: rgb(138, 138, 138);
     color: #ffffff;
   }
 }
 
 .shopPopupIndex {
   margin-left: 20px;
+}
+
+.shopPopupAddButton {
+  padding: 12pxpx;
+  background-color: #292929;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 300ms linear;
+
+  &:hover {
+    background-color: #c4c4c4;
+    scale: 102%;
+  }
 }

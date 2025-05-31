@@ -1,3 +1,4 @@
+import { Product } from "../IAgentFormProps";
 import { getDigest } from "./GetDigest";
 
 export async function handleAddItem(
@@ -348,5 +349,45 @@ export async function addOrUpdateItemInVirtualInventory(data: {
   } catch (err) {
     console.error("❌ Error in addOrUpdateItemInVirtualInventory:", err);
     throw err;
+  }
+}
+
+export async function addToCart(product: Product): Promise<void> {
+  const agentGuid = sessionStorage.getItem("agent_guid");
+  if (!agentGuid) {
+    alert("شناسه نماینده پیدا نشد.");
+    return;
+  }
+
+  const postData = {
+    Title: product.Title,
+    codegoods: product.Code,
+    guid_form: agentGuid,
+  };
+
+  try {
+    const digest = await getDigest();
+
+    const response = await fetch(
+      "https://crm.zarsim.com/_api/web/lists/getbytitle('shoping')/items",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json;odata=verbose",
+          "Content-Type": "application/json;odata=verbose",
+          "X-RequestDigest": digest,
+        },
+        body: JSON.stringify(postData),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("خطا در افزودن به سبد خرید");
+    }
+
+    alert("محصول با موفقیت افزوده شد!");
+  } catch (error) {
+    console.error(error);
+    alert("افزودن به سبد خرید با خطا مواجه شد.");
   }
 }

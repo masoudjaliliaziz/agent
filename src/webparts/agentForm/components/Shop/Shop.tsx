@@ -1,20 +1,21 @@
 import * as React from "react";
-import { Product } from "../IAgentFormProps";
+import { Product, ShopPopUpProps, ShopPopUpState } from "../IAgentFormProps";
 import styles from "./Shop.module.scss";
 import SearchBar from "../Search/SearchBar";
+import { addToCart } from "../Crud/AddData";
 
 export default class ShopPopUp extends React.Component<
-  { products: Product[] },
-  any
+  ShopPopUpProps,
+  ShopPopUpState
 > {
-  constructor(props) {
+  constructor(props: ShopPopUpProps) {
     super(props);
     this.state = {
       searchQuery: "",
     };
   }
 
-  handleSearchChange = (e: any) => {
+  private handleSearchChange = (e: any) => {
     this.setState({ searchQuery: e.target.value });
   };
 
@@ -22,13 +23,11 @@ export default class ShopPopUp extends React.Component<
     const { products } = this.props;
     const { searchQuery } = this.state;
 
-    let filteredItems = products;
-
-    if (searchQuery.trim() !== "") {
-      filteredItems = filteredItems.filter(
-        (item: Product) => item.Title && item.Title.indexOf(searchQuery) !== -1
-      );
-    }
+    const filteredItems = searchQuery.trim()
+      ? products.filter(
+          (item) => item.Title && item.Title.indexOf(searchQuery) !== -1
+        )
+      : products;
 
     return (
       <div className={styles.shopPopupDiv}>
@@ -42,6 +41,12 @@ export default class ShopPopUp extends React.Component<
             <li className={styles.shopPopupItem} key={index}>
               <span className={styles.shopPopupIndex}>{index + 1}</span>
               {p.Title}
+              <button
+                onClick={() => addToCart(p)}
+                className={styles.shopPopupAddButton}
+              >
+                افزودن به سبد خرید
+              </button>
             </li>
           ))}
         </ul>

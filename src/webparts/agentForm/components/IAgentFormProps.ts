@@ -31,6 +31,14 @@ export interface SearchBarProps {
   onChange: (e: any) => void;
 }
 
+export interface ShopPopUpProps {
+  products: Product[];
+}
+
+export interface ShopPopUpState {
+  searchQuery: string;
+}
+
 export interface Product {
   codegoods: string;
   size: string;
