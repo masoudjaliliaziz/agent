@@ -393,3 +393,83 @@ export async function addToCart(product: Product): Promise<void> {
     alert("افزودن به سبد خرید با خطا مواجه شد.");
   }
 }
+
+
+export async function addOrUpdateItemInOrderableInventory({
+  Code,
+  orderableInventory,
+}: {
+  Code: string;
+  orderableInventory: string;
+}): Promise<string | null> {
+  const listName = "orderableInventory";
+  const itemType = `SP.Data.${
+    listName.charAt(0).toUpperCase() + listName.slice(1)
+  }ListItem`;
+  const webUrl = "https://crm.zarsim.com";
+
+  try {
+    const digest = await getDigest();
+
+    // بررسی وجود آیتم با Code
+    const existingItemsResponse = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=Code eq '${Code}'`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json;odata=verbose",
+        },
+      }
+    );
+
+    const existingItemsData = await existingItemsResponse.json();
+    const existingItem = existingItemsData.d.results[0];
+
+    if (existingItem) {
+      // اگر آیتم وجود دارد، آن را بروزرسانی کن
+      await fetch(
+        `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${existingItem.Id})`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose",
+            "X-RequestDigest": digest,
+            "X-HTTP-Method": "MERGE",
+            "If-Match": "*",
+          },
+          body: JSON.stringify({
+            __metadata: { type: itemType },
+            orderableInventory,
+          }),
+        }
+      );
+
+      return orderableInventory;
+    } else {
+      // اگر وجود ندارد، یک آیتم جدید بساز
+      const createResponse = await fetch(
+        `${webUrl}/_api/web/lists/getbytitle('${listName}')/items`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose",
+            "X-RequestDigest": digest,
+          },
+          body: JSON.stringify({
+            __metadata: { type: itemType },
+            Code,
+            orderableInventory,
+          }),
+        }
+      );
+
+      const createdItem = await createResponse.json();
+      return createdItem.d.orderableInventory;
+    }
+  } catch (err) {
+    console.error("❌ خطا در افزودن یا بروزرسانی:", err);
+    return null;
+  }
+}

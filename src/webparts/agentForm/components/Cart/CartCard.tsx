@@ -4,6 +4,7 @@ import Counter from "./Counter";
 import { loadItemByCode, loadReservedInventoryByCode } from "../Crud/GetData";
 import { handleUpdateCartPrice } from "../Crud/UpdateData";
 import { addOrUpdateItemInVirtualInventory } from "../Crud/AddData";
+import { addOrUpdateItemInOrderableInventory } from "../Crud/AddData"; // اضافه شده
 import ReserveHistory from "../reserve/ReserveHistory";
 
 export default class CartCard extends React.Component<any, any> {
@@ -18,6 +19,7 @@ export default class CartCard extends React.Component<any, any> {
       showSuccessPopup: false,
       reservedTotal: 0,
       errorMsg: "",
+      inventoryAvailable: 0, // مقدار ذخیره شده برای مقایسه تغییرات
     };
   }
 
@@ -29,43 +31,92 @@ export default class CartCard extends React.Component<any, any> {
     const initialPrice =
       productFromStore.Price || parseFloat(product.price) || 0;
 
+    const reserveInventories = await loadReservedInventoryByCode(
+      productFromStore.Code
+    );
+    const totalReserved = reserveInventories.reduce((acc, item) => {
+      const resInv = parseInt(item.reserveInventory) || 0;
+      return acc + resInv;
+    }, 0);
+
+    const inventory = parseInt(productFromStore.Inventory || "0");
+    const inventoryAvailable = inventory - totalReserved;
+
     this.setState(
       {
         productFromStore,
         price: initialPrice,
         count: parseFloat(count) || 1,
+        reservedTotal: totalReserved,
+        inventoryAvailable, // مقدار اولیه ذخیره شود
       },
-      async () => {
+      () => {
         this.calculateTotal();
-        await this.fetchReservedTotal(productFromStore.Code);
       }
     );
   }
+
   async componentDidUpdate(prevProps, prevState) {
+    // وقتی محصول تغییر کرد، دوباره اطلاعات لود کن
     if (this.props.product.Id !== prevProps.product.Id) {
-      // وقتی محصول تغییر کرد، دوباره اطلاعات لود کن
       const productFromStore = await loadItemByCode(
         this.props.product.codegoods
       );
       const initialPrice =
         productFromStore.Price || parseFloat(this.props.product.price) || 0;
 
+      const reserveInventories = await loadReservedInventoryByCode(
+        productFromStore.Code
+      );
+      const totalReserved = reserveInventories.reduce((acc, item) => {
+        const resInv = parseInt(item.reserveInventory) || 0;
+        return acc + resInv;
+      }, 0);
+
+      const inventory = parseInt(productFromStore.Inventory || "0");
+      const inventoryAvailable = inventory - totalReserved;
+
       this.setState(
         {
           productFromStore,
           price: initialPrice,
           count: parseFloat(this.props.product.count) || 1,
+          reservedTotal: totalReserved,
+          inventoryAvailable,
         },
-        async () => {
+        () => {
           this.calculateTotal();
-          await this.fetchReservedTotal(productFromStore.Code);
         }
       );
     }
 
+    // وقتی تعداد تغییر کرد، موجودی رزرو شده آپدیت شود
     if (this.state.count !== prevState.count) {
-      // وقتی تعداد تغییر کرد، دوباره موجودی رزرو شده آپدیت شود
       await this.fetchReservedTotal(this.state.productFromStore.Code);
+    }
+
+    // وقتی موجودی رزرو شده یا موجودی کلی تغییر کرد، موجودی قابل رزرو (inventoryAvailable) را آپدیت کن
+    if (
+      this.state.reservedTotal !== prevState.reservedTotal ||
+      this.state.productFromStore.Inventory !==
+        prevState.productFromStore.Inventory
+    ) {
+      const inventory = parseInt(this.state.productFromStore.Inventory || "0");
+      const inventoryAvailable = inventory - this.state.reservedTotal;
+
+      // فقط اگر مقدار موجودی قابل رزرو تغییر کرده باشد، state را آپدیت کن و تابع addOrUpdate را صدا بزن
+      if (inventoryAvailable !== this.state.inventoryAvailable) {
+        this.setState({ inventoryAvailable }, async () => {
+          try {
+            await addOrUpdateItemInOrderableInventory({
+              Code: this.state.productFromStore.Code,
+              orderableInventory: String(this.state.inventoryAvailable),
+            });
+          } catch (err) {
+            console.error("❌ خطا در ارسال موجودی قابل رزرو به سرور:", err);
+          }
+        });
+      }
     }
 
     if (
@@ -75,11 +126,11 @@ export default class CartCard extends React.Component<any, any> {
       this.handleSaveDiscountExternally();
     }
   }
+
   fetchReservedTotal = async (productCode) => {
     if (!productCode) return;
 
     try {
-      // از توابع موجودت استفاده کن
       const reserveInventories = await loadReservedInventoryByCode(productCode);
 
       const totalReserved = reserveInventories.reduce((acc, item) => {
@@ -119,7 +170,6 @@ export default class CartCard extends React.Component<any, any> {
     });
     this.setState({ reserveInventory });
 
-    // بعد از رزرو موفق، موجودی رزرو شده رو دوباره آپدیت کن
     await this.fetchReservedTotal(productFromStore.Code);
   };
 
@@ -129,8 +179,6 @@ export default class CartCard extends React.Component<any, any> {
       this.props.onItemUpdate(this.props.product.Id, {
         count: newCount,
       });
-      // این خط حذف شد چون fetchReservedTotal در componentDidUpdate انجام میشه
-      // this.fetchReservedTotal(this.state.productFromStore.Code);
     });
   };
 
@@ -181,7 +229,6 @@ export default class CartCard extends React.Component<any, any> {
     return new Intl.NumberFormat().format(Number(number.toFixed(2)));
   };
 
-  // دریافت مجموع رزرو شده از ReserveHistory
   handleReservedTotalChange = (reservedTotal: number) => {
     this.setState({ reservedTotal });
   };
@@ -196,10 +243,8 @@ export default class CartCard extends React.Component<any, any> {
       reserveInventory,
       errorMsg,
       reservedTotal,
+      inventoryAvailable,
     } = this.state;
-
-    const inventory = parseInt(productFromStore.Inventory || "0");
-    const inventoryAvailable = inventory - reservedTotal;
 
     const discountAmount = (price * discount) / 100;
     const finalPricePerItem = price - discountAmount;
