@@ -103,40 +103,53 @@ export default class Form extends Component<FormProps, any> {
             />
           </div>
 
-          <div className={styles.selectContainer}>
-            <select
-              value={this.state.Event_Type}
-              onChange={(event) =>
-                this.setState({ Event_Type: String(event.currentTarget.value) })
-              }
-              name="Event_Type"
-            >
-              <option value="chose" disabled>
-                نوع رویداد
-              </option>
-              <option value="telegram">تلگرام</option>
-              <option value="whatsapp">واتساپ</option>
-              <option value="phoneNumber">تماس تلفنی</option>
-              <option value="email">ایمیل</option>
-              <option value="presental">حضوری</option>
-            </select>
+          <div className={styles.distributerCodeDiv}>
+            {this.props.distributerCode &&
+              this.props.distributerCode.trim() !== "" && (
+                <div className={styles.distributerCodeChildDiv}>
+                  <p className={styles.distributerCodeParaph}>
+                    کد نماینده: <span className={styles.distributerCodeSpan}>{this.props.distributerCode}</span>
+                  </p>
+                </div>
+              )}
 
-            <select
-              value={this.state.Order_Status}
-              onChange={(event) =>
-                this.setState({
-                  Order_Status: String(event.currentTarget.value),
-                })
-              }
-              name="Order_Status"
-            >
-              <option value="chose" disabled>
-                وضعیت سفارش
-              </option>
-              <option value="درحال مذاکره">در حال مذاکره</option>
-              <option value="ارجاع به کارشناس">ارجاع به کارشناس</option>
-              <option value="نا موفق">ناموفق</option>
-            </select>
+            <div className={styles.selectContainer}>
+              <select
+                value={this.state.Event_Type}
+                onChange={(event) =>
+                  this.setState({
+                    Event_Type: String(event.currentTarget.value),
+                  })
+                }
+                name="Event_Type"
+              >
+                <option value="chose" disabled>
+                  نوع رویداد
+                </option>
+                <option value="telegram">تلگرام</option>
+                <option value="whatsapp">واتساپ</option>
+                <option value="phoneNumber">تماس تلفنی</option>
+                <option value="email">ایمیل</option>
+                <option value="presental">حضوری</option>
+              </select>
+
+              <select
+                value={this.state.Order_Status}
+                onChange={(event) =>
+                  this.setState({
+                    Order_Status: String(event.currentTarget.value),
+                  })
+                }
+                name="Order_Status"
+              >
+                <option value="chose" disabled>
+                  وضعیت سفارش
+                </option>
+                <option value="درحال مذاکره">در حال مذاکره</option>
+                <option value="ارجاع به کارشناس">ارجاع به کارشناس</option>
+                <option value="نا موفق">ناموفق</option>
+              </select>
+            </div>
           </div>
 
           <textarea
@@ -170,4 +183,3 @@ export default class Form extends Component<FormProps, any> {
     );
   }
 }
-

@@ -118,3 +118,32 @@
     color: rgb(37, 37, 37);
   }
 }
+
+.distributerCodeDiv{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.distributerCodeChildDiv{
+  width: 100%;
+  max-width: 150px;
+  background-color: #ffffff;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid black;
+  border-radius: 8px;
+}
+
+.distributerCodeParaph{
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.distributerCodeSpan{
+font-size: 18px;
+  font-weight: 600;
+}
