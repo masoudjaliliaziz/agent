@@ -211,6 +211,29 @@ export async function loadPhoneNumberFromOrder(filterGuidForm: string) {
   }
 }
 
+
+export async function CustomerNameFromOrder(filterGuidForm: string) {
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Orders";
+  console.log(filterGuidForm);
+  try {
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${filterGuidForm}'`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
+
+    const data = await response.json();
+
+    return data.d.results.at(0).CustomerName;
+  } catch (err) {
+    console.error("خطا در دریافت آیتم‌ها:", err);
+    return [];
+  }
+}
+
+
 export async function loadDistributerCodeFromOrder(filterGuidForm: string) {
   const webUrl = "https://crm.zarsim.com";
   const listName = "Orders";

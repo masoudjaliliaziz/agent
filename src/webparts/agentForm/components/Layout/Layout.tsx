@@ -5,6 +5,7 @@ import {
   loadPhoneNumberFromOrder,
   loadOrdersByPhoneNumber,
   loadDistributerCodeFromOrder,
+  CustomerNameFromOrder,
 } from "../Crud/GetData";
 import OrderHistory from "../history/OrderHistory";
 export class Layout extends React.Component<any, any> {
@@ -14,6 +15,7 @@ export class Layout extends React.Component<any, any> {
     this.state = {
       phoneNumber: "",
       distributerCode: "",
+      CustomerName: "",
       showSuccessPopup: false,
       getGuidFormByPhoneNumber: [],
     };
@@ -23,6 +25,8 @@ export class Layout extends React.Component<any, any> {
 
   async componentDidMount() {
     const form_guid = sessionStorage.getItem("agent_guid");
+    const CustomerName = await CustomerNameFromOrder(form_guid);
+    this.setState({ CustomerName });
     const phoneNumber = await loadPhoneNumberFromOrder(form_guid);
     this.setState({ phoneNumber });
     const distributerCode = await loadDistributerCodeFromOrder(form_guid);
@@ -94,7 +98,7 @@ export class Layout extends React.Component<any, any> {
               onClick={() => this.setState({ showSuccessPopup: true })}
               className={styles.history}
             >
-              {this.state.phoneNumber}
+              {this.state.CustomerName}
             </div>
           </div>
         </header>
