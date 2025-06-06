@@ -133,8 +133,11 @@ export default class Cart extends Component<any, any> {
 
   calculateTotalBeforeDiscount = () => {
     return this.state.cartItems.reduce((sum, item) => {
-      const count = parseFloat(item.count) || 0;
-      const price = parseFloat(item.price) || 0;
+      const count = parseFloat(item.count);
+      console.log("count", count);
+      const price = parseFloat(item.price);
+      console.log("price", price);
+      console.log("sum", sum);
       return sum + count * price;
     }, 0);
   };
@@ -193,10 +196,12 @@ export default class Cart extends Component<any, any> {
                 {" "}
                 مقدار تخفیف{" "}
               </small>
-              <h3 className={styles.totalContainerH3}>
-                {this.formatNumberWithComma(discountAmount)}
-                <small className={styles.totalContainerH3Small}>تومان</small>
-              </h3>
+              <div className={styles.priceShown}>
+                <small className={styles.totalContainerH3Small}>ریال</small>
+                <h3 className={styles.totalContainerH3}>
+                  {this.formatNumberWithComma(Math.ceil(discountAmount))}
+                </h3>
+              </div>
             </div>
           </div>
 
@@ -205,17 +210,21 @@ export default class Cart extends Component<any, any> {
               <small className={styles.totalContainerSmall}>
                 جمع کل بدون تخفیف
               </small>
-              <h3 className={styles.totalContainerH3}>
-                {this.formatNumberWithComma(totalBefore)}{" "}
-                <small className={styles.totalContainerH3Small}>تومان</small>
-              </h3>
+              <div className={styles.priceShown}>
+                <small className={styles.totalContainerH3Small}>ریال</small>
+                <h3 className={styles.totalContainerH3}>
+                  {this.formatNumberWithComma(totalBefore)}{" "}
+                </h3>
+              </div>
             </div>
             <div>
               <small className={styles.totalContainerSmall}> مبلغ نهایی</small>
-              <h2 className={styles.totalContainerH2}>
-                {this.formatNumberWithComma(finalTotal)}{" "}
-                <small className={styles.totalContainerH2Small}>تومان</small>
-              </h2>
+              <div className={styles.priceShown}>
+                <small className={styles.totalContainerH2Small}>ریال</small>
+                <h2 className={styles.totalContainerH2}>
+                  {this.formatNumberWithComma(Math.ceil(finalTotal))}{" "}
+                </h2>
+              </div>
             </div>
           </div>
 

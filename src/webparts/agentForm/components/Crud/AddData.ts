@@ -365,6 +365,11 @@ export async function addToCart(product: Product): Promise<void> {
     Title: product.Title,
     codegoods: product.Code,
     guid_form: agentGuid,
+    count: "1",
+    price: Number(product.Price),
+    size: product.size,
+    color: product.color,
+    IdCode: product.IdCode,
   };
 
   try {
@@ -393,7 +398,6 @@ export async function addToCart(product: Product): Promise<void> {
     alert("افزودن به سبد خرید با خطا مواجه شد.");
   }
 }
-
 
 export async function addOrUpdateItemInOrderableInventory({
   Code,

@@ -28,8 +28,7 @@ export default class CartCard extends React.Component<any, any> {
     const { codegoods, count } = product;
 
     const productFromStore = await loadItemByCode(codegoods);
-    const initialPrice =
-      productFromStore.Price || parseFloat(product.price) || 0;
+    const initialPrice = parseFloat(product.price);
 
     const reserveInventories = await loadReservedInventoryByCode(
       productFromStore.Code
@@ -62,8 +61,7 @@ export default class CartCard extends React.Component<any, any> {
       const productFromStore = await loadItemByCode(
         this.props.product.codegoods
       );
-      const initialPrice =
-        productFromStore.Price || parseFloat(this.props.product.price) || 0;
+      const initialPrice = parseFloat(this.props.product.price);
 
       const reserveInventories = await loadReservedInventoryByCode(
         productFromStore.Code
@@ -182,20 +180,6 @@ export default class CartCard extends React.Component<any, any> {
     });
   };
 
-  handlePriceChange = (e) => {
-    const price = parseFloat(e.target.value) || 0;
-    this.setState({ price }, () => {
-      this.calculateTotal();
-      this.props.onItemUpdate(this.props.product.Id, {
-        price,
-      });
-    });
-  };
-
-  handlePriceBlur = () => {
-    this.handleSaveDiscountExternally();
-  };
-
   handleSaveDiscountExternally = async () => {
     const { discount, product } = this.props;
     const { price } = this.state;
@@ -271,11 +255,10 @@ export default class CartCard extends React.Component<any, any> {
         <div className={styles.cardDescription}>
           <div className={styles.priceForm}>
             <input
+              disabled
               className={styles.priceInput}
               type="number"
               value={price}
-              onBlur={this.handlePriceBlur}
-              onChange={this.handlePriceChange}
             />
             <div>قیمت</div>
           </div>
@@ -309,32 +292,32 @@ export default class CartCard extends React.Component<any, any> {
             {errorMsg && (
               <p style={{ color: "red", fontWeight: "bold" }}>{errorMsg}</p>
             )}
-            <div className={styles.actionContainer}>
-              <div
-                onClick={() => this.setState({ showSuccessPopup: true })}
-                className={styles.reserve}
-              >
-                نمایش موجودی رزرو{" "}
-              </div>
-              <p className={styles.inventoryDescription}>
-                موجودی رزرو : {reserveInventory}
-              </p>
+
+            <p className={styles.inventoryDescription}>
+              موجودی رزرو : {reserveInventory}
+            </p>
+
+            <div
+              onClick={() => this.setState({ showSuccessPopup: true })}
+              className={styles.reserve}
+            >
+              نمایش موجودی رزرو{" "}
             </div>
             <p>
               <small>تخفیف ({discount}٪):</small>{" "}
-              {this.formatNumberWithComma(discountAmount).toLocaleString()}{" "}
-              تومان
+              {this.formatNumberWithComma(Math.ceil(discountAmount))} تومان
             </p>
             <p style={{ color: "green" }}>
               <small>قیمت بعد تخفیف (هر عدد):</small>{" "}
-              {this.formatNumberWithComma(finalPricePerItem).toLocaleString()}{" "}
-              تومان
+              {this.formatNumberWithComma(Math.ceil(finalPricePerItem))} تومان
             </p>
           </div>
 
           <div className={styles.priceForm}>
-            <input type="number" disabled value={total} />
-            <div>جمع</div>
+            <div className={styles.priceFormDivToatal}>
+              {this.formatNumberWithComma(Math.ceil(total))}
+            </div>
+            <div className={styles.priceFormDivLabl}>جمع کل بدون تخفیف</div>
           </div>
         </div>
         {showSuccessPopup && (

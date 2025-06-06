@@ -54,6 +54,7 @@ export interface Product {
   Title: string;
   Code: string;
   djne: string;
+  Price: string;
   cart: (id: number, title: string) => void;
   updateCartCount?: () => void;
 }

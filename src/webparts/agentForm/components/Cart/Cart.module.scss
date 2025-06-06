@@ -279,31 +279,36 @@
   justify-content: center;
   align-items: center;
   border-radius: 6px;
-  input {
-    font-weight: bolder;
-    padding: 0 15px;
-    height: 25px;
-    width: 180px;
-    background-color: white;
-    border: none;
-    outline: none;
-    border-radius: 6px;
-  }
-  div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    outline: none;
-
-    font-weight: bold;
-    padding: 5px;
-    height: 25px;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
-  }
 }
 
+.priceFormDivToatal {
+  font-weight: bolder;
+  padding: 0 15px;
+  height: 25px;
+  width: 140px;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  background-color: white;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+}
+
+.priceFormDivLabl {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 120px;
+  outline: none;
+  font-size: smaller;
+  font-weight: bold;
+  padding: 5px;
+  height: 25px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
+}
 .discountForm {
   background-color: lightgray;
   padding: 5px 7.5px;
@@ -417,11 +422,10 @@
     .totalContainerH2 {
       color: #276749;
       direction: rtl;
-
-      .totalContainerH2Small {
-        color: #005a9e;
-        font-size: 12px;
-      }
+    }
+    .totalContainerH2Small {
+      color: #005a9e;
+      font-size: 12px;
     }
 
     .totalContainerSmall {
@@ -464,6 +468,10 @@
 
 .discountDiv {
   font-weight: bolder;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 10px;
 }
 
 .submit {
@@ -493,6 +501,9 @@
   color: white;
   font-weight: bold;
   font-size: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   &:hover {
     background-color: #043d3f;
@@ -665,4 +676,12 @@
     scale: 105%;
     color: white;
   }
+}
+
+.priceShown {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
