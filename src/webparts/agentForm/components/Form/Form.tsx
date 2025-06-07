@@ -3,8 +3,8 @@ import { Component } from "react";
 import styles from "./Form.module.scss";
 import { FormProps } from "../IAgentFormProps";
 import uuidv4 from "../utils/createGuid";
-import { handleAddEvent } from "../Crud/AddData";
-import { loadEvent } from "../Crud/GetData";
+import { handleAddEvent, updatePreInvoiceCreateField } from "../Crud/AddData";
+import { loadEvent, loadOrdersByGuid } from "../Crud/GetData";
 import ShownForm from "./ShownForms";
 import { FileUploader } from "../utils/FileUploader";
 
@@ -165,10 +165,34 @@ export default class Form extends Component<FormProps, any> {
 
           <div className={styles.buttonsContainer}>
             <div className={styles.buttonSave} onClick={this.onEventAdd}>
-            ذخیره
-          </div>
+              ذخیره
+            </div>
 
-          <button type="button" className={styles.preInvoiceButton}>ایجاد پیش فاکتور</button>
+            <button
+              type="button"
+              className={styles.preInvoiceButton}
+              onClick={() =>
+                updatePreInvoiceCreateField(this.props.parent_GUID)
+              }
+            >
+              ایجاد پیش فاکتور
+            </button>
+
+            {this.props.existLink === null ||
+            this.props.existLink === "" ||
+            this.props.existLink === undefined ? (
+              <p>testConditional</p>
+            ) : (
+              <a
+                href={this.props.existLink}
+                className={styles.preInvoiceButton}
+                onClick={() =>
+                  updatePreInvoiceCreateField(this.props.parent_GUID)
+                }
+              >
+                مشاهده پیش فاکتور
+              </a>
+            )}
           </div>
         </div>
 

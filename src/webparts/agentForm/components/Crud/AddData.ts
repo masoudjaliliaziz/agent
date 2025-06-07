@@ -352,54 +352,6 @@ export async function addOrUpdateItemInVirtualInventory(data: {
   }
 }
 
-export async function addToCart(product: Product): Promise<void> {
-  const agentGuid = sessionStorage.getItem("agent_guid");
-  if (!agentGuid) {
-    alert("شناسه نماینده پیدا نشد.");
-    return;
-  }
-
-  const postData = {
-    __metadata: {
-      type: "SP.Data.ShopingListItem",
-    },
-    Title: product.Title,
-    codegoods: product.Code,
-    guid_form: agentGuid,
-    count: "1",
-    price: Number(product.Price),
-    size: product.size,
-    color: product.color,
-    IdCode: product.IdCode,
-  };
-
-  try {
-    const digest = await getDigest();
-
-    const response = await fetch(
-      "https://crm.zarsim.com/_api/web/lists/getbytitle('shoping')/items",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json;odata=verbose",
-          "Content-Type": "application/json;odata=verbose",
-          "X-RequestDigest": digest,
-        },
-        body: JSON.stringify(postData),
-      }
-    );
-
-    const resultText = await response.text();
-
-    if (!response.ok) {
-      throw new Error("خطا در افزودن به سبد خرید");
-    }
-  } catch (error) {
-    console.error("❌ خطا:", error);
-    alert("افزودن به سبد خرید با خطا مواجه شد.");
-  }
-}
-
 export async function addOrUpdateItemInOrderableInventory({
   Code,
   orderableInventory,
@@ -479,33 +431,109 @@ export async function addOrUpdateItemInOrderableInventory({
   }
 }
 
-export async function updatePreInvoiceCreateField(itemId) {
+export async function addToCart(product: Product): Promise<void> {
+  const agentGuid = sessionStorage.getItem("agent_guid");
+  if (!agentGuid) {
+    alert("شناسه نماینده پیدا نشد.");
+    return;
+  }
+
+  const postData = {
+    __metadata: {
+      type: "SP.Data.ShopingListItem",
+    },
+    Title: product.Title,
+    codegoods: product.Code,
+    guid_form: agentGuid,
+    count: "1",
+    price: Number(product.Price),
+    size: product.size,
+    color: product.color,
+    IdCode: product.IdCode,
+  };
+
+  try {
+    const digest = await getDigest();
+
+    const response = await fetch(
+      "https://crm.zarsim.com/_api/web/lists/getbytitle('shoping')/items",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json;odata=verbose",
+          "Content-Type": "application/json;odata=verbose",
+          "X-RequestDigest": digest,
+        },
+        body: JSON.stringify(postData),
+      }
+    );
+
+    const resultText = await response.text();
+
+    if (!response.ok) {
+      throw new Error("خطا در افزودن به سبد خرید");
+    }
+  } catch (error) {
+    console.error("❌ خطا:", error);
+    alert("افزودن به سبد خرید با خطا مواجه شد.");
+  }
+}
+
+export async function updatePreInvoiceCreateField(guid_form: string) {
   const webUrl = "https://crm.zarsim.com";
   const digest = await getDigest();
+  const listName = "Orders";
+  const itemType = `SP.Data.${
+    listName.charAt(0).toUpperCase() + listName.slice(1)
+  }ListItem`;
 
-  const url = `${webUrl}/_api/web/lists/getbytitle('Orders')/items(${itemId})`;
+  // Step 1 → GET the item to find its ID
+  const getUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${guid_form}'&$top=1`;
 
-  return fetch(url, {
-    method: "POST",
-    headers: {
-      Accept: "application/json;odata=verbose",
-      "Content-Type": "application/json;odata=verbose",
-      "X-RequestDigest": digest,
-      "IF-MATCH": "*",
-      "X-HTTP-Method": "MERGE",
-    },
-    body: JSON.stringify({
-      Pre_Invoice_Create: "1",
-    }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        console.log(`✅ Item ${itemId} updated successfully.`);
-      } else {
-        console.error(`❌ Error updating item ${itemId}:`, res.statusText);
-      }
-    })
-    .catch((error) => {
-      console.error(`❌ Fetch error updating item ${itemId}:`, error);
+  try {
+    const getResponse = await fetch(getUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json;odata=verbose",
+      },
     });
+
+    const getData = await getResponse.json();
+
+    if (getData.d.results.length === 0) {
+      console.error(`❌ No item found with guid_form: ${guid_form}`);
+      return;
+    }
+
+    const itemId = getData.d.results[0].Id;
+
+    // Step 2 → Now update that item by ID
+    const updateUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${itemId})`;
+
+    const updateResponse = await fetch(updateUrl, {
+      method: "POST",
+      headers: {
+        Accept: "application/json;odata=verbose",
+        "Content-Type": "application/json;odata=verbose",
+        "X-RequestDigest": digest,
+        "IF-MATCH": "*",
+        "X-HTTP-Method": "MERGE",
+      },
+      body: JSON.stringify({
+        __metadata: { type: itemType },
+        Pre_Invoice_Create: "1",
+      }),
+    });
+
+    if (updateResponse.ok) {
+      console.log(`✅ Item ${guid_form} (ID: ${itemId}) updated successfully.`);
+    } else {
+      console.error(
+        `❌ Error updating item ${guid_form} (ID: ${itemId}):`,
+        updateResponse.statusText
+      );
+    }
+  } catch (error) {
+    console.error(`❌ Fetch error updating item ${guid_form}:`, error);
+  }
 }

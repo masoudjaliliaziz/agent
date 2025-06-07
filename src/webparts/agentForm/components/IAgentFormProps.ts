@@ -5,11 +5,13 @@ export interface IAgentFormProps {
 
 export interface IAgentFormState {
   parent_GUID: string;
+  existLink: null | "" | undefined | string;
 }
 
 export interface FormProps {
   parent_GUID: string;
   distributerCode?: string;
+  existLink: any;
 }
 
 export interface FormState {
