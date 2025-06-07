@@ -88,6 +88,24 @@ export default class Cart extends Component<any, any> {
       });
   };
 
+  extractQuantity(text) {
+    // تبدیل اعداد فارسی به انگلیسی
+    const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+    persianNumbers.forEach((num, index) => {
+      const regex = new RegExp(num, "g");
+      text = text.replace(regex, index);
+    });
+
+    // گرفتن عدد قبل از "متری" یا "متري"
+    const match = text.match(/(\d+)\s*(?:متر[یي])/);
+
+    if (match) {
+      return parseInt(match[1], 10); // فقط عدد
+    } else {
+      return null;
+    }
+  }
+
   handleDiscountChange = (e) => {
     const discount = parseFloat(e.target.value) || 0;
     this.setState({ discount });
@@ -119,26 +137,26 @@ export default class Cart extends Component<any, any> {
     return this.state.cartItems.reduce((sum, item) => {
       const count = parseFloat(item.count) || 0;
       const price = parseFloat(item.price) || 0;
+      const unit = this.extractQuantity(item.Title) || 1; // اضافه شده
+
       const discountedPrice = price - (price * this.state.discount) / 100;
-      return sum + count * discountedPrice;
+      return sum + count * unit * discountedPrice;
     }, 0);
   };
 
   calculateDiscountAmount = () => {
-    return (
-      (this.calculateTotal() * this.state.discount) /
-      (100 + this.state.discount)
-    );
+    const totalBefore = this.calculateTotalBeforeDiscount();
+    const totalAfter = this.calculateTotal();
+    return totalBefore - totalAfter;
   };
 
   calculateTotalBeforeDiscount = () => {
     return this.state.cartItems.reduce((sum, item) => {
-      const count = parseFloat(item.count);
-      console.log("count", count);
-      const price = parseFloat(item.price);
-      console.log("price", price);
-      console.log("sum", sum);
-      return sum + count * price;
+      const count = parseFloat(item.count) || 0;
+      const price = parseFloat(item.price) || 0;
+      const unit = this.extractQuantity(item.Title) || 1; // اضافه شده
+
+      return sum + count * unit * price;
     }, 0);
   };
 

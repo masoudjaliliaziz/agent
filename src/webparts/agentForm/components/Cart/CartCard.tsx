@@ -15,6 +15,7 @@ export default class CartCard extends React.Component<any, any> {
       count: 1,
       price: 0,
       total: 0,
+      unit: 0,
       reserveInventory: "0",
       showSuccessPopup: false,
       reservedTotal: 0,
@@ -25,8 +26,10 @@ export default class CartCard extends React.Component<any, any> {
 
   async componentDidMount() {
     const { product } = this.props;
-    const { codegoods, count } = product;
+    const { codegoods, count, Title } = product;
 
+    const unit = this.extractQuantity(Title);
+    this.setState({ unit: Number(unit) });
     const productFromStore = await loadItemByCode(codegoods);
     const initialPrice = parseFloat(product.price);
 
@@ -142,6 +145,24 @@ export default class CartCard extends React.Component<any, any> {
     }
   };
 
+  extractQuantity(text) {
+    // تبدیل اعداد فارسی به انگلیسی
+    const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+    persianNumbers.forEach((num, index) => {
+      const regex = new RegExp(num, "g");
+      text = text.replace(regex, index);
+    });
+
+    // گرفتن عدد قبل از "متری" یا "متري"
+    const match = text.match(/(\d+)\s*(?:متر[یي])/);
+
+    if (match) {
+      return parseInt(match[1], 10); // فقط عدد
+    } else {
+      return null;
+    }
+  }
+
   handleUpdateInventory = async () => {
     const { product } = this.props;
     const { codegoods, guid_form, Title } = product;
@@ -164,7 +185,7 @@ export default class CartCard extends React.Component<any, any> {
       Title,
       ProductCode: String(codegoods),
       status: 0,
-      reserveInventory: String(count),
+      reserveInventory: String(Number(count) * Number(this.state.unit)),
     });
     this.setState({ reserveInventory });
 
@@ -202,13 +223,14 @@ export default class CartCard extends React.Component<any, any> {
   };
 
   calculateTotal = () => {
-    const { price, count } = this.state;
+    const { price, count, unit } = this.state;
     const { discount } = this.props;
+
     const discountedPrice = price - (price * discount) / 100;
-    const total = discountedPrice * count;
+    const total = discountedPrice * count * unit;
+
     this.setState({ total });
   };
-
   formatNumberWithComma = (number: number) => {
     return new Intl.NumberFormat().format(Number(number.toFixed(2)));
   };
@@ -264,6 +286,7 @@ export default class CartCard extends React.Component<any, any> {
           </div>
           <div className={styles.actionssContainer}>
             <Counter
+              unit={product}
               Id={product.Id}
               onDelete={onDelete}
               onCountChange={this.handleCountChange}
