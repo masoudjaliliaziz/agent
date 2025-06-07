@@ -8,21 +8,21 @@
 
   .formContainer {
     width: 100%;
-    background-color: rebeccapurple;
     padding: 20px 10px;
     border-radius: 12.5px;
     background-color: lightgray;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: end;
     gap: 10px;
 
     .upladContainer {
+      width: 100%;
       display: flex;
       align-items: center;
-      flex-direction: row;
+      flex-direction: column;
+      justify-content: start;
       gap: 10px;
-      justify-content: end;
     }
 
     .selectContainer {
@@ -98,6 +98,36 @@
     flex-wrap: wrap;
   }
 }
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preInvoiceButton {
+  padding: 8px 12px;
+  min-width: 100px;
+  max-width: 300px;
+  height: 25px;
+  border-radius: 5.5px;
+  font-weight: bolder;
+  background-color: rgb(37, 37, 37);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 300ms linear;
+
+  &:hover {
+    background-color: white;
+    border: 2px solid rgb(37, 37, 37);
+    color: rgb(37, 37, 37);
+  }
+}
+
 .buttonSave {
   width: 95px;
   height: 25px;
@@ -111,7 +141,7 @@
   align-items: center;
   justify-content: center;
   transition: all 300ms linear;
-  
+
   &:hover {
     background-color: white;
     border: 2px solid rgb(37, 37, 37);
@@ -119,14 +149,14 @@
   }
 }
 
-.distributerCodeDiv{
+.distributerCodeDiv {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.distributerCodeChildDiv{
+.distributerCodeChildDiv {
   width: 100%;
   max-width: 150px;
   background-color: #ffffff;
@@ -138,12 +168,12 @@
   border-radius: 8px;
 }
 
-.distributerCodeParaph{
+.distributerCodeParaph {
   font-size: 16px;
   font-weight: 400;
 }
 
-.distributerCodeSpan{
-font-size: 18px;
+.distributerCodeSpan {
+  font-size: 18px;
   font-weight: 600;
 }

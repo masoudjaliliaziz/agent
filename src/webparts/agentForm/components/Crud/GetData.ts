@@ -1,3 +1,6 @@
+import { updatePreInvoiceCreateField } from "./AddData";
+import { getDigest } from "./GetDigest";
+
 export async function loadItems(): Promise<any[]> {
   const webUrl = "https://crm.zarsim.com";
   const listName = "Store";
@@ -211,7 +214,6 @@ export async function loadPhoneNumberFromOrder(filterGuidForm: string) {
   }
 }
 
-
 export async function CustomerNameFromOrder(filterGuidForm: string) {
   const webUrl = "https://crm.zarsim.com";
   const listName = "Orders";
@@ -232,7 +234,6 @@ export async function CustomerNameFromOrder(filterGuidForm: string) {
     return [];
   }
 }
-
 
 export async function loadDistributerCodeFromOrder(filterGuidForm: string) {
   const webUrl = "https://crm.zarsim.com";
@@ -297,4 +298,31 @@ export async function loadOrdersByPhoneNumber(
     console.error("خطا در دریافت آیتم‌ها:", err);
     return [];
   }
+}
+
+export async function updateAllPreInvoiceCreateFields() {
+  const webUrl = "https://crm.zarsim.com";
+
+  const url = `${webUrl}/_api/web/lists/getbytitle('Orders')/items?$filter=Pre_Invoice_Create eq '0'&$top=5000`;
+
+  fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json;odata=verbose",
+    },
+  })
+    .then((res) => res.json())
+    .then(async (data) => {
+      const items = data.d.results;
+      console.log(`Found ${items.length} items to update.`);
+
+      for (const item of items) {
+        await updatePreInvoiceCreateField(item.Id);
+      }
+
+      console.log("✅ All items updated.");
+    })
+    .catch((error) => {
+      console.error("❌ Error fetching items:", error);
+    });
 }

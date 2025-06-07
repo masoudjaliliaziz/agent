@@ -56,6 +56,7 @@ export default class ShopPopUp extends React.Component<any, any> {
               <span className={styles.shopPopupIndex}>{p.Code}</span>
               {p.Title}
               <button
+                type="button"
                 onClick={() => this.handleAddItem(p)}
                 className={styles.shopPopupAddButton}
               >

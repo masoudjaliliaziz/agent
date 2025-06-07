@@ -108,7 +108,10 @@ export default class Form extends Component<FormProps, any> {
               this.props.distributerCode.trim() !== "" && (
                 <div className={styles.distributerCodeChildDiv}>
                   <p className={styles.distributerCodeParaph}>
-                    کد نماینده: <span className={styles.distributerCodeSpan}>{this.props.distributerCode}</span>
+                    کد نماینده:{" "}
+                    <span className={styles.distributerCodeSpan}>
+                      {this.props.distributerCode}
+                    </span>
                   </p>
                 </div>
               )}
@@ -160,8 +163,12 @@ export default class Form extends Component<FormProps, any> {
             }
           />
 
-          <div className={styles.buttonSave} onClick={this.onEventAdd}>
+          <div className={styles.buttonsContainer}>
+            <div className={styles.buttonSave} onClick={this.onEventAdd}>
             ذخیره
+          </div>
+
+          <button type="button" className={styles.preInvoiceButton}>ایجاد پیش فاکتور</button>
           </div>
         </div>
 

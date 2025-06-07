@@ -351,6 +351,7 @@ export async function addOrUpdateItemInVirtualInventory(data: {
     throw err;
   }
 }
+
 export async function addToCart(product: Product): Promise<void> {
   const agentGuid = sessionStorage.getItem("agent_guid");
   if (!agentGuid) {
@@ -476,4 +477,35 @@ export async function addOrUpdateItemInOrderableInventory({
     console.error("❌ خطا در افزودن یا بروزرسانی:", err);
     return null;
   }
+}
+
+export async function updatePreInvoiceCreateField(itemId) {
+  const webUrl = "https://crm.zarsim.com";
+  const digest = await getDigest();
+
+  const url = `${webUrl}/_api/web/lists/getbytitle('Orders')/items(${itemId})`;
+
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      Accept: "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose",
+      "X-RequestDigest": digest,
+      "IF-MATCH": "*",
+      "X-HTTP-Method": "MERGE",
+    },
+    body: JSON.stringify({
+      Pre_Invoice_Create: "1",
+    }),
+  })
+    .then((res) => {
+      if (res.ok) {
+        console.log(`✅ Item ${itemId} updated successfully.`);
+      } else {
+        console.error(`❌ Error updating item ${itemId}:`, res.statusText);
+      }
+    })
+    .catch((error) => {
+      console.error(`❌ Fetch error updating item ${itemId}:`, error);
+    });
 }
