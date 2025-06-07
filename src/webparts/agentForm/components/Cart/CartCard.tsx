@@ -328,11 +328,11 @@ export default class CartCard extends React.Component<any, any> {
             </div>
             <p>
               <small>تخفیف ({discount}٪):</small>{" "}
-              {this.formatNumberWithComma(Math.ceil(discountAmount))} تومان
+              {this.formatNumberWithComma(Math.ceil(discountAmount))} ریال
             </p>
             <p style={{ color: "green" }}>
               <small>قیمت بعد تخفیف (هر عدد):</small>{" "}
-              {this.formatNumberWithComma(Math.ceil(finalPricePerItem))} تومان
+              {this.formatNumberWithComma(Math.ceil(finalPricePerItem))} ریال
             </p>
           </div>
 
