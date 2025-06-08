@@ -17,14 +17,13 @@ export default class Cart extends Component<any, any> {
       showMessage: false,
       saveSignal: null,
       shopPopup: false,
-      products: [], // محصولات بارگذاری شده برای popup
+      products: [],
     };
   }
 
   componentDidMount() {
     this.setGuidFromUrlOrSession();
 
-    // بارگذاری محصولات برای پنجره افزودن محصول
     loadItems().then((products) => this.setState({ products }));
   }
 
@@ -89,18 +88,16 @@ export default class Cart extends Component<any, any> {
   };
 
   extractQuantity(text) {
-    // تبدیل اعداد فارسی به انگلیسی
     const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
     persianNumbers.forEach((num, index) => {
       const regex = new RegExp(num, "g");
       text = text.replace(regex, index);
     });
 
-    // گرفتن عدد قبل از "متری" یا "متري"
     const match = text.match(/(\d+)\s*(?:متر[یي])/);
 
     if (match) {
-      return parseInt(match[1], 10); // فقط عدد
+      return parseInt(match[1], 10);
     } else {
       return null;
     }
@@ -137,7 +134,7 @@ export default class Cart extends Component<any, any> {
     return this.state.cartItems.reduce((sum, item) => {
       const count = parseFloat(item.count) || 0;
       const price = parseFloat(item.price) || 0;
-      const unit = this.extractQuantity(item.Title) || 1; // اضافه شده
+      const unit = this.extractQuantity(item.Title) || 1;
 
       const discountedPrice = price - (price * this.state.discount) / 100;
       return sum + count * unit * discountedPrice;
@@ -154,7 +151,7 @@ export default class Cart extends Component<any, any> {
     return this.state.cartItems.reduce((sum, item) => {
       const count = parseFloat(item.count) || 0;
       const price = parseFloat(item.price) || 0;
-      const unit = this.extractQuantity(item.Title) || 1; // اضافه شده
+      const unit = this.extractQuantity(item.Title) || 1;
 
       return sum + count * unit * price;
     }, 0);

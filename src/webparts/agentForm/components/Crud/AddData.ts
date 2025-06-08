@@ -148,7 +148,6 @@ export async function updateOrderFormByGuid(guid_form: string, Data: any) {
   const listName = "Orders";
   const itemType = "SP.Data.OrdersListItem";
 
-  // مرحله 1: پیدا کردن آیتم با guid_form برابر ورودی
   const filter = `guid_form eq '${guid_form}'`;
   const queryUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=${filter}`;
 
@@ -166,21 +165,20 @@ export async function updateOrderFormByGuid(guid_form: string, Data: any) {
     return;
   }
 
-  // فرض می‌گیریم فقط یک آیتم داریم با این guid_form
+
   const item = getData.d.results[0];
   const itemId = item.Id;
 
-  // مرحله 2: آپدیت آیتم با استفاده از ID
   const updateUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${itemId})`;
 
   const updateResponse = await fetch(updateUrl, {
-    method: "POST", // برای آپدیت در SP REST API از POST + X-HTTP-Method: MERGE استفاده می‌کنیم
+    method: "POST",
     headers: {
       Accept: "application/json;odata=verbose",
       "Content-Type": "application/json;odata=verbose",
       "X-RequestDigest": digest,
       "X-HTTP-Method": "MERGE",
-      "If-Match": item.__metadata.etag, // برای جلوگیری از override ناخواسته
+      "If-Match": item.__metadata.etag,
     },
     body: JSON.stringify({
       __metadata: { type: itemType },
@@ -223,9 +221,6 @@ export async function addItemToVirtualInventory(data) {
     const reserveInventory = await result.d.reserveInventory;
     return reserveInventory;
 
-    // if (!response.ok) {
-    //   throw new Error(`Server responded with status ${response.status}`);
-    // }
   } catch (err) {
     console.error("❌ Error adding item to inventory:", err);
   }
@@ -266,7 +261,6 @@ export async function addOrUpdateItemInVirtualInventory(data: {
       );
     }
 
-    // جستجو در لیست با فیلتر
     const filterUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=${filterQuery}`;
     const searchResponse = await fetch(filterUrl, {
       headers: { Accept: "application/json;odata=verbose" },
@@ -368,7 +362,6 @@ export async function addOrUpdateItemInOrderableInventory({
   try {
     const digest = await getDigest();
 
-    // بررسی وجود آیتم با Code
     const existingItemsResponse = await fetch(
       `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=Code eq '${Code}'`,
       {
@@ -383,7 +376,6 @@ export async function addOrUpdateItemInOrderableInventory({
     const existingItem = existingItemsData.d.results[0];
 
     if (existingItem) {
-      // اگر آیتم وجود دارد، آن را بروزرسانی کن
       await fetch(
         `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${existingItem.Id})`,
         {
@@ -404,7 +396,6 @@ export async function addOrUpdateItemInOrderableInventory({
 
       return orderableInventory;
     } else {
-      // اگر وجود ندارد، یک آیتم جدید بساز
       const createResponse = await fetch(
         `${webUrl}/_api/web/lists/getbytitle('${listName}')/items`,
         {
@@ -487,7 +478,6 @@ export async function updatePreInvoiceCreateField(guid_form: string) {
     listName.charAt(0).toUpperCase() + listName.slice(1)
   }ListItem`;
 
-  // Step 1 → GET the item to find its ID
   const getUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${guid_form}'&$top=1`;
 
   try {
@@ -507,7 +497,6 @@ export async function updatePreInvoiceCreateField(guid_form: string) {
 
     const itemId = getData.d.results[0].Id;
 
-    // Step 2 → Now update that item by ID
     const updateUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${itemId})`;
 
     const updateResponse = await fetch(updateUrl, {

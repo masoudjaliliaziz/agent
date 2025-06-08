@@ -4,7 +4,7 @@ import Counter from "./Counter";
 import { loadItemByCode, loadReservedInventoryByCode } from "../Crud/GetData";
 import { handleUpdateCartPrice } from "../Crud/UpdateData";
 import { addOrUpdateItemInVirtualInventory } from "../Crud/AddData";
-import { addOrUpdateItemInOrderableInventory } from "../Crud/AddData"; // اضافه شده
+import { addOrUpdateItemInOrderableInventory } from "../Crud/AddData";
 import ReserveHistory from "../reserve/ReserveHistory";
 
 export default class CartCard extends React.Component<any, any> {
@@ -20,7 +20,7 @@ export default class CartCard extends React.Component<any, any> {
       showSuccessPopup: false,
       reservedTotal: 0,
       errorMsg: "",
-      inventoryAvailable: 0, // مقدار ذخیره شده برای مقایسه تغییرات
+      inventoryAvailable: 0,
     };
   }
 
@@ -50,7 +50,7 @@ export default class CartCard extends React.Component<any, any> {
         price: initialPrice,
         count: parseFloat(count) || 1,
         reservedTotal: totalReserved,
-        inventoryAvailable, // مقدار اولیه ذخیره شود
+        inventoryAvailable,
       },
       () => {
         this.calculateTotal();
@@ -59,7 +59,6 @@ export default class CartCard extends React.Component<any, any> {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    // وقتی محصول تغییر کرد، دوباره اطلاعات لود کن
     if (this.props.product.Id !== prevProps.product.Id) {
       const productFromStore = await loadItemByCode(
         this.props.product.codegoods
@@ -91,12 +90,10 @@ export default class CartCard extends React.Component<any, any> {
       );
     }
 
-    // وقتی تعداد تغییر کرد، موجودی رزرو شده آپدیت شود
     if (this.state.count !== prevState.count) {
       await this.fetchReservedTotal(this.state.productFromStore.Code);
     }
 
-    // وقتی موجودی رزرو شده یا موجودی کلی تغییر کرد، موجودی قابل رزرو (inventoryAvailable) را آپدیت کن
     if (
       this.state.reservedTotal !== prevState.reservedTotal ||
       this.state.productFromStore.Inventory !==
@@ -105,7 +102,6 @@ export default class CartCard extends React.Component<any, any> {
       const inventory = parseInt(this.state.productFromStore.Inventory || "0");
       const inventoryAvailable = inventory - this.state.reservedTotal;
 
-      // فقط اگر مقدار موجودی قابل رزرو تغییر کرده باشد، state را آپدیت کن و تابع addOrUpdate را صدا بزن
       if (inventoryAvailable !== this.state.inventoryAvailable) {
         this.setState({ inventoryAvailable }, async () => {
           try {
@@ -146,18 +142,16 @@ export default class CartCard extends React.Component<any, any> {
   };
 
   extractQuantity(text) {
-    // تبدیل اعداد فارسی به انگلیسی
     const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
     persianNumbers.forEach((num, index) => {
       const regex = new RegExp(num, "g");
       text = text.replace(regex, index);
     });
 
-    // گرفتن عدد قبل از "متری" یا "متري"
     const match = text.match(/(\d+)\s*(?:متر[یي])/);
 
     if (match) {
-      return parseInt(match[1], 10); // فقط عدد
+      return parseInt(match[1], 10);
     } else {
       return null;
     }

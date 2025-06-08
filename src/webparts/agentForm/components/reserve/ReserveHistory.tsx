@@ -17,13 +17,11 @@ export default class ReserveHistory extends React.Component<any, any> {
     const reserveInventories = await loadReservedInventoryByCode(productCode);
     this.setState({ reserveInventories, loading: false });
 
-    // محاسبه مجموع مقدار رزرو شده
     const totalReserved = reserveInventories.reduce((acc, item) => {
       const resInv = parseInt(item.reserveInventory) || 0;
       return acc + resInv;
     }, 0);
 
-    // ارسال مجموع رزرو به والد اگر تابع موجود بود
     if (this.props.onReservedTotalChange) {
       this.props.onReservedTotalChange(totalReserved);
     }
@@ -44,7 +42,7 @@ export default class ReserveHistory extends React.Component<any, any> {
               key={index}
               reserveData={data}
               onReservedTotalChange={this.props.onReservedTotalChange}
-              onDeleted={() => this.componentDidMount()} // بارگذاری مجدد پس از حذف
+              onDeleted={() => this.componentDidMount()}
             />
           ))
         )}

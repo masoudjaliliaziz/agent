@@ -17,7 +17,6 @@ export default class ReserveItem extends React.Component<any, any> {
   async componentDidMount() {
     const userId = this.props.reserveData.AuthorId;
 
-    // دریافت اطلاعات کاربر لاگین‌شده
     try {
       const res = await fetch(`https://crm.zarsim.com/_api/web/currentuser`, {
         headers: {
@@ -70,7 +69,6 @@ export default class ReserveItem extends React.Component<any, any> {
       await deleteVirtualInventoryItemById(this.props.reserveData.Id);
       alert("رزرو حذف شد");
 
-      // رفرش داده‌ها پس از حذف
       if (this.props.onDeleted) {
         this.props.onDeleted();
       }

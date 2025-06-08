@@ -35,8 +35,6 @@ export default class CartCardHistory extends React.Component<any, any> {
       let totalReserved = 0;
       for (let i = 0; i < reserveInventories.length; i++) {
         const item = reserveInventories[i];
-        // تبدیل غیرصریح: ضرب در 1 تا تبدیل شود، اما اگر نخواهیم ضرب کنیم:
-        // در این حالت فرض میکنیم مقدار عددی است یا رشته عددی، خود JS در + جمع تبدیل میکند
         totalReserved += item.reserveInventory ? item.reserveInventory * 1 : 0;
       }
       this.setState({ reservedTotal: totalReserved });
@@ -60,7 +58,6 @@ export default class CartCardHistory extends React.Component<any, any> {
 
     if (!productFromStore) return <div>در حال بارگذاری...</div>;
 
-    // قیمت:
     let price = productFromStore.Price;
     if (price === undefined || price === null || price === "") {
       price = product.price;
@@ -69,13 +66,11 @@ export default class CartCardHistory extends React.Component<any, any> {
       }
     }
 
-    // تعداد:
     let count = product.count;
     if (count === undefined || count === null || count === "") {
       count = "1";
     }
 
-    // تبدیل غیرصریح توسط عملیات ریاضی (بدون Number یا parseFloat):
     const discountAmount = (price * discount) / 100;
     const finalPrice = price - discountAmount;
     const total = finalPrice * count;

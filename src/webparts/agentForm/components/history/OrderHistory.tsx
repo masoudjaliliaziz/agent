@@ -6,8 +6,6 @@ export default class OrderHistory extends React.Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {
-      //   reserveInventories: [],
-      //   loading: true,
     };
   }
 
