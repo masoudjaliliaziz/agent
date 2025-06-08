@@ -352,6 +352,85 @@ export async function addOrUpdateItemInVirtualInventory(data: {
   }
 }
 
+export async function addOrUpdateItemInOrderableInventory({
+  Code,
+  orderableInventory,
+}: {
+  Code: string;
+  orderableInventory: string;
+}): Promise<string | null> {
+  const listName = "orderableInventory";
+  const itemType = `SP.Data.${
+    listName.charAt(0).toUpperCase() + listName.slice(1)
+  }ListItem`;
+  const webUrl = "https://crm.zarsim.com";
+
+  try {
+    const digest = await getDigest();
+
+    // بررسی وجود آیتم با Code
+    const existingItemsResponse = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=Code eq '${Code}'`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json;odata=verbose",
+        },
+      }
+    );
+
+    const existingItemsData = await existingItemsResponse.json();
+    const existingItem = existingItemsData.d.results[0];
+
+    if (existingItem) {
+      // اگر آیتم وجود دارد، آن را بروزرسانی کن
+      await fetch(
+        `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${existingItem.Id})`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose",
+            "X-RequestDigest": digest,
+            "X-HTTP-Method": "MERGE",
+            "If-Match": "*",
+          },
+          body: JSON.stringify({
+            __metadata: { type: itemType },
+            orderableInventory,
+          }),
+        }
+      );
+
+      return orderableInventory;
+    } else {
+      // اگر وجود ندارد، یک آیتم جدید بساز
+      const createResponse = await fetch(
+        `${webUrl}/_api/web/lists/getbytitle('${listName}')/items`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose",
+            "X-RequestDigest": digest,
+          },
+          body: JSON.stringify({
+            __metadata: { type: itemType },
+            Code,
+            orderableInventory,
+          }),
+        }
+      );
+
+      const createdItem = await createResponse.json();
+      return createdItem.d.orderableInventory;
+    }
+  } catch (err) {
+    console.error("❌ خطا در افزودن یا بروزرسانی:", err);
+    return null;
+  }
+}
+
 export async function addToCart(product: Product): Promise<void> {
   const agentGuid = sessionStorage.getItem("agent_guid");
   if (!agentGuid) {
@@ -366,6 +445,11 @@ export async function addToCart(product: Product): Promise<void> {
     Title: product.Title,
     codegoods: product.Code,
     guid_form: agentGuid,
+    count: "1",
+    price: Number(product.Price),
+    size: product.size,
+    color: product.color,
+    IdCode: product.IdCode,
   };
 
   try {
@@ -389,9 +473,67 @@ export async function addToCart(product: Product): Promise<void> {
     if (!response.ok) {
       throw new Error("خطا در افزودن به سبد خرید");
     }
-    
   } catch (error) {
     console.error("❌ خطا:", error);
     alert("افزودن به سبد خرید با خطا مواجه شد.");
+  }
+}
+
+export async function updatePreInvoiceCreateField(guid_form: string) {
+  const webUrl = "https://crm.zarsim.com";
+  const digest = await getDigest();
+  const listName = "Orders";
+  const itemType = `SP.Data.${
+    listName.charAt(0).toUpperCase() + listName.slice(1)
+  }ListItem`;
+
+  // Step 1 → GET the item to find its ID
+  const getUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${guid_form}'&$top=1`;
+
+  try {
+    const getResponse = await fetch(getUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json;odata=verbose",
+      },
+    });
+
+    const getData = await getResponse.json();
+
+    if (getData.d.results.length === 0) {
+      console.error(`❌ No item found with guid_form: ${guid_form}`);
+      return;
+    }
+
+    const itemId = getData.d.results[0].Id;
+
+    // Step 2 → Now update that item by ID
+    const updateUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${itemId})`;
+
+    const updateResponse = await fetch(updateUrl, {
+      method: "POST",
+      headers: {
+        Accept: "application/json;odata=verbose",
+        "Content-Type": "application/json;odata=verbose",
+        "X-RequestDigest": digest,
+        "IF-MATCH": "*",
+        "X-HTTP-Method": "MERGE",
+      },
+      body: JSON.stringify({
+        __metadata: { type: itemType },
+        Pre_Invoice_Create: "1",
+      }),
+    });
+
+    if (updateResponse.ok) {
+      console.log(`✅ Item ${guid_form} (ID: ${itemId}) updated successfully.`);
+    } else {
+      console.error(
+        `❌ Error updating item ${guid_form} (ID: ${itemId}):`,
+        updateResponse.statusText
+      );
+    }
+  } catch (error) {
+    console.error(`❌ Fetch error updating item ${guid_form}:`, error);
   }
 }

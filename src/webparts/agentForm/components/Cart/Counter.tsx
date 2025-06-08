@@ -12,11 +12,13 @@ class Counter extends React.Component<any, any> {
       count: 0,
       displayCount: 0,
       loading: true,
+  
     };
   }
 
   async componentDidMount() {
     await this.fetchQuantity();
+  
   }
 
   fetchQuantity = async () => {
@@ -93,6 +95,8 @@ class Counter extends React.Component<any, any> {
       }
     }
   };
+
+
 
   increment = () => {
     const newCount = this.state.displayCount + 1;

@@ -1,12 +1,10 @@
 @import "~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss";
-
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
   font-family: "Vazir", sans-serif;
 }
-
 .agentForm {
   width: 100%;
 
@@ -22,12 +20,17 @@
   }
 
   .button {
+    // Our button
     text-decoration: none;
     height: 32px;
+
+    // Primary Button
     min-width: 80px;
     background-color: $ms-color-themePrimary;
     border-color: $ms-color-themePrimary;
     color: $ms-color-white;
+
+    // Basic Button
     outline: transparent;
     position: relative;
     font-family: "Segoe UI WestEuropean", "Segoe UI", -apple-system,

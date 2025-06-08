@@ -1,13 +1,17 @@
 export interface IAgentFormProps {
   description: string;
+  distributerCode?: string;
 }
 
 export interface IAgentFormState {
   parent_GUID: string;
+  existLink: null | "" | undefined | string;
 }
 
 export interface FormProps {
   parent_GUID: string;
+  distributerCode?: string;
+  existLink: any;
 }
 
 export interface FormState {
@@ -38,7 +42,7 @@ export interface ShopPopUpProps {
 
 export interface ShopPopUpState {
   searchQuery: string;
-  showMessage: boolean; 
+  showMessage: boolean;
 }
 
 export interface Product {
@@ -52,6 +56,7 @@ export interface Product {
   Title: string;
   Code: string;
   djne: string;
+  Price: string;
   cart: (id: number, title: string) => void;
   updateCartCount?: () => void;
 }

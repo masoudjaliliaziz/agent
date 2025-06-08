@@ -4,6 +4,7 @@ import Counter from "./Counter";
 import { loadItemByCode, loadReservedInventoryByCode } from "../Crud/GetData";
 import { handleUpdateCartPrice } from "../Crud/UpdateData";
 import { addOrUpdateItemInVirtualInventory } from "../Crud/AddData";
+import { addOrUpdateItemInOrderableInventory } from "../Crud/AddData"; // اضافه شده
 import ReserveHistory from "../reserve/ReserveHistory";
 
 export default class CartCard extends React.Component<any, any> {
@@ -14,56 +15,109 @@ export default class CartCard extends React.Component<any, any> {
       count: 1,
       price: 0,
       total: 0,
+      unit: 0,
       reserveInventory: "0",
       showSuccessPopup: false,
       reservedTotal: 0,
       errorMsg: "",
+      inventoryAvailable: 0, // مقدار ذخیره شده برای مقایسه تغییرات
     };
   }
 
   async componentDidMount() {
     const { product } = this.props;
-    const { codegoods, count } = product;
+    const { codegoods, count, Title } = product;
 
+    const unit = this.extractQuantity(Title);
+    this.setState({ unit: Number(unit) });
     const productFromStore = await loadItemByCode(codegoods);
-    const initialPrice =
-      productFromStore.Price || parseFloat(product.price) || 0;
+    const initialPrice = parseFloat(product.price);
+
+    const reserveInventories = await loadReservedInventoryByCode(
+      productFromStore.Code
+    );
+    const totalReserved = reserveInventories.reduce((acc, item) => {
+      const resInv = parseInt(item.reserveInventory) || 0;
+      return acc + resInv;
+    }, 0);
+
+    const inventory = parseInt(productFromStore.Inventory || "0");
+    const inventoryAvailable = inventory - totalReserved;
 
     this.setState(
       {
         productFromStore,
         price: initialPrice,
         count: parseFloat(count) || 1,
+        reservedTotal: totalReserved,
+        inventoryAvailable, // مقدار اولیه ذخیره شود
       },
-      async () => {
+      () => {
         this.calculateTotal();
-        await this.fetchReservedTotal(productFromStore.Code);
       }
     );
   }
+
   async componentDidUpdate(prevProps, prevState) {
+    // وقتی محصول تغییر کرد، دوباره اطلاعات لود کن
     if (this.props.product.Id !== prevProps.product.Id) {
       const productFromStore = await loadItemByCode(
         this.props.product.codegoods
       );
-      const initialPrice =
-        productFromStore.Price || parseFloat(this.props.product.price) || 0;
+      const initialPrice = parseFloat(this.props.product.price);
+
+      const reserveInventories = await loadReservedInventoryByCode(
+        productFromStore.Code
+      );
+      const totalReserved = reserveInventories.reduce((acc, item) => {
+        const resInv = parseInt(item.reserveInventory) || 0;
+        return acc + resInv;
+      }, 0);
+
+      const inventory = parseInt(productFromStore.Inventory || "0");
+      const inventoryAvailable = inventory - totalReserved;
 
       this.setState(
         {
           productFromStore,
           price: initialPrice,
           count: parseFloat(this.props.product.count) || 1,
+          reservedTotal: totalReserved,
+          inventoryAvailable,
         },
-        async () => {
+        () => {
           this.calculateTotal();
-          await this.fetchReservedTotal(productFromStore.Code);
         }
       );
     }
 
+    // وقتی تعداد تغییر کرد، موجودی رزرو شده آپدیت شود
     if (this.state.count !== prevState.count) {
       await this.fetchReservedTotal(this.state.productFromStore.Code);
+    }
+
+    // وقتی موجودی رزرو شده یا موجودی کلی تغییر کرد، موجودی قابل رزرو (inventoryAvailable) را آپدیت کن
+    if (
+      this.state.reservedTotal !== prevState.reservedTotal ||
+      this.state.productFromStore.Inventory !==
+        prevState.productFromStore.Inventory
+    ) {
+      const inventory = parseInt(this.state.productFromStore.Inventory || "0");
+      const inventoryAvailable = inventory - this.state.reservedTotal;
+
+      // فقط اگر مقدار موجودی قابل رزرو تغییر کرده باشد، state را آپدیت کن و تابع addOrUpdate را صدا بزن
+      if (inventoryAvailable !== this.state.inventoryAvailable) {
+        this.setState({ inventoryAvailable }, async () => {
+          try {
+            await addOrUpdateItemInOrderableInventory({
+              Code: this.state.productFromStore.Code,
+              orderableInventory: String(this.state.inventoryAvailable),
+            });
+          } catch (err) {
+            console.error("❌ خطا در ارسال موجودی قابل رزرو به سرور:", err);
+          }
+        });
+      }
     }
 
     if (
@@ -73,6 +127,7 @@ export default class CartCard extends React.Component<any, any> {
       this.handleSaveDiscountExternally();
     }
   }
+
   fetchReservedTotal = async (productCode) => {
     if (!productCode) return;
 
@@ -89,6 +144,24 @@ export default class CartCard extends React.Component<any, any> {
       console.error("Error fetching reserved total:", err);
     }
   };
+
+  extractQuantity(text) {
+    // تبدیل اعداد فارسی به انگلیسی
+    const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+    persianNumbers.forEach((num, index) => {
+      const regex = new RegExp(num, "g");
+      text = text.replace(regex, index);
+    });
+
+    // گرفتن عدد قبل از "متری" یا "متري"
+    const match = text.match(/(\d+)\s*(?:متر[یي])/);
+
+    if (match) {
+      return parseInt(match[1], 10); // فقط عدد
+    } else {
+      return null;
+    }
+  }
 
   handleUpdateInventory = async () => {
     const { product } = this.props;
@@ -112,7 +185,7 @@ export default class CartCard extends React.Component<any, any> {
       Title,
       ProductCode: String(codegoods),
       status: 0,
-      reserveInventory: String(count),
+      reserveInventory: String(Number(count) * Number(this.state.unit)),
     });
     this.setState({ reserveInventory });
 
@@ -126,20 +199,6 @@ export default class CartCard extends React.Component<any, any> {
         count: newCount,
       });
     });
-  };
-
-  handlePriceChange = (e) => {
-    const price = parseFloat(e.target.value) || 0;
-    this.setState({ price }, () => {
-      this.calculateTotal();
-      this.props.onItemUpdate(this.props.product.Id, {
-        price,
-      });
-    });
-  };
-
-  handlePriceBlur = () => {
-    this.handleSaveDiscountExternally();
   };
 
   handleSaveDiscountExternally = async () => {
@@ -164,13 +223,14 @@ export default class CartCard extends React.Component<any, any> {
   };
 
   calculateTotal = () => {
-    const { price, count } = this.state;
+    const { price, count, unit } = this.state;
     const { discount } = this.props;
+
     const discountedPrice = price - (price * discount) / 100;
-    const total = discountedPrice * count;
+    const total = discountedPrice * count * unit;
+
     this.setState({ total });
   };
-
   formatNumberWithComma = (number: number) => {
     return new Intl.NumberFormat().format(Number(number.toFixed(2)));
   };
@@ -189,10 +249,8 @@ export default class CartCard extends React.Component<any, any> {
       reserveInventory,
       errorMsg,
       reservedTotal,
+      inventoryAvailable,
     } = this.state;
-
-    const inventory = parseInt(productFromStore.Inventory || "0");
-    const inventoryAvailable = inventory - reservedTotal;
 
     const discountAmount = (price * discount) / 100;
     const finalPricePerItem = price - discountAmount;
@@ -219,17 +277,16 @@ export default class CartCard extends React.Component<any, any> {
         <div className={styles.cardDescription}>
           <div className={styles.priceForm}>
             <input
+              disabled
               className={styles.priceInput}
               type="number"
               value={price}
-              onBlur={this.handlePriceBlur}
-              onChange={this.handlePriceChange}
             />
-            <div className={styles.priceFormDiv}>قیمت</div>
+            <div>قیمت</div>
           </div>
-
           <div className={styles.actionssContainer}>
             <Counter
+              unit={product}
               Id={product.Id}
               onDelete={onDelete}
               onCountChange={this.handleCountChange}
@@ -259,38 +316,33 @@ export default class CartCard extends React.Component<any, any> {
               <p style={{ color: "red", fontWeight: "bold" }}>{errorMsg}</p>
             )}
 
-            <div className={styles.actionContainer}>
-              <div
-                onClick={() => this.setState({ showSuccessPopup: true })}
-                className={styles.reserve}
-              >
-                نمایش موجودی رزرو{" "}
-              </div>
-
-              <p className={styles.inventoryDescription}>
-                موجودی رزرو : {reserveInventory}
-              </p>
-            </div>
-
-            <p>
-              <small>تخفیف ({discount}٪):</small>{" "}
-              {this.formatNumberWithComma(discountAmount).toLocaleString()}{" "}
-              تومان
+            <p className={styles.inventoryDescription}>
+              موجودی رزرو : {reserveInventory}
             </p>
 
+            <div
+              onClick={() => this.setState({ showSuccessPopup: true })}
+              className={styles.reserve}
+            >
+              نمایش موجودی رزرو{" "}
+            </div>
+            <p>
+              <small>تخفیف ({discount}٪):</small>{" "}
+              {this.formatNumberWithComma(Math.ceil(discountAmount))} ریال
+            </p>
             <p style={{ color: "green" }}>
               <small>قیمت بعد تخفیف (هر عدد):</small>{" "}
-              {this.formatNumberWithComma(finalPricePerItem).toLocaleString()}{" "}
-              تومان
+              {this.formatNumberWithComma(Math.ceil(finalPricePerItem))} ریال
             </p>
           </div>
 
           <div className={styles.priceForm}>
-            <input type="number" disabled value={total} />
-            <div>جمع</div>
+            <div className={styles.priceFormDivToatal}>
+              {this.formatNumberWithComma(Math.ceil(total))}
+            </div>
+            <div className={styles.priceFormDivLabl}>جمع کل بدون تخفیف</div>
           </div>
         </div>
-
         {showSuccessPopup && (
           <div className={styles.popupOverlay}>
             <div className={styles.popupBox}>

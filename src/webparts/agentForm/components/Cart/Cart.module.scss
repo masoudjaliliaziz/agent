@@ -52,7 +52,6 @@
   animation: slideDown 0.3s ease-out;
   font-weight: bolder;
 }
-
 .errorMessage {
   position: fixed;
   top: 20px;
@@ -111,7 +110,6 @@
   flex-direction: column;
   align-items: right;
   padding: 10px;
-
   .btn {
     width: 150px;
     margin: 10px auto;
@@ -127,7 +125,6 @@
     gap: 5px;
     box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
       rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
-
     &:hover {
       scale: 105%;
       background-color: black;
@@ -204,7 +201,6 @@
     color: #555;
     line-height: 1.6;
   }
-
   .titleDescription {
     direction: rtl;
     font-weight: bolder;
@@ -267,6 +263,7 @@
   background-color: #0078d4;
   color: white;
   font-weight: bold;
+
   box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
 
   &:hover {
@@ -282,33 +279,36 @@
   justify-content: center;
   align-items: center;
   border-radius: 6px;
-
-  .priceFormInput {
-    font-weight: bolder;
-    padding: 0 15px;
-    height: 25px;
-    width: 180px;
-    background-color: white;
-    border: none;
-    outline: none;
-    border-radius: 6px;
-  }
-
-  .priceFormDiv {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    outline: none;
-
-    font-weight: bold;
-    padding: 5px;
-    height: 25px;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
-  }
 }
 
+.priceFormDivToatal {
+  font-weight: bolder;
+  padding: 0 15px;
+  height: 25px;
+  width: 140px;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  background-color: white;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+}
+
+.priceFormDivLabl {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 120px;
+  outline: none;
+  font-size: smaller;
+  font-weight: bold;
+  padding: 5px;
+  height: 25px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
+}
 .discountForm {
   background-color: lightgray;
   padding: 5px 7.5px;
@@ -316,8 +316,16 @@
   justify-content: center;
   align-items: center;
   border-radius: 6px;
-
-  .discountFormBtn {
+  input {
+    padding: 0 5px;
+    height: 25px;
+    width: 60px;
+    background-color: white;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+  }
+  button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -331,11 +339,42 @@
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
     cursor: pointer;
-
     &:hover {
       background-color: #193b2b;
       transform: scale(1.05);
     }
+  }
+}
+
+.fullPrice {
+  background-color: lightgray;
+  padding: 5px 7.5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  input {
+    padding: 0 5px;
+    height: 25px;
+    width: 60px;
+    background-color: white;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+  }
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    outline: none;
+    background-color: gray;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    height: 25px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
   }
 }
 
@@ -383,11 +422,10 @@
     .totalContainerH2 {
       color: #276749;
       direction: rtl;
-
-      .totalContainerH2Small {
-        color: #005a9e;
-        font-size: 12px;
-      }
+    }
+    .totalContainerH2Small {
+      color: #005a9e;
+      font-size: 12px;
     }
 
     .totalContainerSmall {
@@ -413,6 +451,7 @@
 .priceInput {
   width: 120px;
   height: 25px;
+
   font-size: 16px;
   font-weight: bolder;
   border: none;
@@ -422,7 +461,6 @@
   transition: all 0.3s ease-in-out;
   background-color: white;
   outline: none;
-
   &:focus {
     border-color: #0077cc;
   }
@@ -430,25 +468,26 @@
 
 .discountDiv {
   font-weight: bolder;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 10px;
 }
 
 .submit {
-  padding: 8px 16px;
-  width: 200px;
-  background-color: #000;
-  color: #ffffff;
-  border-radius: 8px;
+  min-width: 40px;
+  padding: 3px 16px;
+  background-color: rgb(45, 45, 45);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
   transition: all 300ms linear;
-  font-size: 18px;
-  font-weight: 500;
-  direction: rtl;
-  border: none;
-  text-align: center;
+  font-weight: bolder;
 
   &:hover {
-    background-color: #e4e4e4;
-    scale: 1.05;
-    color: rgb(0, 0, 0);
+    background-color: #dadada;
+    color: #000000;
+    scale: scale(1.05);
   }
 }
 
@@ -462,6 +501,9 @@
   color: white;
   font-weight: bold;
   font-size: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   &:hover {
     background-color: #043d3f;
@@ -488,7 +530,6 @@
   font-size: 14px;
   box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
   margin-left: 80px;
-
   &:hover {
     background-color: #05486e;
     transform: scale(1.05);
@@ -567,31 +608,6 @@
   align-items: center;
 }
 
-.shopPopupContainor {
-  position: fixed;
-  direction: rtl;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px 20px 60px 20px;
-  z-index: 1001;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  width: 1200px;
-  height: 900px;
-}
-
-.shopPopupBackdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
-
 .addProductBtn {
   padding: 8px 16px;
   width: 200px;
@@ -609,6 +625,30 @@
     scale: 1.05;
     color: rgb(0, 0, 0);
   }
+}
+.shopPopupBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.shopPopupContainor {
+  position: fixed;
+  direction: rtl;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px 20px 60px 20px;
+  z-index: 1001;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  width: 1200px;
+  height: 900px;
 }
 
 .closeShopPopupBtn {
@@ -636,4 +676,12 @@
     scale: 105%;
     color: white;
   }
+}
+
+.priceShown {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }

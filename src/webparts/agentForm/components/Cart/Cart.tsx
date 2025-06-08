@@ -17,13 +17,15 @@ export default class Cart extends Component<any, any> {
       showMessage: false,
       saveSignal: null,
       shopPopup: false,
+      products: [], // محصولات بارگذاری شده برای popup
     };
   }
 
   componentDidMount() {
     this.setGuidFromUrlOrSession();
 
-    loadItems().then((products) => this.setState({ products: products }));
+    // بارگذاری محصولات برای پنجره افزودن محصول
+    loadItems().then((products) => this.setState({ products }));
   }
 
   setGuidFromUrlOrSession = () => {
@@ -86,6 +88,24 @@ export default class Cart extends Component<any, any> {
       });
   };
 
+  extractQuantity(text) {
+    // تبدیل اعداد فارسی به انگلیسی
+    const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+    persianNumbers.forEach((num, index) => {
+      const regex = new RegExp(num, "g");
+      text = text.replace(regex, index);
+    });
+
+    // گرفتن عدد قبل از "متری" یا "متري"
+    const match = text.match(/(\d+)\s*(?:متر[یي])/);
+
+    if (match) {
+      return parseInt(match[1], 10); // فقط عدد
+    } else {
+      return null;
+    }
+  }
+
   handleDiscountChange = (e) => {
     const discount = parseFloat(e.target.value) || 0;
     this.setState({ discount });
@@ -117,23 +137,26 @@ export default class Cart extends Component<any, any> {
     return this.state.cartItems.reduce((sum, item) => {
       const count = parseFloat(item.count) || 0;
       const price = parseFloat(item.price) || 0;
+      const unit = this.extractQuantity(item.Title) || 1; // اضافه شده
+
       const discountedPrice = price - (price * this.state.discount) / 100;
-      return sum + count * discountedPrice;
+      return sum + count * unit * discountedPrice;
     }, 0);
   };
 
   calculateDiscountAmount = () => {
-    return (
-      (this.calculateTotal() * this.state.discount) /
-      (100 + this.state.discount)
-    );
+    const totalBefore = this.calculateTotalBeforeDiscount();
+    const totalAfter = this.calculateTotal();
+    return totalBefore - totalAfter;
   };
 
   calculateTotalBeforeDiscount = () => {
     return this.state.cartItems.reduce((sum, item) => {
       const count = parseFloat(item.count) || 0;
       const price = parseFloat(item.price) || 0;
-      return sum + count * price;
+      const unit = this.extractQuantity(item.Title) || 1; // اضافه شده
+
+      return sum + count * unit * price;
     }, 0);
   };
 
@@ -191,10 +214,12 @@ export default class Cart extends Component<any, any> {
                 {" "}
                 مقدار تخفیف{" "}
               </small>
-              <h3 className={styles.totalContainerH3}>
-                {this.formatNumberWithComma(discountAmount)}
-                <small className={styles.totalContainerH3Small}>تومان</small>
-              </h3>
+              <div className={styles.priceShown}>
+                <small className={styles.totalContainerH3Small}>ریال</small>
+                <h3 className={styles.totalContainerH3}>
+                  {this.formatNumberWithComma(Math.ceil(discountAmount))}
+                </h3>
+              </div>
             </div>
           </div>
 
@@ -203,17 +228,21 @@ export default class Cart extends Component<any, any> {
               <small className={styles.totalContainerSmall}>
                 جمع کل بدون تخفیف
               </small>
-              <h3 className={styles.totalContainerH3}>
-                {this.formatNumberWithComma(totalBefore)}{" "}
-                <small className={styles.totalContainerH3Small}>تومان</small>
-              </h3>
+              <div className={styles.priceShown}>
+                <small className={styles.totalContainerH3Small}>ریال</small>
+                <h3 className={styles.totalContainerH3}>
+                  {this.formatNumberWithComma(totalBefore)}{" "}
+                </h3>
+              </div>
             </div>
             <div>
               <small className={styles.totalContainerSmall}> مبلغ نهایی</small>
-              <h2 className={styles.totalContainerH2}>
-                {this.formatNumberWithComma(finalTotal)}{" "}
-                <small className={styles.totalContainerH2Small}>تومان</small>
-              </h2>
+              <div className={styles.priceShown}>
+                <small className={styles.totalContainerH2Small}>ریال</small>
+                <h2 className={styles.totalContainerH2}>
+                  {this.formatNumberWithComma(Math.ceil(finalTotal))}{" "}
+                </h2>
+              </div>
             </div>
           </div>
 

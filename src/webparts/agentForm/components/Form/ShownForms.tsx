@@ -3,7 +3,7 @@ import { Component } from "react";
 import styles from "./ShownForm.module.scss";
 import { FormProps, ShownFormProps } from "../IAgentFormProps";
 
-// import { convertIsoToJalali } from "../utils/convertToJalali";
+import { convertIsoToJalali } from "../utils/convertToJalali";
 import { loadFiles } from "../Crud/GetData";
 import { convertToJalaliDateTime } from "../utils/geoToJalali";
 
@@ -65,7 +65,6 @@ export default class ShownForm extends Component<ShownFormProps, any> {
               <p className={styles.ColDataP}>{this.props.Order_Status}</p>
             </div>
           </div>
-
           <div className={styles.ColData}>
             <div className={styles.ColDataDiv}>
               <small className={styles.ColDataSmall}>ایجاد شده توسط </small>
@@ -79,32 +78,27 @@ export default class ShownForm extends Component<ShownFormProps, any> {
             </div>
           </div>
         </div>
-
         <div className={styles.Description}>
           <p className={styles.descriptionP}>توضیحات</p>
           <div className={styles.descriptionDiv}>{this.props.Description}</div>
         </div>
-
         <div className={styles.colDataLinks}>
-
           {this.state.EventRecive.map((e, i) => (
             <div className={styles.ColDataLinkRecive}>
-              <a className={styles.ColDataLinkReciveAlink} href={e.url} key={i} download>
+              <a href={e.url} key={i} download>
                 {e.name}
               </a>
-              <small className={styles.ColDataLinkReciveSmall}>فایل دریافتی</small>
+              <small>فایل دریافتی</small>
             </div>
           ))}
-
           {this.state.EventSend.map((e, i) => (
             <div className={styles.ColDataLinkSend}>
-              <a href={e.url} key={i} download className={styles.ColDataLinkSendAlink}>
+              <a href={e.url} key={i} download>
                 {e.name}
               </a>
-              <small className={styles.ColDataLinkSendSmall}>فایل ارسالی</small>
+              <small>فایل ارسالی</small>
             </div>
           ))}
-
         </div>
       </div>
     );

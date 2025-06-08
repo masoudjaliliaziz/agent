@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Component } from "react";
-import { loadAllOrders, loadCard, loadOrders } from "../Crud/GetData";
+import { loadAllOrders, loadCard } from "../Crud/GetData";
 import styles from "./HistoryCart.module.scss";
 import CartListHistory from "./CartListHistory";
 
@@ -39,8 +39,6 @@ export default class Cart extends Component<any, any> {
     try {
       const cartItems = await loadCard(guid);
       const orderDetails = await loadAllOrders(guid);
-      // اصلاح نام متغیرها طبق API واقعی:
-      // فرض می‌کنیم API درست این است، اگر نه باید با API هماهنگ کنید
       const discountPercentage = Number(orderDetails.discountPercenTage) || 0;
       const totalBeforeDiscount =
         Number(

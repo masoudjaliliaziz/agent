@@ -3,8 +3,8 @@ import { Component } from "react";
 import styles from "./Form.module.scss";
 import { FormProps } from "../IAgentFormProps";
 import uuidv4 from "../utils/createGuid";
-import { handleAddEvent } from "../Crud/AddData";
-import { loadEvent } from "../Crud/GetData";
+import { handleAddEvent, updatePreInvoiceCreateField } from "../Crud/AddData";
+import { loadEvent, loadOrdersByGuid } from "../Crud/GetData";
 import ShownForm from "./ShownForms";
 import { FileUploader } from "../utils/FileUploader";
 
@@ -95,7 +95,6 @@ export default class Form extends Component<FormProps, any> {
               subFolder={this.state.item_GUID}
               title={"فایل دریافتی"}
             />
-
             <FileUploader
               ref={(el) => (this.sendRef = el)}
               orderNumber={this.props.parent_GUID}
@@ -104,46 +103,59 @@ export default class Form extends Component<FormProps, any> {
             />
           </div>
 
-          <div className={styles.selectContainer}>
-            <select
-              className={styles.formSelect}
-              value={this.state.Event_Type}
-              onChange={(event) =>
-                this.setState({ Event_Type: String(event.currentTarget.value) })
-              }
-              name="Event_Type"
-            >
-              <option value="chose" disabled>
-                نوع رویداد
-              </option>
-              <option value="telegram">تلگرام</option>
-              <option value="whatsapp">واتساپ</option>
-              <option value="phoneNumber">تماس تلفنی</option>
-              <option value="email">ایمیل</option>
-              <option value="presental">حضوری</option>
-            </select>
+          <div className={styles.distributerCodeDiv}>
+            {this.props.distributerCode &&
+              this.props.distributerCode.trim() !== "" && (
+                <div className={styles.distributerCodeChildDiv}>
+                  <p className={styles.distributerCodeParaph}>
+                    کد نماینده:{" "}
+                    <span className={styles.distributerCodeSpan}>
+                      {this.props.distributerCode}
+                    </span>
+                  </p>
+                </div>
+              )}
 
-            <select
-              className={styles.formSelect}
-              value={this.state.Order_Status}
-              onChange={(event) =>
-                this.setState({
-                  Order_Status: String(event.currentTarget.value),
-                })
-              }
-              name="Order_Status"
-            >
-              <option value="chose" disabled>
-                وضعیت سفارش
-              </option>
-              <option value="درحال مذاکره">در حال مذاکره</option>
-              <option value="ارجاع به کارشناس">ارجاع به کارشناس</option>
-              <option value="نا موفق">ناموفق</option>
-            </select>
+            <div className={styles.selectContainer}>
+              <select
+                value={this.state.Event_Type}
+                onChange={(event) =>
+                  this.setState({
+                    Event_Type: String(event.currentTarget.value),
+                  })
+                }
+                name="Event_Type"
+              >
+                <option value="chose" disabled>
+                  نوع رویداد
+                </option>
+                <option value="telegram">تلگرام</option>
+                <option value="whatsapp">واتساپ</option>
+                <option value="phoneNumber">تماس تلفنی</option>
+                <option value="email">ایمیل</option>
+                <option value="presental">حضوری</option>
+              </select>
+
+              <select
+                value={this.state.Order_Status}
+                onChange={(event) =>
+                  this.setState({
+                    Order_Status: String(event.currentTarget.value),
+                  })
+                }
+                name="Order_Status"
+              >
+                <option value="chose" disabled>
+                  وضعیت سفارش
+                </option>
+                <option value="درحال مذاکره">در حال مذاکره</option>
+                <option value="ارجاع به کارشناس">ارجاع به کارشناس</option>
+                <option value="نا موفق">ناموفق</option>
+              </select>
+            </div>
           </div>
 
           <textarea
-            className={styles.formTextArea}
             placeholder="توضیحات ..."
             value={this.state.Description}
             onChange={(e) =>
@@ -151,8 +163,36 @@ export default class Form extends Component<FormProps, any> {
             }
           />
 
-          <div className={styles.buttonSave} onClick={this.onEventAdd}>
-            ذخیره
+          <div className={styles.buttonsContainer}>
+            <div className={styles.buttonSave} onClick={this.onEventAdd}>
+              ذخیره
+            </div>
+
+            <button
+              type="button"
+              className={styles.preInvoiceButton}
+              onClick={() =>
+                updatePreInvoiceCreateField(this.props.parent_GUID)
+              }
+            >
+              ایجاد پیش فاکتور
+            </button>
+
+            {this.props.existLink === null ||
+            this.props.existLink === "" ||
+            this.props.existLink === undefined ? (
+              <p>testConditional</p>
+            ) : (
+              <a
+                href={this.props.existLink}
+                className={styles.preInvoiceButton}
+                onClick={() =>
+                  updatePreInvoiceCreateField(this.props.parent_GUID)
+                }
+              >
+                مشاهده پیش فاکتور
+              </a>
+            )}
           </div>
         </div>
 

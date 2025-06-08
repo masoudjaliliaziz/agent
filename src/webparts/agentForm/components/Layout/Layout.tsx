@@ -1,7 +1,12 @@
 import * as React from "react";
 import styles from "./Layout.module.scss";
 import { hashHistory } from "react-router";
-import { loadOrders, loadOrdersByPhoneNumber } from "../Crud/GetData";
+import {
+  loadPhoneNumberFromOrder,
+  loadOrdersByPhoneNumber,
+  loadDistributerCodeFromOrder,
+  CustomerNameFromOrder,
+} from "../Crud/GetData";
 import OrderHistory from "../history/OrderHistory";
 export class Layout extends React.Component<any, any> {
   constructor(props) {
@@ -9,6 +14,8 @@ export class Layout extends React.Component<any, any> {
 
     this.state = {
       phoneNumber: "",
+      distributerCode: "",
+      CustomerName: "",
       showSuccessPopup: false,
       getGuidFormByPhoneNumber: [],
     };
@@ -18,8 +25,12 @@ export class Layout extends React.Component<any, any> {
 
   async componentDidMount() {
     const form_guid = sessionStorage.getItem("agent_guid");
-    const phoneNumber = await loadOrders(form_guid);
+    const CustomerName = await CustomerNameFromOrder(form_guid);
+    this.setState({ CustomerName });
+    const phoneNumber = await loadPhoneNumberFromOrder(form_guid);
     this.setState({ phoneNumber });
+    const distributerCode = await loadDistributerCodeFromOrder(form_guid);
+    this.setState({ distributerCode });
     const getGuidFormByPhoneNumber = await loadOrdersByPhoneNumber(phoneNumber);
     this.setState({ getGuidFormByPhoneNumber });
   }
@@ -87,12 +98,21 @@ export class Layout extends React.Component<any, any> {
               onClick={() => this.setState({ showSuccessPopup: true })}
               className={styles.history}
             >
-              {this.state.phoneNumber}
+              {this.state.CustomerName}
             </div>
           </div>
         </header>
 
-        <main>{this.props.children}</main>
+        <main>
+          {React.Children.map(this.props.children, (child) =>
+            React.isValidElement(child)
+              ? React.cloneElement(child as React.ReactElement<any>, {
+                  distributerCode: this.state.distributerCode,
+                })
+              : child
+          )}
+        </main>
+
         {this.state.showSuccessPopup && (
           <div className={styles.popupOverlay}>
             <div className={styles.popupBox}>
