@@ -165,7 +165,6 @@ export async function updateOrderFormByGuid(guid_form: string, Data: any) {
     return;
   }
 
-
   const item = getData.d.results[0];
   const itemId = item.Id;
 
@@ -220,7 +219,6 @@ export async function addItemToVirtualInventory(data) {
     const result = await response.json();
     const reserveInventory = await result.d.reserveInventory;
     return reserveInventory;
-
   } catch (err) {
     console.error("❌ Error adding item to inventory:", err);
   }
@@ -470,7 +468,7 @@ export async function addToCart(product: Product): Promise<void> {
   }
 }
 
-export async function updatePreInvoiceCreateField(guid_form: string) {
+export async function updatePreInvoiceCreateField(guid_form: string, data) {
   const webUrl = "https://crm.zarsim.com";
   const digest = await getDigest();
   const listName = "Orders";
@@ -511,6 +509,13 @@ export async function updatePreInvoiceCreateField(guid_form: string) {
       body: JSON.stringify({
         __metadata: { type: itemType },
         Pre_Invoice_Create: "1",
+        coName: data.coName,
+        customerNationalCode: data.customerNationalCode,
+        address: data.address,
+        postalCode: data.postalCode,
+        customerMobile: data.customerMobile,
+        phoneNumber: data.phoneNumber,
+        economicalCode: data.economicalCode,
       }),
     });
 

@@ -20,6 +20,13 @@ export default class Form extends Component<FormProps, any> {
       Order_Status: "chose",
       Description: "",
       Events: [],
+      economicalCode: "",
+      phoneNumber: "",
+      customerMobile: "",
+      postalCode: "",
+      address: "",
+      customerNationalCode: "",
+      coName: "",
     };
 
     this.onEventAdd = this.onEventAdd.bind(this);
@@ -84,131 +91,244 @@ export default class Form extends Component<FormProps, any> {
     }
   }
 
+  async handleUpdatePreInvoiceCreateField() {
+    const {
+      economicalCode,
+      phoneNumber,
+      customerMobile,
+      postalCode,
+      address,
+      customerNationalCode,
+      coName,
+    } = this.state;
+    const data = {
+      economicalCode,
+      phoneNumber,
+      customerMobile,
+      postalCode,
+      address,
+      customerNationalCode,
+      coName,
+    };
+    await updatePreInvoiceCreateField(this.props.parent_GUID, data);
+  }
+
   render() {
     return (
-      <div className={styles.Form}>
-        <div className={styles.formContainer}>
-          <div className={styles.upladContainer}>
-            <FileUploader
-              ref={(el) => (this.reciveRef = el)}
-              orderNumber={this.props.parent_GUID}
-              subFolder={this.state.item_GUID}
-              title={"فایل دریافتی"}
-            />
-            <FileUploader
-              ref={(el) => (this.sendRef = el)}
-              orderNumber={this.props.parent_GUID}
-              subFolder={this.state.item_GUID}
-              title={"فایل ارسالی"}
-            />
-          </div>
-
-          <div className={styles.distributerCodeDiv}>
-            {this.props.distributerCode &&
-              this.props.distributerCode.trim() !== "" && (
-                <div className={styles.distributerCodeChildDiv}>
-                  <p className={styles.distributerCodeParaph}>
-                    کد نماینده:{" "}
-                    <span className={styles.distributerCodeSpan}>
-                      {this.props.distributerCode}
-                    </span>
-                  </p>
+      <div>
+        {this.state.showSuccessPopup && (
+          <div className={styles.popupOverlay}>
+            <div className={styles.popupBox}>
+              <div className={styles.popupContent}>
+                <div className={styles.popupForm}>
+                  <label htmlFor="coNumber">نام شرکت</label>
+                  <input
+                    value={this.state.coName}
+                    onChange={(e) =>
+                      this.setState({ coName: e.currentTarget.value })
+                    }
+                    className={styles.popupFormInput}
+                    type="text"
+                    id="coNumber"
+                  />
+                  <label htmlFor="nationalCode"> شناسه ملی</label>
+                  <input
+                    value={this.state.nationalCode}
+                    onChange={(e) =>
+                      this.setState({ nationalCode: e.currentTarget.value })
+                    }
+                    className={styles.popupFormInput}
+                    type="text"
+                    id="nationalCode"
+                  />{" "}
+                  <label htmlFor="postalCode"> کد پستی</label>
+                  <input
+                    value={this.state.postalCode}
+                    onChange={(e) =>
+                      this.setState({ postalCode: e.currentTarget.value })
+                    }
+                    className={styles.popupFormInput}
+                    type="text"
+                    id="postalCode"
+                  />{" "}
+                  <label htmlFor="ecoCode"> شماره اقتصادی</label>
+                  <input
+                    value={this.state.economicalCode}
+                    onChange={(e) =>
+                      this.setState({ economicalCode: e.currentTarget.value })
+                    }
+                    className={styles.popupFormInput}
+                    type="text"
+                    id="ecoCode"
+                  />{" "}
+                  <label htmlFor="address"> نشانی</label>
+                  <textarea
+                    value={this.state.address}
+                    onChange={(e) =>
+                      this.setState({ address: e.currentTarget.value })
+                    }
+                    className={styles.popupFormInput}
+                    type="text"
+                    id="address"
+                  />{" "}
+                  <label htmlFor="mobile"> تلفن همراه</label>
+                  <input
+                    value={this.state.phoneNumber}
+                    onChange={(e) =>
+                      this.setState({ phoneNumber: e.currentTarget.value })
+                    }
+                    className={styles.popupFormInput}
+                    type="text"
+                    id="mobile"
+                  />{" "}
+                  <label htmlFor="phoneNumber">تلفن ثابت </label>
+                  <input
+                    value={this.state.customerMobile}
+                    onChange={(e) =>
+                      this.setState({ customerMobile: e.currentTarget.value })
+                    }
+                    className={styles.popupFormInput}
+                    type="text"
+                    id="phoneNumber"
+                  />
                 </div>
-              )}
+              </div>
 
-            <div className={styles.selectContainer}>
-              <select
-                value={this.state.Event_Type}
-                onChange={(event) =>
+              <div
+                className={styles.closePopupBtn}
+                onClick={() => {
+                  this.handleUpdatePreInvoiceCreateField();
                   this.setState({
-                    Event_Type: String(event.currentTarget.value),
-                  })
-                }
-                name="Event_Type"
+                    showSuccessPopup: false,
+                  });
+                }}
               >
-                <option value="chose" disabled>
-                  نوع رویداد
-                </option>
-                <option value="telegram">تلگرام</option>
-                <option value="whatsapp">واتساپ</option>
-                <option value="phoneNumber">تماس تلفنی</option>
-                <option value="email">ایمیل</option>
-                <option value="presental">حضوری</option>
-              </select>
-
-              <select
-                value={this.state.Order_Status}
-                onChange={(event) =>
-                  this.setState({
-                    Order_Status: String(event.currentTarget.value),
-                  })
-                }
-                name="Order_Status"
-              >
-                <option value="chose" disabled>
-                  وضعیت سفارش
-                </option>
-                <option value="درحال مذاکره">در حال مذاکره</option>
-                <option value="ارجاع به کارشناس">ارجاع به کارشناس</option>
-                <option value="نا موفق">ناموفق</option>
-              </select>
+                ذخیره و ایجاد پیش فاکتور
+              </div>
             </div>
           </div>
-
-          <textarea
-            placeholder="توضیحات ..."
-            value={this.state.Description}
-            onChange={(e) =>
-              this.setState({ Description: e.currentTarget.value })
-            }
-          />
-
-          <div className={styles.buttonsContainer}>
-            <div className={styles.buttonSave} onClick={this.onEventAdd}>
-              ذخیره
+        )}
+        <div className={styles.Form}>
+          <div className={styles.formContainer}>
+            <div className={styles.upladContainer}>
+              <FileUploader
+                ref={(el) => (this.reciveRef = el)}
+                orderNumber={this.props.parent_GUID}
+                subFolder={this.state.item_GUID}
+                title={"فایل دریافتی"}
+              />
+              <FileUploader
+                ref={(el) => (this.sendRef = el)}
+                orderNumber={this.props.parent_GUID}
+                subFolder={this.state.item_GUID}
+                title={"فایل ارسالی"}
+              />
             </div>
 
-            <button
-              type="button"
-              className={styles.preInvoiceButton}
-              onClick={() =>
-                updatePreInvoiceCreateField(this.props.parent_GUID)
+            <div className={styles.distributerCodeDiv}>
+              {this.props.distributerCode &&
+                this.props.distributerCode.trim() !== "" && (
+                  <div className={styles.distributerCodeChildDiv}>
+                    <p className={styles.distributerCodeParaph}>
+                      کد نماینده:{" "}
+                      <span className={styles.distributerCodeSpan}>
+                        {this.props.distributerCode}
+                      </span>
+                    </p>
+                  </div>
+                )}
+
+              <div className={styles.selectContainer}>
+                <select
+                  value={this.state.Event_Type}
+                  onChange={(event) =>
+                    this.setState({
+                      Event_Type: String(event.currentTarget.value),
+                    })
+                  }
+                  name="Event_Type"
+                >
+                  <option value="chose" disabled>
+                    نوع رویداد
+                  </option>
+                  <option value="telegram">تلگرام</option>
+                  <option value="whatsapp">واتساپ</option>
+                  <option value="phoneNumber">تماس تلفنی</option>
+                  <option value="email">ایمیل</option>
+                  <option value="presental">حضوری</option>
+                </select>
+
+                <select
+                  value={this.state.Order_Status}
+                  onChange={(event) =>
+                    this.setState({
+                      Order_Status: String(event.currentTarget.value),
+                    })
+                  }
+                  name="Order_Status"
+                >
+                  <option value="chose" disabled>
+                    وضعیت سفارش
+                  </option>
+                  <option value="درحال مذاکره">در حال مذاکره</option>
+                  <option value="ارجاع به کارشناس">ارجاع به کارشناس</option>
+                  <option value="نا موفق">ناموفق</option>
+                </select>
+              </div>
+            </div>
+
+            <textarea
+              placeholder="توضیحات ..."
+              value={this.state.Description}
+              onChange={(e) =>
+                this.setState({ Description: e.currentTarget.value })
               }
-            >
-              ایجاد پیش فاکتور
-            </button>
-
-            {this.props.existLink === null ||
-            this.props.existLink === "" ||
-            this.props.existLink === undefined ? (
-              <p>testConditional</p>
-            ) : (
-              <a
-                href={this.props.existLink}
-                className={styles.preInvoiceButton}
-                onClick={() =>
-                  updatePreInvoiceCreateField(this.props.parent_GUID)
-                }
-              >
-                مشاهده پیش فاکتور
-              </a>
-            )}
-          </div>
-        </div>
-
-        <div className={styles.shownHistory}>
-          {this.state.Events.map((event, i) => (
-            <ShownForm
-              key={i}
-              Description={event.Description}
-              Event_Type={event.Event_Type}
-              Display_Name={event.Display_Name}
-              Order_Status={event.Order_Status}
-              Created={event.Created}
-              parent_GUID={this.props.parent_GUID}
-              item_GUID={event.Title}
             />
-          ))}
+
+            <div className={styles.buttonsContainer}>
+              <div className={styles.buttonSave} onClick={this.onEventAdd}>
+                ذخیره
+              </div>
+
+              <button
+                type="button"
+                className={styles.preInvoiceButton}
+                onClick={() => {
+                  this.setState({ showSuccessPopup: true });
+                }}
+              >
+                وارد کردن اطلاعات تکمیلی و ایجاد پیش فاکتور
+              </button>
+
+              {this.props.existLink === null ||
+              this.props.existLink === "" ||
+              this.props.existLink === undefined ? (
+                <p>پیش فاکتوری یافت نشد</p>
+              ) : (
+                <a
+                  href={this.props.existLink}
+                  className={styles.preInvoiceButton}
+                >
+                  مشاهده پیش فاکتور
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.shownHistory}>
+            {this.state.Events.map((event, i) => (
+              <ShownForm
+                key={i}
+                Description={event.Description}
+                Event_Type={event.Event_Type}
+                Display_Name={event.Display_Name}
+                Order_Status={event.Order_Status}
+                Created={event.Created}
+                parent_GUID={this.props.parent_GUID}
+                item_GUID={event.Title}
+              />
+            ))}
+          </div>
         </div>
       </div>
     );
