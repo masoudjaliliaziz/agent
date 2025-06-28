@@ -111,6 +111,16 @@ export default class Form extends Component<FormProps, any> {
       coName,
     };
     await updatePreInvoiceCreateField(this.props.parent_GUID, data);
+    this.setState({
+      economicalCode: "",
+      phoneNumber: "",
+      customerMobile: "",
+      postalCode: "",
+      address: "",
+      customerNationalCode: "",
+      coName: "",
+      showSuccessPopup: false,
+    });
   }
 
   render() {
@@ -119,6 +129,19 @@ export default class Form extends Component<FormProps, any> {
         {this.state.showSuccessPopup && (
           <div className={styles.popupOverlay}>
             <div className={styles.popupBox}>
+              <div className={styles.popUpCloseContainer}>
+                <span
+                  onClick={() =>
+                    this.setState({
+                      showSuccessPopup: false,
+                    })
+                  }
+                  className={styles.popUpClose}
+                >
+                  x
+                </span>
+              </div>
+
               <div className={styles.popupContent}>
                 <div className={styles.popupForm}>
                   <label htmlFor="coNumber">نام شرکت</label>
@@ -133,9 +156,11 @@ export default class Form extends Component<FormProps, any> {
                   />
                   <label htmlFor="nationalCode"> شناسه ملی</label>
                   <input
-                    value={this.state.nationalCode}
+                    value={this.state.customerNationalCode}
                     onChange={(e) =>
-                      this.setState({ nationalCode: e.currentTarget.value })
+                      this.setState({
+                        customerNationalCode: e.currentTarget.value,
+                      })
                     }
                     className={styles.popupFormInput}
                     type="text"
@@ -198,9 +223,6 @@ export default class Form extends Component<FormProps, any> {
                 className={styles.closePopupBtn}
                 onClick={() => {
                   this.handleUpdatePreInvoiceCreateField();
-                  this.setState({
-                    showSuccessPopup: false,
-                  });
                 }}
               >
                 ذخیره و ایجاد پیش فاکتور

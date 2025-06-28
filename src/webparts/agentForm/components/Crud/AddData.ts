@@ -520,12 +520,9 @@ export async function updatePreInvoiceCreateField(guid_form: string, data) {
     });
 
     if (updateResponse.ok) {
-      console.log(`✅ Item ${guid_form} (ID: ${itemId}) updated successfully.`);
+      alert(`✅ آیتم با موفقیت بروزرسانی شد`);
     } else {
-      console.error(
-        `❌ Error updating item ${guid_form} (ID: ${itemId}):`,
-        updateResponse.statusText
-      );
+      alert("❌ خطا در بروزسانی آیتم  ");
     }
   } catch (error) {
     console.error(`❌ Fetch error updating item ${guid_form}:`, error);
