@@ -289,7 +289,7 @@ export default class CartCard extends React.Component<any, any> {
               onClick={() => this.handleUpdateInventory()}
               className={styles.reserveBtn}
             >
-              رزرو
+              رزرو (حلقه)
             </div>
           </div>
         </div>
@@ -300,10 +300,10 @@ export default class CartCard extends React.Component<any, any> {
               className={styles.inventoryDescription}
               style={{ color: "green" }}
             >
-              موجودی قابل رزرو : {inventoryAvailable}
+              موجودی قابل رزرو : {inventoryAvailable} متر
             </p>
             <p className={styles.inventoryReserve}>
-              مجموع رزرو شده : {reservedTotal}
+              مجموع رزرو شده : {reservedTotal} متر
             </p>
 
             {errorMsg && (
@@ -311,7 +311,7 @@ export default class CartCard extends React.Component<any, any> {
             )}
 
             <p className={styles.inventoryDescription}>
-              موجودی رزرو : {reserveInventory}
+              موجودی رزرو : {reserveInventory} متر
             </p>
 
             <div
