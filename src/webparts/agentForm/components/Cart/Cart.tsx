@@ -6,7 +6,7 @@ import CartList from "./CartList";
 import { updateOrderFormByGuid } from "../Crud/AddData";
 import ShopPopUp from "../Shop/Shop";
 import * as moment from "moment-jalaali";
-
+import { hashHistory } from "react-router";
 export default class Cart extends Component<any, any> {
   constructor(props) {
     super(props);
@@ -27,7 +27,9 @@ export default class Cart extends Component<any, any> {
       savedDiscountAmount: "",
       manualDiscount: "",
       products: [],
+      showSubmitAlert: false,
     };
+    this.goList = this.goList.bind(this);
   }
 
   componentDidMount() {
@@ -37,6 +39,9 @@ export default class Cart extends Component<any, any> {
     this.fetchSavedDiscountData(this.state.guid);
   }
 
+  goList() {
+    hashHistory.push("/");
+  }
   setGuidFromUrlOrSession = () => {
     const hash = window.location.hash;
     if (hash) {
@@ -207,8 +212,8 @@ export default class Cart extends Component<any, any> {
             savedDate: String(savedData.Created),
             savedEditor: String(savedData.Editor),
             savedDiscountAmount: String(savedData.discountAmount),
-            manualDiscount: String(savedData.Manual_Discount),
-            manualDiscountAmount: String(savedData.Manual_Discount),
+            manualDiscount: parseFloat(savedData.Manual_Discount) || 0,
+            manualDiscountAmount: parseFloat(savedData.Manual_Discount) || 0,
           });
         }
       });
@@ -310,14 +315,20 @@ export default class Cart extends Component<any, any> {
           </div>
           <div
             className={styles.submit}
-            onClick={() =>
+            onClick={() => {
               this.handleSaveAllDiscounts(
                 finalTotal,
                 totalBefore,
                 discountAmount,
                 this.state.discount
-              )
-            }
+              );
+
+              this.setState({ showSubmitAlert: true });
+
+              setTimeout(() => {
+                this.setState({ showSubmitAlert: false });
+              }, 3000);
+            }}
           >
             ثبت
           </div>
@@ -415,6 +426,30 @@ export default class Cart extends Component<any, any> {
                 بستن
               </button>
             </div>
+          </div>
+        )}
+
+        {this.state.showSubmitAlert && (
+          <div className={styles.successMessage}>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="green"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20 6L9 17L4 12" />
+            </svg>
+            <span>سبدخرید با موفقیت بروز رسانی شد</span>
+            <button
+              className={styles.closeBtn}
+              onClick={() => this.setState({ showSubmitAlert: false })}
+            >
+              ✕
+            </button>
           </div>
         )}
       </div>

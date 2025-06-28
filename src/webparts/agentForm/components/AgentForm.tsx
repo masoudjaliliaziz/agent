@@ -11,7 +11,9 @@ export default class AgentForm extends React.Component<IAgentFormProps, any> {
     this.state = {
       parent_GUID: "",
       existLink: "",
+      formKey: 0,
     };
+    this.handleFormRefresh = this.handleFormRefresh.bind(this);
   }
 
   async componentDidMount() {
@@ -40,15 +42,25 @@ export default class AgentForm extends React.Component<IAgentFormProps, any> {
       this.setState({ existLink: currentOrderLink });
     }
   }
-
+  handleFormRefresh() {
+    this.setState({ formKey: this.state.formKey + 1 }, async () => {
+      // بعد از رفرش فرم، لینک رو مجدد لود کن
+      if (this.state.parent_GUID) {
+        const currentOrderLink = await loadOrdersByGuid(this.state.parent_GUID);
+        this.setState({ existLink: currentOrderLink });
+      }
+    });
+  }
   public render(): React.ReactElement<IAgentFormProps> {
     return (
       <div className={styles.agentForm}>
         <div className={styles.container}>
           <Form
+            key={this.state.formKey} // 🔑 کلید که فرم رو مجدد رندر می‌کنه
             existLink={this.state.existLink}
             parent_GUID={this.state.parent_GUID}
             distributerCode={this.props.distributerCode}
+            onRefresh={this.handleFormRefresh} // 🔁 ارسال متد رفرش به فرم
           />
         </div>
       </div>

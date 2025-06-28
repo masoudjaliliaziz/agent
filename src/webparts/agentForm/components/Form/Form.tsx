@@ -8,10 +8,10 @@ import { loadEvent, loadOrdersByGuid } from "../Crud/GetData";
 import ShownForm from "./ShownForms";
 import { FileUploader } from "../utils/FileUploader";
 
-export default class Form extends Component<FormProps, any> {
+export default class Form extends Component<any, any> {
   private sendRef: FileUploader | null = null;
   private reciveRef: FileUploader | null = null;
-
+  private intervalId = null;
   constructor(props: FormProps) {
     super(props);
     this.state = {
@@ -27,24 +27,71 @@ export default class Form extends Component<FormProps, any> {
       address: "",
       customerNationalCode: "",
       coName: "",
+      existLink: props.existLink,
     };
 
     this.onEventAdd = this.onEventAdd.bind(this);
     this.loadData = this.loadData.bind(this);
+    this.checkPreInvoiceLink = this.checkPreInvoiceLink.bind(this);
   }
 
   async componentDidMount() {
     if (this.props.parent_GUID) {
       this.loadData(this.props.parent_GUID);
     }
+    // شروع تایمر برای چک کردن لینک
+    this.intervalId = setInterval(this.checkPreInvoiceLink, 2000);
   }
 
+  componentWillUnmount() {
+    // قطع تایمر موقع خروج از کامپوننت
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+  checkPreInvoiceLink = async () => {
+    if (!this.props.parent_GUID) return;
+
+    // داده رو از سرور بگیر
+    const result = await loadOrdersByGuid(this.props.parent_GUID);
+
+    // فرض می‌کنیم result یک آرایه است
+    if (result && result.length > 0) {
+      const currentOrderLink = result[0].link;
+
+      if (currentOrderLink && currentOrderLink !== this.state.existLink) {
+        this.setState({ existLink: currentOrderLink });
+
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+          this.intervalId = null;
+        }
+      }
+    }
+  };
+
   async componentDidUpdate(prevProps: FormProps) {
+    // اگه parent_GUID تغییر کرد، دیتا رو دوباره لود کن
     if (
       prevProps.parent_GUID !== this.props.parent_GUID &&
       this.props.parent_GUID
     ) {
       this.loadData(this.props.parent_GUID);
+    }
+
+    // اگه لینک تغییر کرد
+    if (prevProps.existLink !== this.props.existLink) {
+      this.setState({ existLink: this.props.existLink });
+
+      // اگه لینک جدید خالی بود و تایمر فعال نیست، تایمر رو مجدد فعال کن
+      if (
+        (this.props.existLink === null ||
+          this.props.existLink === "" ||
+          this.props.existLink === undefined) &&
+        this.intervalId === null
+      ) {
+        this.intervalId = setInterval(this.checkPreInvoiceLink, 2000);
+      }
     }
   }
 
@@ -221,8 +268,9 @@ export default class Form extends Component<FormProps, any> {
 
               <div
                 className={styles.closePopupBtn}
-                onClick={() => {
-                  this.handleUpdatePreInvoiceCreateField();
+                onClick={async () => {
+                  await this.handleUpdatePreInvoiceCreateField();
+                  this.props.onRefresh(); // 🔁 بعد از ذخیره، فرم رفرش بشه
                 }}
               >
                 ذخیره و ایجاد پیش فاکتور
@@ -322,14 +370,16 @@ export default class Form extends Component<FormProps, any> {
                 وارد کردن اطلاعات تکمیلی و ایجاد پیش فاکتور
               </button>
 
-              {this.props.existLink === null ||
-              this.props.existLink === "" ||
-              this.props.existLink === undefined ? (
+              {this.state.existLink === null ||
+              this.state.existLink === "" ||
+              this.state.existLink === undefined ? (
                 <p>پیش فاکتوری یافت نشد</p>
               ) : (
                 <a
-                  href={this.props.existLink}
+                  href={this.state.existLink}
                   className={styles.preInvoiceButton}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   مشاهده پیش فاکتور
                 </a>
