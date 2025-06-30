@@ -319,3 +319,23 @@ export async function loadOrdersByGuid(guid_form: string): Promise<any[]> {
     return [];
   }
 }
+
+export async function loadOrderByGuid(guid_form: string) {
+  const webUrl = "https://crm.zarsim.com";
+  const listName = "Orders";
+
+  try {
+    const response = await fetch(
+      `${webUrl}/_api/web/lists/getbytitle('${listName}')/items?$filter=guid_form eq '${guid_form}'`,
+      {
+        headers: { Accept: "application/json;odata=verbose" },
+      }
+    );
+
+    const data = await response.json();
+    return data.d.results.at(0);
+  } catch (err) {
+    console.error("خطا در دریافت آیتم‌ها:", err);
+    return [];
+  }
+}

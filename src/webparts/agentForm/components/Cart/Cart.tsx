@@ -225,7 +225,10 @@ export default class Cart extends Component<any, any> {
 
   render() {
     const totalBefore = this.calculateTotalBeforeDiscount();
-    const discountAmount = this.calculateDiscountAmount(); // فقط درصدی
+
+    const percentDiscountAmount = this.calculateDiscountAmount();
+    const manualDiscountAmount = this.state.manualDiscountAmount;
+    const discountAmount = percentDiscountAmount + manualDiscountAmount; // فقط درصدی
     const finalTotal = this.calculateTotal();
 
     return (

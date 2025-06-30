@@ -169,7 +169,7 @@ export async function updateOrderFormByGuid(guid_form: string, Data: any) {
   const itemId = item.Id;
 
   const updateUrl = `${webUrl}/_api/web/lists/getbytitle('${listName}')/items(${itemId})`;
-
+  console.log(Data.discountAmount);
   const updateResponse = await fetch(updateUrl, {
     method: "POST",
     headers: {
@@ -200,7 +200,7 @@ export async function addItemToVirtualInventory(data) {
 
   try {
     const digest = await getDigest();
-    console.log("Digest:", digest);
+
     const response = await fetch(
       `${webUrl}/_api/web/lists/getbytitle('${listName}')/items`,
       {
@@ -516,6 +516,7 @@ export async function updatePreInvoiceCreateField(guid_form: string, data) {
         customerMobile: data.customerMobile,
         phoneNumber: data.phoneNumber,
         economicalCode: data.economicalCode,
+        coFoundNumber: data.coFoundNumber,
       }),
     });
 
